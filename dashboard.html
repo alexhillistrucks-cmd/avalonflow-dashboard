@@ -5,255 +5,194 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AvalonFlow Dashboard</title>
 <style>
-/* ---------------- Body & Basic Layout ---------------- */
-body {
-    font-family: 'Arial', sans-serif;
-    margin: 0;
-    padding: 0;
-    background: #0d0d0d;
-    color: #fff;
-    overflow-x: hidden;
-}
+    /* ----- Reset & Base ----- */
+    body {
+        font-family: 'Arial', sans-serif;
+        margin: 0; padding: 0;
+        background: #0d0d0d;
+        color: #fff;
+        overflow-x: hidden;
+    }
+    a { text-decoration: none; color: inherit; }
+    button { cursor: pointer; }
 
-/* ---------------- Floating Background ---------------- */
-#floating-bg {
-    position: fixed;
-    top:0; left:0;
-    width: 100%;
-    height: 100%;
-    z-index: 0;
-    overflow: hidden;
-    pointer-events: none;
-    background: radial-gradient(circle at bottom, #1a0d3a, #0d0d0d);
-}
+    /* ----- Floating Background ----- */
+    #floating-bg {
+        position: fixed; top:0; left:0;
+        width: 100%; height: 100%;
+        z-index:0; pointer-events:none;
+        background: radial-gradient(circle at bottom, #1a0d3a, #0d0d0d);
+        overflow: hidden;
+    }
+    .particle {
+        position: absolute; border-radius: 50%; opacity: 0.6;
+        animation: floatParticles linear infinite;
+        box-shadow: 0 0 10px #6b2cd8, 0 0 20px #6b2cd8;
+    }
+    @keyframes floatParticles {
+        0% { transform: translateY(100vh) translateX(0) scale(0.3); opacity: 0; }
+        50% { opacity: 1; }
+        100% { transform: translateY(-10vh) translateX(30vw) scale(1); opacity: 0; }
+    }
 
-.particle {
-    position: absolute;
-    border-radius: 50%;
-    opacity: 0.6;
-    background: radial-gradient(circle, #6b2cd8, transparent);
-    animation: floatParticles linear infinite;
-    box-shadow: 0 0 10px #6b2cd8, 0 0 20px #6b2cd8;
-}
+    /* ----- Sidebar ----- */
+    #sidebar {
+        position: fixed; top:0; left:0; height:100%;
+        width:250px; background: rgba(255,255,255,0.05);
+        backdrop-filter: blur(10px); z-index:2;
+        padding: 20px; box-sizing:border-box;
+        transition: transform 0.3s ease;
+    }
+    #sidebar.closed { transform: translateX(-250px); }
+    #sidebar h2 { margin-top:0; color:#6b2cd8; }
+    #sidebar ul { list-style:none; padding:0; }
+    #sidebar ul li { margin:15px 0; }
+    #sidebar ul li button {
+        width: 100%; padding:10px; border:none; border-radius:8px;
+        background: rgba(255,255,255,0.1); color:#fff;
+        font-size:16px;
+    }
 
-@keyframes floatParticles {
-    0% { transform: translateY(100vh) translateX(0) scale(0.3); opacity: 0; }
-    50% { opacity: 1; }
-    100% { transform: translateY(-10vh) translateX(30vw) scale(1); opacity: 0; }
-}
+    /* ----- Main Content ----- */
+    #content {
+        margin-left: 250px; padding:30px;
+        transition: margin-left 0.3s ease;
+    }
+    #sidebar.closed ~ #content { margin-left:0; }
 
-/* ---------------- Sidebar ---------------- */
-.sidebar {
-    position: fixed;
-    left: 0;
-    top: 0;
-    width: 240px;
-    height: 100%;
-    background: rgba(255,255,255,0.05);
-    backdrop-filter: blur(12px);
-    padding: 20px;
-    box-sizing: border-box;
-    transition: transform 0.3s ease;
-    z-index: 2;
-}
+    .panel {
+        background: rgba(255,255,255,0.1);
+        backdrop-filter: blur(10px);
+        border-radius: 15px; padding:20px; margin-bottom:20px;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+    }
+    .panel h3 { color:#6b2cd8; margin-top:0; }
+    .panel p { margin:5px 0; }
+    .button {
+        background-color: #6b2cd8; color: white;
+        padding: 10px 15px; border:none; border-radius: 8px;
+        cursor: pointer;
+        margin-top:10px; display:inline-block;
+    }
+    .button.locked { opacity:0.5; cursor: not-allowed; }
 
-.sidebar.closed { transform: translateX(-250px); }
+    table { width:100%; border-collapse:collapse; }
+    table th, table td { border:1px solid #ddd; padding:8px; }
+    table th { background-color:#6b2cd8; color:#fff; }
 
-.sidebar h2 { color: #6b2cd8; margin-top: 0; }
-.sidebar a {
-    display: block;
-    color: #fff;
-    text-decoration: none;
-    padding: 10px 0;
-    border-radius: 6px;
-    transition: background 0.2s;
-}
-.sidebar a:hover { background: rgba(107,44,216,0.2); }
-
-/* ---------------- Main Content ---------------- */
-.main-content {
-    margin-left: 260px;
-    padding: 30px;
-    transition: margin-left 0.3s ease;
-}
-
-.main-content.full { margin-left: 20px; }
-
-/* ---------------- Glass Cards ---------------- */
-.content-section {
-    background: rgba(255,255,255,0.15);
-    backdrop-filter: blur(12px);
-    border-radius: 12px;
-    padding: 20px;
-    margin-bottom: 20px;
-}
-
-.branch-card, .activity-card, .reward-card, .admin-card {
-    background: rgba(255,255,255,0.15);
-    backdrop-filter: blur(12px);
-    border-radius: 12px;
-    padding: 16px;
-    margin-bottom: 16px;
-}
-
-.branch-card.locked { opacity: 0.4; pointer-events: none; }
-
-/* ---------------- Buttons ---------------- */
-.button {
-    display: inline-block;
-    background-color: #6b2cd8;
-    color: white;
-    padding: 10px 15px;
-    text-decoration: none;
-    border-radius: 5px;
-    margin-top: 10px;
-    cursor: pointer;
-}
-
-/* ---------------- Progress Bar ---------------- */
-.progress-bar {
-    background: rgba(255,255,255,0.1);
-    height: 12px;
-    border-radius: 6px;
-    margin-top: 8px;
-}
-
-.progress {
-    background-color: #6b2cd8;
-    height: 100%;
-    border-radius: 6px;
-}
-
-/* ---------------- Hidden Sections ---------------- */
-.hidden { display: none; }
-
+    /* ----- Toggle Sidebar Button ----- */
+    #toggleSidebar {
+        position: fixed; top:20px; left:20px; z-index:3;
+        background:#6b2cd8; color:#fff; border:none; padding:10px;
+        border-radius:8px;
+    }
 </style>
 </head>
 <body>
+
 <div id="floating-bg"></div>
 
-<!-- ---------------- Sidebar ---------------- -->
-<div class="sidebar" id="sidebar">
+<!-- Sidebar -->
+<div id="sidebar">
     <h2>AvalonFlow</h2>
-    <a href="#" onclick="showSection('avaloncare')">AvalonCare</a>
-    <a href="#" onclick="showSection('avalongrow')">AvalonGrow</a>
-    <a href="#" onclick="showSection('avalonease')">AvalonEase</a>
-    <a href="#" onclick="showSection('rewards')">Rewards</a>
-    <a href="#" onclick="showSection('support')">Support</a>
-    <a href="#" onclick="showSection('settings')">Settings</a>
-    <a href="#" onclick="toggleSidebar()">Close Sidebar</a>
+    <ul>
+        <li><button onclick="showPanel('branches')">Branches</button></li>
+        <li><button onclick="showPanel('rewards')">Rewards</button></li>
+        <li><button onclick="showPanel('support')">Support</button></li>
+        <li><button onclick="logout()">Logout</button></li>
+    </ul>
 </div>
 
-<!-- ---------------- Main Content ---------------- -->
-<div class="main-content" id="mainContent">
-    <button class="button" onclick="toggleSidebar()">☰ Open Sidebar</button>
+<button id="toggleSidebar" onclick="toggleSidebar()">☰</button>
 
-    <!-- AvalonCare -->
-    <section id="avaloncare" class="content-section">
-        <h2>AvalonCare — Activity Overview</h2>
-        <div class="activity-card">
-            <h3>Daily Task</h3>
-            <p>Complete the structured exercise to unlock growth points.</p>
-            <div class="progress-bar"><div class="progress" style="width:40%"></div></div>
-        </div>
-        <div class="activity-card">
-            <h3>Weekly Reflection</h3>
-            <p>Log your insights for this week’s milestone.</p>
-            <div class="progress-bar"><div class="progress" style="width:0%"></div></div>
-        </div>
-    </section>
+<!-- Main Content -->
+<div id="content">
+    <div id="branches" class="panel">
+        <h3>Branches</h3>
+        <p>Select a branch to unlock access:</p>
+        <button class="button" onclick="openPayment()">AvalonCare — Locked</button>
+        <button class="button" onclick="openPayment()">AvalonGrow — Locked</button>
+        <button class="button" onclick="openPayment()">AvalonEase — Locked</button>
+    </div>
 
-    <!-- AvalonGrow -->
-    <section id="avalongrow" class="content-section branch-card locked hidden">
-        <h2>AvalonGrow — Locked</h2>
-        <p>This branch is currently locked. Unlock by completing AvalonCare activities.</p>
-    </section>
+    <div id="rewards" class="panel" style="display:none;">
+        <h3>Rewards / Progress</h3>
+        <table>
+            <tr>
+                <th>Branch</th>
+                <th>Reward Earned</th>
+                <th>Date</th>
+                <th>Status</th>
+            </tr>
+            <tr>
+                <td>AvalonCare</td>
+                <td>---</td>
+                <td>---</td>
+                <td>Locked</td>
+            </tr>
+            <tr>
+                <td>AvalonGrow</td>
+                <td>---</td>
+                <td>---</td>
+                <td>Locked</td>
+            </tr>
+            <tr>
+                <td>AvalonEase</td>
+                <td>---</td>
+                <td>---</td>
+                <td>Locked</td>
+            </tr>
+        </table>
+    </div>
 
-    <!-- AvalonEase -->
-    <section id="avalonease" class="content-section branch-card locked hidden">
-        <h2>AvalonEase — Locked</h2>
-        <p>This branch is currently locked. Unlock by completing AvalonGrow.</p>
-    </section>
-
-    <!-- Rewards -->
-    <section id="rewards" class="content-section hidden">
-        <h2>Rewards / Progress</h2>
-        <div class="reward-card">
-            <p>AvalonCare: ---</p>
-            <p>AvalonGrow: Locked</p>
-            <p>AvalonEase: Locked</p>
-        </div>
-        <div class="reward-card">
-            <h3>Bind Wallet</h3>
-            <input type="text" placeholder="Enter your Reward ID" id="rewardIdInput">
-            <button onclick="bindWallet()">Bind Wallet</button>
-            <p id="walletMessage"></p>
-        </div>
-    </section>
-
-    <!-- Support -->
-    <section id="support" class="content-section hidden">
-        <h2>Support</h2>
-        <p>If you have questions, reach out to us: <a href="mailto:avalonflow@usa.com">avalonflow@usa.com</a></p>
-    </section>
-
-    <!-- Settings -->
-    <section id="settings" class="content-section hidden">
-        <h2>Settings</h2>
-        <button onclick="logout()">Logout</button>
-    </section>
+    <div id="support" class="panel" style="display:none;">
+        <h3>Support</h3>
+        <p>If you have questions, reach out to us:</p>
+        <a href="mailto:avalonflow@usa.com" class="button">Email Support</a>
+    </div>
 </div>
 
 <script>
-// ---------------- Floating Particles ----------------
-const container = document.getElementById('floating-bg');
-const colors = ['#6b2cd8','#9b59b6','#8e44ad'];
-const totalParticles = 60;
-function createParticle() {
-    const p = document.createElement('div');
-    p.classList.add('particle');
-    const size = Math.random()*20+10;
-    p.style.width = size+'px';
-    p.style.height = size+'px';
-    p.style.left = Math.random()*100+'vw';
-    p.style.animationDuration = (Math.random()*20+10)+'s';
-    p.style.background = `radial-gradient(circle, ${colors[Math.floor(Math.random()*colors.length)]}, transparent)`;
-    container.appendChild(p);
-    setTimeout(()=>p.remove(),30000);
-}
-for(let i=0;i<totalParticles;i++){setTimeout(createParticle,i*200);}
-setInterval(createParticle,1000);
-
-// ---------------- Sidebar Toggle ----------------
-function toggleSidebar(){
-    const sidebar = document.getElementById('sidebar');
-    const main = document.getElementById('mainContent');
-    sidebar.classList.toggle('closed');
-    main.classList.toggle('full');
-}
-
-// ---------------- Section Navigation ----------------
-function showSection(id){
-    const sections = document.querySelectorAll('.content-section');
-    sections.forEach(s=>s.classList.add('hidden'));
-    document.getElementById(id).classList.remove('hidden');
-}
-
-// ---------------- Wallet Binding ----------------
-function bindWallet(){
-    const rewardId = document.getElementById("rewardIdInput").value;
-    if(rewardId.length>0){
-        document.getElementById("walletMessage").innerText = "Reward ID bound successfully!";
-    } else {
-        document.getElementById("walletMessage").innerText = "Please enter a valid Reward ID.";
+    // ----- Floating Particles -----
+    const container = document.getElementById('floating-bg');
+    const colors = ['#6b2cd8','#9b59b6','#8e44ad'];
+    const totalParticles = 60;
+    function createParticle() {
+        const p = document.createElement('div');
+        p.classList.add('particle');
+        const size = Math.random() * 20 + 10;
+        p.style.width = size + 'px';
+        p.style.height = size + 'px';
+        p.style.left = Math.random() * 100 + 'vw';
+        p.style.animationDuration = (Math.random() * 20 + 10) + 's';
+        p.style.background = `radial-gradient(circle, ${colors[Math.floor(Math.random()*colors.length)]}, transparent)`;
+        container.appendChild(p);
+        setTimeout(() => p.remove(), 30000);
     }
-}
+    for(let i=0;i<totalParticles;i++){ setTimeout(createParticle, i*200); }
+    setInterval(createParticle, 1000);
 
-// ---------------- Logout ----------------
-function logout(){
-    alert("Logging out...");
-    window.location.href="index.html"; // demo only
-}
+    // ----- Sidebar Toggle -----
+    const sidebar = document.getElementById('sidebar');
+    const content = document.getElementById('content');
+    function toggleSidebar() {
+        sidebar.classList.toggle('closed');
+    }
+
+    // ----- Show Panel -----
+    function showPanel(panelId) {
+        const panels = document.querySelectorAll('.panel');
+        panels.forEach(p => p.style.display='none');
+        document.getElementById(panelId).style.display='block';
+    }
+
+    // ----- Paymento Link -----
+    function openPayment() {
+        window.open('https://app.paymento.io/payment-link/829c6748054a418f8226cb20387729f8', '_blank');
+    }
+
+    // ----- Logout -----
+    function logout() { window.location.href='index.html'; }
 </script>
 </body>
-        </html>
+                    </html>
