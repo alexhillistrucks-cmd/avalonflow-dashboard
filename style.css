@@ -1,0 +1,134 @@
+﻿/* Global Body & Font */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #1a0d3a; /* works with floating scene */
+    color: #fff;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+}
+
+/* Header */
+header {
+    background-color: rgba(107,44,216,0.9); /* semi-transparent purple */
+    color: white;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
+
+/* Main Container */
+main {
+    max-width: 800px;
+    margin: 30px auto;
+    padding: 0 20px;
+    position: relative;
+    z-index: 1; /* above floating background */
+}
+
+/* Headings */
+h2 {
+    color: #d1b3ff;
+    margin-bottom: 20px;
+}
+
+/* Branch Cards */
+.branch {
+    background-color: rgba(255,255,255,0.05); /* subtle transparent card */
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 25px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.branch h3 {
+    margin: 0 0 10px 0;
+    color: #b393ff;
+}
+
+/* Branch Hover Effect */
+.branch:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+}
+
+/* Buttons */
+.button, button {
+    display: inline-block;
+    background-color: #6b2cd8;
+    color: white;
+    padding: 10px 15px;
+    text-decoration: none;
+    border-radius: 8px;
+    margin-top: 10px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.button:hover, button:hover {
+    background-color: #7f3fe5;
+    box-shadow: 0 6px 15px rgba(0,0,0,0.4);
+}
+
+/* Input Fields */
+input {
+    padding: 12px;
+    margin: 10px 0;
+    width: 100%;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    background: rgba(255,255,255,0.1);
+    color: #fff;
+    transition: all 0.3s ease;
+}
+
+input:focus {
+    border-color: #6b2cd8;
+    box-shadow: 0 0 8px rgba(107,44,216,0.7);
+    outline: none;
+}
+
+/* Reward Table */
+.reward-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background: rgba(255,255,255,0.05);
+}
+
+.reward-table th, .reward-table td {
+    border: 1px solid rgba(255,255,255,0.2);
+    padding: 10px;
+    text-align: left;
+    color: #fff;
+    opacity: 0;
+    transform: translateY(10px);
+    animation: fadeInRow 0.6s forwards;
+}
+
+.reward-table th {
+    background-color: rgba(107,44,216,0.8);
+}
+
+/* Table Row Animation */
+@keyframes fadeInRow {
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Footer */
+footer {
+    text-align: center;
+    padding: 20px;
+    font-size: 14px;
+    color: #ccc;
+}
+
+/* Floating Background z-index management */
+#floating-bg {
+    z-index: 0;
+}
+
+/* Optional Subtle Glow Particles Animation (already in your script) */
+/* Keeps dashboard content above particles */
