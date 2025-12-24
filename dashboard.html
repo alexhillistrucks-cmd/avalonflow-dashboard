@@ -1,107 +1,169 @@
-﻿‎<!DOCTYPE html>
-‎<html lang="en">
-‎<head>
-‎    <meta charset="UTF-8">
-‎    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-‎    <title>AvalonFlow Dashboard</title>
-‎    <style>
-‎        body {
-‎            font-family: 'Arial', sans-serif;
-‎            background-color: #f9f9f9;
-‎            color: #333;
-‎            margin: 0;
-‎            padding: 0;
-‎        }
-‎        header {
-‎            background-color: #6b2cd8; /* purple */
-‎            color: white;
-‎            padding: 20px;
-‎            text-align: center;
-‎        }
-‎        main {
-‎            max-width: 800px;
-‎            margin: 30px auto;
-‎            padding: 0 20px;
-‎        }
-‎        h2 {
-‎            color: #6b2cd8;
-‎        }
-‎        .branch {
-‎            background-color: white;
-‎            border-radius: 8px;
-‎            padding: 15px;
-‎            margin-bottom: 20px;
-‎            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-‎        }
-‎        .branch h3 {
-‎            margin: 0 0 10px 0;
-‎        }
-‎        .branch p {
-‎            margin: 0;
-‎        }
-‎        .reward-table {
-‎            width: 100%;
-‎            border-collapse: collapse;
-‎            margin-top: 20px;
-‎        }
-‎        .reward-table th, .reward-table td {
-‎            border: 1px solid #ddd;
-‎            padding: 8px;
-‎        }
-‎        .reward-table th {
-‎            background-color: #6b2cd8;
-‎            color: white;
-‎        }
-‎        footer {
-‎            text-align: center;
-‎            padding: 20px;
-‎            font-size: 14px;
-‎            color: #777;
-‎        }
-‎        .button {
-‎            display: inline-block;
-‎            background-color: #6b2cd8;
-‎            color: white;
-‎            padding: 10px 15px;
-‎            text-decoration: none;
-‎            border-radius: 5px;
-‎            margin-top: 10px;
-‎        }
-‎    </style>
-‎</head>
-‎<body>
-‎<div id="floating-bg"></div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AvalonFlow Dashboard</title>
+    <style>
+        /* --- Base Styles --- */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f9f9f9;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #6b2cd8;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+        main {
+            max-width: 800px;
+            margin: 30px auto;
+            padding: 0 20px;
+            position: relative;
+            z-index: 1;
+        }
+        h2 {
+            color: #6b2cd8;
+        }
+        .branch {
+            background-color: white;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            position: relative;
+            z-index: 1;
+        }
+        .branch h3 { margin: 0 0 10px 0; color: #6b2cd8; }
+        .branch p { margin: 0; }
+        .reward-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            position: relative;
+            z-index: 1;
+        }
+        .reward-table th, .reward-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+        .reward-table th {
+            background-color: #6b2cd8;
+            color: white;
+        }
+        footer {
+            text-align: center;
+            padding: 20px;
+            font-size: 14px;
+            color: #777;
+            position: relative;
+            z-index: 1;
+        }
+        .button {
+            display: inline-block;
+            background-color: #6b2cd8;
+            color: white;
+            padding: 10px 15px;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 10px;
+            position: relative;
+            z-index: 1;
+        }
 
-<style>
-    /* Floating scene container */
-    #floating-bg {
-        position: fixed;
-        top:0; left:0;
-        width: 100%;
-        height: 100%;
-        z-index:0; /* behind all content */
-        overflow: hidden;
-        pointer-events: none; /* allow clicks to pass through */
-        background: radial-gradient(circle at bottom, #1a0d3a, #0d0d0d);
-    }
+        /* --- Floating Particle Background --- */
+        #floating-bg {
+            position: fixed;
+            top:0; left:0;
+            width: 100%;
+            height: 100%;
+            z-index: -1; /* behind all content */
+            overflow: hidden;
+            pointer-events: none;
+            background: radial-gradient(circle at bottom, #1a0d3a, #0d0d0d);
+        }
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.6;
+            background: radial-gradient(circle, #6b2cd8, transparent);
+            animation: floatParticles linear infinite;
+            box-shadow: 0 0 10px #6b2cd8, 0 0 20px #6b2cd8;
+        }
+        @keyframes floatParticles {
+            0% { transform: translateY(100vh) translateX(0) scale(0.3); opacity: 0; }
+            50% { opacity: 1; }
+            100% { transform: translateY(-10vh) translateX(30vw) scale(1); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
 
-    .particle {
-        position: absolute;
-        border-radius: 50%;
-        opacity: 0.6;
-        background: radial-gradient(circle, #6b2cd8, transparent);
-        animation: floatParticles linear infinite;
-        box-shadow: 0 0 10px #6b2cd8, 0 0 20px #6b2cd8;
-    }
+<!-- Floating background -->
+<div id="floating-bg"></div>
 
-    @keyframes floatParticles {
-        0% { transform: translateY(100vh) translateX(0) scale(0.3); opacity: 0; }
-        50% { opacity: 1; }
-        100% { transform: translateY(-10vh) translateX(30vw) scale(1); opacity: 0; }
-    }
-</style>
+<header>
+    <h1>Welcome to AvalonFlow</h1>
+    <p>Your structured support dashboard</p>
+</header>
+
+<main>
+    <h2>Hi, here’s your access</h2>
+
+    <div class="branch">
+        <h3>🪽 AvalonCare — The Foundation Branch</h3>
+        <p>Where restoration begins</p>
+        <a href="#" class="button">View Snapshot</a>
+    </div>
+
+    <div class="branch">
+        <h3>🪽 AvalonGrow — The Expansion Branch</h3>
+        <p>Where growth meets opportunity</p>
+        <a href="#" class="button">View Snapshot</a>
+    </div>
+
+    <div class="branch">
+        <h3>🪽 AvalonEase — The Mastery Branch</h3>
+        <p>Where mastery meets effortless control</p>
+        <a href="#" class="button">View Snapshot</a>
+    </div>
+
+    <h2>Rewards / Progress</h2>
+    <table class="reward-table">
+        <tr>
+            <th>Branch</th>
+            <th>Reward Earned</th>
+            <th>Date</th>
+            <th>Status</th>
+        </tr>
+        <tr>
+            <td>AvalonCare</td>
+            <td>---</td>
+            <td>---</td>
+            <td>Active</td>
+        </tr>
+    </table>
+
+    <h2>Support</h2>
+    <p>If you have questions, reach out to us: <a href="mailto:avalonflow@usa.com">avalonflow@usa.com</a></p>
+
+    <button onclick="logout()">Logout</button>
+</main>
+
+<footer>
+    &copy; 2025 AvalonFlow | Powered by Centrical™
+</footer>
+
+<script src="script.js"></script>
 
 <script>
+    // Particle animation JS
     const container = document.getElementById('floating-bg');
     const colors = ['#6b2cd8','#9b59b6','#8e44ad'];
     const totalParticles = 60;
@@ -122,65 +184,8 @@
     for(let i=0;i<totalParticles;i++){
         setTimeout(createParticle, i*200);
     }
-
     setInterval(createParticle, 1000);
 </script>
 
-‎<header>
-‎    <h1>Welcome to AvalonFlow</h1>
-‎    <p>Your structured support dashboard</p>
-‎</header>
-‎
-‎<main>
-‎    <h2>Hi, here’s your access</h2>
-‎
-‎    <div class="branch">
-‎        <h3>🪽 AvalonCare — The Foundation Branch</h3>
-‎        <p>Where restoration begins</p>
-‎        <a href="#" class="button">View Snapshot</a>
-‎    </div>
-‎
-‎    <div class="branch">
-‎        <h3>🪽 AvalonGrow — The Expansion Branch</h3>
-‎        <p>Where growth meets opportunity</p>
-‎        <a href="#" class="button">View Snapshot</a>
-‎    </div>
-‎
-‎    <div class="branch">
-‎        <h3>🪽 AvalonEase — The Mastery Branch</h3>
-‎        <p>Where mastery meets effortless control</p>
-‎        <a href="#" class="button">View Snapshot</a>
-‎    </div>
-‎
-‎    <h2>Rewards / Progress</h2>
-‎    <table class="reward-table">
-‎        <tr>
-‎            <th>Branch</th>
-‎            <th>Reward Earned</th>
-‎            <th>Date</th>
-‎            <th>Status</th>
-‎        </tr>
-‎        <tr>
-‎            <td>AvalonCare</td>
-‎            <td>---</td>
-‎            <td>---</td>
-‎            <td>Active</td>
-‎        </tr>
-‎    </table>
-‎
-‎    <h2>Support</h2>
-‎    <p>If you have questions, reach out to us: <a href="mailto:avalonflow@usa.com">avalonflow@usa.com</a></p>
-‎
-‎</main>
-‎
-‎ <button onclick="logout()">Logout</button>
-‎  </div>
-‎
-‎<footer>
-‎    &copy; 2025 AvalonFlow | Powered by Centrical™
-‎</footer>
-‎
-‎  <script src="script.js"></script>
-‎</body>
-‎</html>
-‎
+</body>
+    </html>
