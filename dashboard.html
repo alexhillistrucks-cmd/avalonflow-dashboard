@@ -45,9 +45,9 @@ a { color: inherit; text-decoration: none; }
     top: 0; left: 0;
     width: 280px;
     height: 100%;
-    background: rgba(15,15,25,.95);
+    background: rgba(15,15,25,1);
     backdrop-filter: blur(14px);
-    z-index: 10;
+    z-index: 1000;
     padding: 25px;
     transform: translateX(-100%);
     transition: transform .3s ease;
@@ -73,11 +73,10 @@ a { color: inherit; text-decoration: none; }
 #overlay {
     position: fixed;
     inset: 0;
-    background: rgba(0,0,0,.6);
+    background: rgba(0,0,0,.85);
     backdrop-filter: blur(4px);
-    z-index: 9;
+    z-index: 900;
     display: none;
-    transition: opacity 0.3s ease;
 }
 #overlay.active { display: block; }
 
@@ -88,9 +87,7 @@ a { color: inherit; text-decoration: none; }
     padding: 40px;
     max-width: 1100px;
     margin: auto;
-    transition: filter 0.3s ease;
 }
-#content.dimmed { filter: brightness(0.5); }
 
 /* ---------- Panels ---------- */
 .panel {
@@ -101,17 +98,26 @@ a { color: inherit; text-decoration: none; }
     margin-bottom: 28px;
     box-shadow: 0 10px 30px rgba(0,0,0,.35);
 }
-.panel h3 { color: #6b2cd8; margin-top: 0; }
+.panel h3 {
+    color: #6b2cd8;
+    margin-top: 0;
+}
 
 /* ---------- Collapsible Info Card ---------- */
-.info-card { margin-bottom: 25px; }
+.info-card {
+    margin-bottom: 25px;
+}
 .info-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     cursor: pointer;
 }
-.info-content { margin-top: 18px; display: none; line-height: 1.6; }
+.info-content {
+    margin-top: 18px;
+    display: none;
+    line-height: 1.6;
+}
 .info-card.open .info-content { display: block; }
 
 /* ---------- Buttons ---------- */
@@ -132,7 +138,7 @@ a { color: inherit; text-decoration: none; }
     position: fixed;
     top: 20px;
     left: 20px;
-    z-index: 11;
+    z-index: 1100;
     background: #6b2cd8;
     border: none;
     color: #fff;
@@ -141,7 +147,10 @@ a { color: inherit; text-decoration: none; }
 }
 
 /* ---------- Progress Bar ---------- */
-#progressContainer { display:block; margin: 20px 0; }
+#progressContainer {
+    display:none;
+    margin: 20px 0;
+}
 .progress-bar {
     background: rgba(255,255,255,.1);
     border-radius: 8px;
@@ -152,16 +161,16 @@ a { color: inherit; text-decoration: none; }
     background: #6b2cd8;
     height: 100%;
     width: 0%;
-    border-radius: 8px;
     transition: width 1s linear;
+    border-radius: 8px;
 }
 
 /* ---------- Testimonial Fade ---------- */
 #testimonialList li {
-    transition: opacity 0.8s ease;
     opacity: 1;
+    transition: opacity 0.8s;
 }
-#testimonialList li.fade-out { opacity: 0; }
+.fade-out { opacity:0; }
 </style>
 </head>
 
@@ -191,7 +200,9 @@ a { color: inherit; text-decoration: none; }
     <p id="testimonial">AvalonFlow is a structured support framework that helps simplify demanding
         workdays and creates room for additional earning potential.</p>
     <p><em>What members say:</em></p>
-    <ul id="testimonialList"><li>“Things stopped feeling scattered.”</li></ul>
+    <ul id="testimonialList">
+        <li>“My shifts are demanding, and I don’t always have time to explore new options. What stood out for me was how simple and structured this felt. It fits around my schedule without adding pressure.” — Charlotte, Patient Care Assistant</li>
+    </ul>
 
     <!-- Today’s Progress -->
     <div id="progressContainer">
@@ -212,7 +223,8 @@ a { color: inherit; text-decoration: none; }
         <p>
             Represents the operational core — powered by a hybrid intelligence infrastructure. By combining
             the reliability of hardware-driven processes with the flexibility of human reasoning. 
-            This Wing isn’t just about mechanics; it’s about creating a system where progress becomes intelligent, consistent, and sustainable.
+            This Wing isn’t just about mechanics; it is about creating a system where progress becomes
+            intelligent, consistent, and sustainable, even for professionals with unpredictable schedules.
         </p>
         <blockquote>“When logic finds balance, systems begin to think — and life begins to flow.”</blockquote>
     </div>
@@ -232,22 +244,31 @@ a { color: inherit; text-decoration: none; }
 <div id="branches" class="panel" style="display:none;">
     <h3>Branches</h3>
 
+    <!-- Collapsible Info Card -->
     <div class="info-card" id="infoCard">
         <div class="info-header" onclick="toggleInfo()">
             <strong>About the AvalonFlow Branches</strong>
             <span>▾</span>
         </div>
+
         <div class="info-content">
             <p><strong>🪽 AvalonCare — The Foundation Branch</strong><br>
             Clarity meets restoration. Focused on stability, guidance, and reducing overwhelm.</p>
+
             <p><strong>🪽 AvalonGrow — The Expansion Branch</strong><br>
             Growth meets opportunity. Supports progress, skill alignment, and financial expansion.</p>
+
             <p><strong>🪽 AvalonEase — The Mastery Branch</strong><br>
             Effortless control meets stability. Sustainable systems without sacrificing performance.</p>
-            <p>Each branch plays a role in addressing common pressures that appear in everyday work and life.</p>
+
+            <p>
+                Each branch plays a role in addressing common pressures that appear
+                in everyday work and life.
+            </p>
         </div>
     </div>
 
+    <!-- Unlock Buttons -->
     <button class="button" onclick="unlockBranch('care')">Unlock AvalonCare</button>
     <button class="button" onclick="unlockBranch('grow')">Unlock AvalonGrow</button>
     <button class="button" onclick="unlockBranch('ease')">Unlock AvalonEase</button>
@@ -289,11 +310,9 @@ setInterval(particle,800);
 /* ---------- Sidebar ---------- */
 const sidebar = document.getElementById('sidebar');
 const overlay = document.getElementById('overlay');
-const content = document.getElementById('content');
 function toggleSidebar(){
     sidebar.classList.toggle('open');
     overlay.classList.toggle('active');
-    content.classList.toggle('dimmed');
 }
 
 /* ---------- Panels ---------- */
@@ -333,22 +352,11 @@ function showProgress(){
     }
 }
 
-/* ---------- Daily Auto Progress ---------- */
-function updateDailyProgress(){
-    const now = new Date();
-    const start = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    const end = new Date(now.getFullYear(), now.getMonth(), now.getDate()+1);
-    const progressPercent = ((now - start)/(end - start))*100;
-    document.getElementById('progressFill').style.width = progressPercent + '%';
-}
-setInterval(updateDailyProgress, 1000);
-updateDailyProgress();
-
-/* ---------- Testimonial Rotation (Fade) ---------- */
+/* ---------- Testimonial Rotation with Fade ---------- */
 const testimonials = [
-    "AvalonFlow is a structured support framework that helps simplify demanding workdays and creates room for additional earning potential.",
-    "Things stopped feeling scattered.",
-    "I finally knew what to focus on."
+  "“My shifts are demanding, and I don’t always have time to explore new options. What stood out for me was how simple and structured this felt. It fits around my schedule without adding pressure.” — Charlotte, Patient Care Assistant",
+  "“As an educator, I value clarity and systems that actually make sense. I appreciated how everything was explained step by step, without hype or unrealistic promises.” — Emily, SPED Teacher",
+  "“This gave me a sense of control and flexibility I didn’t expect. I finally started seeing progress without feeling overwhelmed.” — Ava, Customer Support Specialist"
 ];
 let tIndex = 0;
 const testimonialLi = document.querySelector('#testimonialList li');
@@ -357,7 +365,7 @@ setInterval(()=>{
     setTimeout(()=>{
         testimonialLi.innerText = testimonials[tIndex];
         testimonialLi.classList.remove('fade-out');
-        tIndex = (tIndex+1)%testimonials.length;
+        tIndex = (tIndex+1) % testimonials.length;
     }, 800);
 }, 4000);
 
@@ -368,4 +376,4 @@ function logout(){
 </script>
 
 </body>
-    </html>
+                                                      </html>
