@@ -1,379 +1,405 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AvalonFlow Dashboard</title>
-
-<style>
-/* ---------- Base ---------- */
-body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    background: #0d0d0d;
-    color: #fff;
-    overflow-x: hidden;
-}
-button { cursor: pointer; }
-a { color: inherit; text-decoration: none; }
-
-/* ---------- Floating Background ---------- */
-#floating-bg {
-    position: fixed;
-    inset: 0;
-    z-index: 0;
-    pointer-events: none;
-    background: radial-gradient(circle at bottom, #1a0d3a, #0d0d0d);
-    overflow: hidden;
-}
-.particle {
-    position: absolute;
-    border-radius: 50%;
-    opacity: .6;
-    animation: floatParticles linear infinite;
-    box-shadow: 0 0 10px #6b2cd8, 0 0 20px #6b2cd8;
-}
-@keyframes floatParticles {
-    0% { transform: translateY(100vh) scale(.3); opacity: 0; }
-    50% { opacity: 1; }
-    100% { transform: translateY(-10vh) scale(1); opacity: 0; }
-}
-
-/* ---------- Sidebar (Overlay) ---------- */
-#sidebar {
-    position: fixed;
-    top: 0; left: 0;
-    width: 280px;
-    height: 100%;
-    background: rgba(15,15,25,1);
-    backdrop-filter: blur(14px);
-    z-index: 1000;
-    padding: 25px;
-    transform: translateX(-100%);
-    transition: transform .3s ease;
-}
-#sidebar.open { transform: translateX(0); }
-
-#sidebar h2 {
-    color: #6b2cd8;
-    margin-top: 0;
-}
-#sidebar button {
-    width: 100%;
-    margin: 12px 0;
-    padding: 12px;
-    border: none;
-    border-radius: 10px;
-    background: rgba(255,255,255,.1);
-    color: #fff;
-    font-size: 16px;
-}
-
-/* ---------- Overlay Blur ---------- */
-#overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,.85);
-    backdrop-filter: blur(4px);
-    z-index: 900;
-    display: none;
-}
-#overlay.active { display: block; }
-
-/* ---------- Content ---------- */
-#content {
-    position: relative;
-    z-index: 1;
-    padding: 40px;
-    max-width: 1100px;
-    margin: auto;
-}
-
-/* ---------- Panels ---------- */
-.panel {
-    background: rgba(255,255,255,.12);
-    backdrop-filter: blur(12px);
-    border-radius: 18px;
-    padding: 28px;
-    margin-bottom: 28px;
-    box-shadow: 0 10px 30px rgba(0,0,0,.35);
-}
-.panel h3 {
-    color: #6b2cd8;
-    margin-top: 0;
-}
-
-/* ---------- Collapsible Info Card ---------- */
-.info-card {
-    margin-bottom: 25px;
-}
-.info-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    cursor: pointer;
-}
-.info-content {
-    margin-top: 18px;
-    display: none;
-    line-height: 1.6;
-}
-.info-card.open .info-content { display: block; }
-
-/* ---------- Buttons ---------- */
-.button {
-    background: #6b2cd8;
-    color: #fff;
-    border: none;
-    border-radius: 10px;
-    padding: 12px 18px;
-    margin: 10px 0;
-    width: 100%;
-    font-size: 16px;
-}
-.button.locked { opacity:0.5; cursor:not-allowed; }
-
-/* ---------- Toggle Button ---------- */
-#menuBtn {
-    position: fixed;
-    top: 20px;
-    left: 20px;
-    z-index: 1100;
-    background: #6b2cd8;
-    border: none;
-    color: #fff;
-    padding: 12px 14px;
-    border-radius: 10px;
-}
-
-/* ---------- Progress Bar ---------- */
-#progressContainer {
-    display:none;
-    margin: 20px 0;
-}
-.progress-bar {
-    background: rgba(255,255,255,.1);
-    border-radius: 8px;
-    height: 16px;
-    overflow: hidden;
-}
-.progress-fill {
-    background: #6b2cd8;
-    height: 100%;
-    width: 0%;
-    transition: width 1s linear;
-    border-radius: 8px;
-}
-
-/* ---------- Testimonial Fade ---------- */
-#testimonialList li {
-    opacity: 1;
-    transition: opacity 0.8s;
-}
-.fade-out { opacity:0; }
-</style>
-</head>
-
-<body>
-
-<div id="floating-bg"></div>
-
-<button id="menuBtn" onclick="toggleSidebar()">☰</button>
-
-<div id="sidebar">
-    <h2>AvalonFlow</h2>
-    <button onclick="showPanel('dashboard')">Dashboard</button>
-    <button onclick="showPanel('ecosystem')">Ecosystem</button>
-    <button onclick="showPanel('branches')">Branches</button>
-    <button onclick="showPanel('rewards')">Rewards</button>
-    <button onclick="showPanel('support')">Support</button>
-    <button onclick="logout()">Logout</button>
-</div>
-
-<div id="overlay" onclick="toggleSidebar()"></div>
-
-<div id="content">
-
-<!-- Dashboard -->
-<div id="dashboard" class="panel">
-    <h3>Welcome</h3>
-    <p id="testimonial">AvalonFlow is a structured support framework that helps simplify demanding
-        workdays and creates room for additional earning potential.</p>
-    <p><em>What members say:</em></p>
-    <ul id="testimonialList">
-        <li>“My shifts are demanding, and I don’t always have time to explore new options. What stood out for me was how simple and structured this felt. It fits around my schedule without adding pressure.” — Charlotte, Patient Care Assistant</li>
-    </ul>
-
-    <!-- Today’s Progress -->
-    <div id="progressContainer">
-        <h4>Today's Progress — Logical Wing</h4>
-        <div class="progress-bar">
-            <div class="progress-fill" id="progressFill"></div>
-        </div>
-    </div>
-</div>
-
-<!-- Ecosystem -->
-<div id="ecosystem" class="panel" style="display:none;">
-    <h3>Ecosystem Overview</h3>
-
-    <div class="panel">
-        <strong>🪽 The Logical Wing</strong><br>
-        <em>Where Structure Meets Intelligence</em>
-        <p>
-            Represents the operational core — powered by a hybrid intelligence infrastructure. By combining
-            the reliability of hardware-driven processes with the flexibility of human reasoning. 
-            This Wing isn’t just about mechanics; it is about creating a system where progress becomes
-            intelligent, consistent, and sustainable, even for professionals with unpredictable schedules.
-        </p>
-        <blockquote>“When logic finds balance, systems begin to think — and life begins to flow.”</blockquote>
-    </div>
-
-    <div class="panel">
-        <strong>💫 The Emotional Wing</strong><br>
-        <em>The Living Core of AvalonFlow</em>
-        <p>
-            Forms the human rhythm of the ecosystem. Restores stability, guides gentle growth, and ensures
-            rewards from the Logical Wing translate into measurable progress and well-being.
-        </p>
-        <blockquote>This is how each branch sustains calm, intelligence, and long-term progress across every level in this ecosystem.</blockquote>
-    </div>
-</div>
-
-<!-- Branches -->
-<div id="branches" class="panel" style="display:none;">
-    <h3>Branches</h3>
-
-    <!-- Collapsible Info Card -->
-    <div class="info-card" id="infoCard">
-        <div class="info-header" onclick="toggleInfo()">
-            <strong>About the AvalonFlow Branches</strong>
-            <span>▾</span>
-        </div>
-
-        <div class="info-content">
-            <p><strong>🪽 AvalonCare — The Foundation Branch</strong><br>
-            Clarity meets restoration. Focused on stability, guidance, and reducing overwhelm.</p>
-
-            <p><strong>🪽 AvalonGrow — The Expansion Branch</strong><br>
-            Growth meets opportunity. Supports progress, skill alignment, and financial expansion.</p>
-
-            <p><strong>🪽 AvalonEase — The Mastery Branch</strong><br>
-            Effortless control meets stability. Sustainable systems without sacrificing performance.</p>
-
-            <p>
-                Each branch plays a role in addressing common pressures that appear
-                in everyday work and life.
-            </p>
-        </div>
-    </div>
-
-    <!-- Unlock Buttons -->
-    <button class="button" onclick="unlockBranch('care')">Unlock AvalonCare</button>
-    <button class="button" onclick="unlockBranch('grow')">Unlock AvalonGrow</button>
-    <button class="button" onclick="unlockBranch('ease')">Unlock AvalonEase</button>
-</div>
-
-<!-- Rewards -->
-<div id="rewards" class="panel" style="display:none;">
-    <h3>Rewards / Progress</h3>
-    <p>All branches currently locked.</p>
-</div>
-
-<!-- Support -->
-<div id="support" class="panel" style="display:none;">
-    <h3>Support</h3>
-    <p>If you have questions, reach out to us:</p>
-    <a href="mailto:avalonflow@usa.com" class="button">Email Support</a>
-</div>
-
-</div>
-
-<script>
-/* ---------- Floating Particles ---------- */
-const bg = document.getElementById('floating-bg');
-const colors = ['#6b2cd8','#9b59b6','#8e44ad'];
-function particle(){
-    const p = document.createElement('div');
-    p.className = 'particle';
-    const s = Math.random()*20+10;
-    p.style.width = s+'px';
-    p.style.height = s+'px';
-    p.style.left = Math.random()*100+'vw';
-    p.style.background = `radial-gradient(circle, ${colors[Math.floor(Math.random()*3)]}, transparent)`;
-    p.style.animationDuration = (Math.random()*20+10)+'s';
-    bg.appendChild(p);
-    setTimeout(()=>p.remove(),30000);
-}
-setInterval(particle,800);
-
-/* ---------- Sidebar ---------- */
-const sidebar = document.getElementById('sidebar');
-const overlay = document.getElementById('overlay');
-function toggleSidebar(){
-    sidebar.classList.toggle('open');
-    overlay.classList.toggle('active');
-}
-
-/* ---------- Panels ---------- */
-function showPanel(id){
-    document.querySelectorAll('.panel').forEach(p=>p.style.display='none');
-    document.getElementById(id).style.display='block';
-    toggleSidebar();
-}
-
-/* ---------- Info Card ---------- */
-function toggleInfo(){
-    document.getElementById('infoCard').classList.toggle('open');
-}
-
-/* ---------- Branch Unlock ---------- */
-const unlockedBranches = {};
-function unlockBranch(branch){
-    const links = {
-        care: 'https://app.paymento.io/payment-link/aaf970b845624de0b5eea78726134e79',
-        grow: 'https://app.paymento.io/payment-link/829c6748054a418f8226cb20387729f8',
-        ease: 'https://app.paymento.io/payment-link/aae78710e60447daaa17733d4d287186'
-    };
-    window.open(links[branch], '_blank');
-    unlockedBranches[branch] = true;
-    showProgress();
-}
-
-/* ---------- Progress Tracker ---------- */
-function showProgress(){
-    if(Object.keys(unlockedBranches).length>0){
-        document.getElementById('progressContainer').style.display='block';
-        let progress = 0;
-        if(unlockedBranches['care']) progress += 33;
-        if(unlockedBranches['grow']) progress += 33;
-        if(unlockedBranches['ease']) progress += 34;
-        document.getElementById('progressFill').style.width = progress+'%';
-    }
-}
-
-/* ---------- Testimonial Rotation with Fade ---------- */
-const testimonials = [
-  "“My shifts are demanding, and I don’t always have time to explore new options. What stood out for me was how simple and structured this felt. It fits around my schedule without adding pressure.” — Charlotte, Patient Care Assistant",
-  "“As an educator, I value clarity and systems that actually make sense. I appreciated how everything was explained step by step, without hype or unrealistic promises.” — Emily, SPED Teacher",
-  "“This gave me a sense of control and flexibility I didn’t expect. I finally started seeing progress without feeling overwhelmed.” — Ava, Customer Support Specialist"
-];
-let tIndex = 0;
-const testimonialLi = document.querySelector('#testimonialList li');
-setInterval(()=>{
-    testimonialLi.classList.add('fade-out');
-    setTimeout(()=>{
-        testimonialLi.innerText = testimonials[tIndex];
-        testimonialLi.classList.remove('fade-out');
-        tIndex = (tIndex+1) % testimonials.length;
-    }, 800);
-}, 4000);
-
-/* ---------- Logout ---------- */
-function logout(){
-    window.location.href = 'index.html';
-}
-</script>
-
-</body>
-                                                      </html>
+‎<!DOCTYPE html>
+‎<html lang="en">
+‎<head>
+‎<meta charset="UTF-8">
+‎<meta name="viewport" content="width=device-width, initial-scale=1.0">
+‎<title>AvalonFlow Dashboard</title>
+‎
+‎<style>
+‎/* ---------- Base ---------- */
+‎body {
+‎    font-family: Arial, sans-serif;
+‎    margin: 0;
+‎    background: #0d0d0d;
+‎    color: #fff;
+‎    overflow-x: hidden;
+‎}
+‎button { cursor: pointer; }
+‎a { color: inherit; text-decoration: none; }
+‎
+‎/* ---------- Floating Background ---------- */
+‎#floating-bg {
+‎    position: fixed;
+‎    inset: 0;
+‎    z-index: 0;
+‎    pointer-events: none;
+‎    background: radial-gradient(circle at bottom, #1a0d3a, #0d0d0d);
+‎    overflow: hidden;
+‎}
+‎.particle {
+‎    position: absolute;
+‎    border-radius: 50%;
+‎    opacity: .6;
+‎    animation: floatParticles linear infinite;
+‎    box-shadow: 0 0 10px #6b2cd8, 0 0 20px #6b2cd8;
+‎}
+‎@keyframes floatParticles {
+‎    0% { transform: translateY(100vh) scale(.3); opacity: 0; }
+‎    50% { opacity: 1; }
+‎    100% { transform: translateY(-10vh) scale(1); opacity: 0; }
+‎}
+‎
+‎/* ---------- Sidebar (Overlay) ---------- */
+‎#sidebar {
+‎    position: fixed;
+‎    top: 0; left: 0;
+‎    width: 280px;
+‎    height: 100%;
+‎    background: rgba(15,15,25,1);
+‎    backdrop-filter: blur(14px);
+‎    z-index: 1000;
+‎    padding: 25px;
+‎    transform: translateX(-100%);
+‎    transition: transform .3s ease;
+‎}
+‎#sidebar.open { transform: translateX(0); }
+‎
+‎#sidebar h2 {
+‎    color: #6b2cd8;
+‎    margin-top: 0;
+‎}
+‎#sidebar button {
+‎    width: 100%;
+‎    margin: 12px 0;
+‎    padding: 12px;
+‎    border: none;
+‎    border-radius: 10px;
+‎    background: rgba(255,255,255,.1);
+‎    color: #fff;
+‎    font-size: 16px;
+‎}
+‎
+‎/* ---------- Overlay Blur ---------- */
+‎#overlay {
+‎    position: fixed;
+‎    inset: 0;
+‎    background: rgba(0,0,0,.85);
+‎    backdrop-filter: blur(4px);
+‎    z-index: 900;
+‎    display: none;
+‎}
+‎#overlay.active { display: block; }
+‎
+‎/* ---------- Content ---------- */
+‎#content {
+‎    position: relative;
+‎    z-index: 1;
+‎    padding: 40px;
+‎    max-width: 1100px;
+‎    margin: auto;
+‎}
+‎
+‎/* ---------- Panels ---------- */
+‎.panel {
+‎    background: rgba(255,255,255,.12);
+‎    backdrop-filter: blur(12px);
+‎    border-radius: 18px;
+‎    padding: 28px;
+‎    margin-bottom: 28px;
+‎    box-shadow: 0 10px 30px rgba(0,0,0,.35);
+‎}
+‎.panel h3 {
+‎    color: #6b2cd8;
+‎    margin-top: 0;
+‎}
+‎
+‎/* ---------- Collapsible Info Card ---------- */
+‎.info-card {
+‎    margin-bottom: 25px;
+‎}
+‎.info-header {
+‎    display: flex;
+‎    justify-content: space-between;
+‎    align-items: center;
+‎    cursor: pointer;
+‎}
+‎.info-content {
+‎    margin-top: 18px;
+‎    display: none;
+‎    line-height: 1.6;
+‎}
+‎.info-card.open .info-content { display: block; }
+‎
+‎/* ---------- Buttons ---------- */
+‎.button {
+‎    background: #6b2cd8;
+‎    color: #fff;
+‎    border: none;
+‎    border-radius: 10px;
+‎    padding: 12px 18px;
+‎    margin: 10px 0;
+‎    width: 100%;
+‎    font-size: 16px;
+‎}
+‎.button.locked { opacity:0.5; cursor:not-allowed; }
+‎
+‎/* ---------- Toggle Button ---------- */
+‎#menuBtn {
+‎    position: fixed;
+‎    top: 20px;
+‎    left: 20px;
+‎    z-index: 1100;
+‎    background: #6b2cd8;
+‎    border: none;
+‎    color: #fff;
+‎    padding: 12px 14px;
+‎    border-radius: 10px;
+‎}
+‎
+‎/* ---------- Progress Bar ---------- */
+‎#progressContainer {
+‎    display:none;
+‎    margin: 20px 0;
+‎}
+‎.progress-bar {
+‎    background: rgba(255,255,255,.1);
+‎    border-radius: 8px;
+‎    height: 16px;
+‎    overflow: hidden;
+‎}
+‎.progress-fill {
+‎    background: #6b2cd8;
+‎    height: 100%;
+‎    width: 0%;
+‎    transition: width 1s linear;
+‎    border-radius: 8px;
+‎}
+‎
+‎/* ---------- Testimonial Fade ---------- */
+‎#testimonialList li {
+‎    opacity: 1;
+‎    transition: opacity 0.8s;
+‎}
+‎.fade-out { opacity:0; }
+‎</style>
+‎</head>
+‎
+‎<body>
+‎
+‎<div id="floating-bg"></div>
+‎
+‎<button id="menuBtn" onclick="toggleSidebar()">☰</button>
+‎
+‎<div id="sidebar">
+‎    <h2>AvalonFlow</h2>
+‎    <button onclick="showPanel('dashboard')">Dashboard</button>
+‎    <button onclick="showPanel('ecosystem')">Ecosystem</button>
+‎    <button onclick="showPanel('branches')">Branches</button>
+‎    <button onclick="showPanel('rewards')">Rewards</button>
+‎    <button onclick="showPanel('support')">Support</button>
+‎    <button onclick="logout()">Logout</button>
+‎</div>
+‎
+‎<div id="overlay" onclick="toggleSidebar()"></div>
+‎
+‎<div id="content">
+‎
+‎<!-- Dashboard -->
+‎<div id="dashboard" class="panel">
+‎    <h3>Welcome</h3>
+‎    <p id="testimonial">AvalonFlow is a structured support framework that helps simplify demanding
+‎        workdays and creates room for additional earning potential.</p>
+‎    <p><em>What members say:</em></p>
+‎    <ul id="testimonialList">
+‎        <li>“My shifts are demanding, and I don’t always have time to explore new options. What stood out for me was how simple and structured this felt. It fits around my schedule without adding pressure.” — Charlotte, Patient Care Assistant</li>
+‎    </ul>
+‎
+‎    <!-- Today’s Progress -->
+‎    <div id="progressContainer">
+‎        <h4>Today's Progress — Logical Wing</h4>
+‎        <div class="progress-bar">
+‎            <div class="progress-fill" id="progressFill"></div>
+‎        </div>
+‎    </div>
+‎</div>
+‎
+‎<!-- Ecosystem -->
+‎<div id="ecosystem" class="panel" style="display:none;">
+‎    <h3>Ecosystem Overview</h3>
+‎
+‎    <p>
+‎        AvalonFlow is built around two interconnected Wings that drive the benefits
+‎        across every branch.
+‎    </p>
+‎
+‎    <!-- Logical Wing -->
+‎    <div class="glass-card">
+‎        <strong>🪽 The Logical Wing</strong><br>
+‎        <em>Where Structure Meets Intelligence</em>
+‎
+‎        <p>
+‎            The Logical Wing represents the operational core — powered by a hybrid
+‎            intelligence infrastructure. By combining the reliability of
+‎            hardware-driven processes with the flexibility of human reasoning.
+‎        </p>
+‎
+‎        <p>
+‎            This Wing isn’t just about mechanics; it is about creating a system
+‎            where progress becomes intelligent, consistent, and sustainable,
+‎            even for professionals with unpredictable schedules.
+‎        </p>
+‎
+‎        <blockquote>
+‎            “When logic finds balance, systems begin to think — and life begins to flow.”
+‎        </blockquote>
+‎    </div>
+‎
+‎    <!-- Emotional Wing -->
+‎    <div class="glass-card">
+‎        <strong>💫 The Emotional Wing — The Living Core of AvalonFlow</strong>
+‎
+‎        <p>
+‎            This Wing forms the human rhythm of the AvalonFlow ecosystem.
+‎        </p>
+‎
+‎        <p>
+‎            It’s designed to restore stability, guide gentle growth, and help
+‎            professionals find effortless balance — ensuring that the milestones
+‎            built in the Logical Wing translate into measurable progress and
+‎            sustainable well-being.
+‎        </p>
+‎
+‎        <blockquote>
+‎            This is how each branch sustains calm, intelligence, and long-term
+‎            progress across every level in this ecosystem.
+‎        </blockquote>
+‎    </div>
+‎</div>
+‎
+‎<!-- Branches -->
+‎<div id="branches" class="panel" style="display:none;">
+‎    <h3>Branches</h3>
+‎
+‎    <!-- Collapsible Info Card -->
+‎    <div class="info-card" id="infoCard">
+‎        <div class="info-header" onclick="toggleInfo()">
+‎            <strong>About the AvalonFlow Branches</strong>
+‎            <span>▾</span>
+‎        </div>
+‎
+‎        <div class="info-content">
+‎            <p><strong>🪽 AvalonCare — The Foundation Branch</strong><br>
+‎            Clarity meets restoration. Focused on stability, guidance, and reducing overwhelm.</p>
+‎
+‎            <p><strong>🪽 AvalonGrow — The Expansion Branch</strong><br>
+‎            Growth meets opportunity. Supports progress, skill alignment, and financial expansion.</p>
+‎
+‎            <p><strong>🪽 AvalonEase — The Mastery Branch</strong><br>
+‎            Effortless control meets stability. Sustainable systems without sacrificing performance.</p>
+‎
+‎            <p>
+‎                Each branch plays a role in addressing common pressures that appear
+‎                in everyday work and life.
+‎            </p>
+‎        </div>
+‎    </div>
+‎
+‎    <!-- Unlock Buttons -->
+‎    <button class="button" onclick="unlockBranch('care')">Unlock AvalonCare</button>
+‎    <button class="button" onclick="unlockBranch('grow')">Unlock AvalonGrow</button>
+‎    <button class="button" onclick="unlockBranch('ease')">Unlock AvalonEase</button>
+‎</div>
+‎
+‎<!-- Rewards -->
+‎<div id="rewards" class="panel" style="display:none;">
+‎    <h3>Rewards / Progress</h3>
+‎    <p>All branches currently locked.</p>
+‎</div>
+‎
+‎<!-- Support -->
+‎<div id="support" class="panel" style="display:none;">
+‎    <h3>Support</h3>
+‎    <p>If you have questions, reach out to us:</p>
+‎    <a href="mailto:avalonflow@usa.com" class="button">Email Support</a>
+‎</div>
+‎
+‎</div>
+‎
+‎<script>
+‎/* ---------- Floating Particles ---------- */
+‎const bg = document.getElementById('floating-bg');
+‎const colors = ['#6b2cd8','#9b59b6','#8e44ad'];
+‎function particle(){
+‎    const p = document.createElement('div');
+‎    p.className = 'particle';
+‎    const s = Math.random()*20+10;
+‎    p.style.width = s+'px';
+‎    p.style.height = s+'px';
+‎    p.style.left = Math.random()*100+'vw';
+‎    p.style.background = `radial-gradient(circle, ${colors[Math.floor(Math.random()*3)]}, transparent)`;
+‎    p.style.animationDuration = (Math.random()*20+10)+'s';
+‎    bg.appendChild(p);
+‎    setTimeout(()=>p.remove(),30000);
+‎}
+‎setInterval(particle,800);
+‎
+‎/* ---------- Sidebar ---------- */
+‎const sidebar = document.getElementById('sidebar');
+‎const overlay = document.getElementById('overlay');
+‎function toggleSidebar(){
+‎    sidebar.classList.toggle('open');
+‎    overlay.classList.toggle('active');
+‎}
+‎
+‎/* ---------- Panels ---------- */
+‎function showPanel(id){
+‎    document.querySelectorAll('.panel').forEach(p=>p.style.display='none');
+‎    document.getElementById(id).style.display='block';
+‎    toggleSidebar();
+‎}
+‎
+‎/* ---------- Info Card ---------- */
+‎function toggleInfo(){
+‎    document.getElementById('infoCard').classList.toggle('open');
+‎}
+‎
+‎/* ---------- Branch Unlock ---------- */
+‎const unlockedBranches = {};
+‎function unlockBranch(branch){
+‎    const links = {
+‎        care: 'https://app.paymento.io/payment-link/aaf970b845624de0b5eea78726134e79',
+‎        grow: 'https://app.paymento.io/payment-link/829c6748054a418f8226cb20387729f8',
+‎        ease: 'https://app.paymento.io/payment-link/aae78710e60447daaa17733d4d287186'
+‎    };
+‎    window.open(links[branch], '_blank');
+‎    unlockedBranches[branch] = true;
+‎    showProgress();
+‎}
+‎
+‎/* ---------- Progress Tracker ---------- */
+‎function showProgress(){
+‎    if(Object.keys(unlockedBranches).length>0){
+‎        document.getElementById('progressContainer').style.display='block';
+‎        let progress = 0;
+‎        if(unlockedBranches['care']) progress += 33;
+‎        if(unlockedBranches['grow']) progress += 33;
+‎        if(unlockedBranches['ease']) progress += 34;
+‎        document.getElementById('progressFill').style.width = progress+'%';
+‎    }
+‎}
+‎
+‎/* ---------- Testimonial Rotation with Fade ---------- */
+‎const testimonials = [
+‎  "“My shifts are demanding, and I don’t always have time to explore new options. What stood out for me was how simple and structured this felt. It fits around my schedule without adding pressure.” — Charlotte, Patient Care Assistant",
+‎  "“As an educator, I value clarity and systems that actually make sense. I appreciated how everything was explained step by step, without hype or unrealistic promises.” — Emily, SPED Teacher",
+‎  "“This gave me a sense of control and flexibility I didn’t expect. I finally started seeing progress without feeling overwhelmed.” — Ava, Customer Support Specialist"
+‎];
+‎let tIndex = 0;
+‎const testimonialLi = document.querySelector('#testimonialList li');
+‎setInterval(()=>{
+‎    testimonialLi.classList.add('fade-out');
+‎    setTimeout(()=>{
+‎        testimonialLi.innerText = testimonials[tIndex];
+‎        testimonialLi.classList.remove('fade-out');
+‎        tIndex = (tIndex+1) % testimonials.length;
+‎    }, 800);
+‎}, 4000);
+‎
+‎/* ---------- Logout ---------- */
+‎function logout(){
+‎    window.location.href = 'index.html';
+‎}
+‎</script>
+‎
+‎</body>
+‎</html>
