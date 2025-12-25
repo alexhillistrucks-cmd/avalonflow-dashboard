@@ -47,7 +47,7 @@ a { color: inherit; text-decoration: none; }
     height: 100%;
     background: rgba(15,15,25,.95);
     backdrop-filter: blur(14px);
-    z-index: 5;
+    z-index: 10;
     padding: 25px;
     transform: translateX(-100%);
     transition: transform .3s ease;
@@ -75,8 +75,9 @@ a { color: inherit; text-decoration: none; }
     inset: 0;
     background: rgba(0,0,0,.6);
     backdrop-filter: blur(4px);
-    z-index: 4;
+    z-index: 9;
     display: none;
+    transition: opacity 0.3s ease;
 }
 #overlay.active { display: block; }
 
@@ -87,7 +88,9 @@ a { color: inherit; text-decoration: none; }
     padding: 40px;
     max-width: 1100px;
     margin: auto;
+    transition: filter 0.3s ease;
 }
+#content.dimmed { filter: brightness(0.5); }
 
 /* ---------- Panels ---------- */
 .panel {
@@ -98,26 +101,17 @@ a { color: inherit; text-decoration: none; }
     margin-bottom: 28px;
     box-shadow: 0 10px 30px rgba(0,0,0,.35);
 }
-.panel h3 {
-    color: #6b2cd8;
-    margin-top: 0;
-}
+.panel h3 { color: #6b2cd8; margin-top: 0; }
 
 /* ---------- Collapsible Info Card ---------- */
-.info-card {
-    margin-bottom: 25px;
-}
+.info-card { margin-bottom: 25px; }
 .info-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     cursor: pointer;
 }
-.info-content {
-    margin-top: 18px;
-    display: none;
-    line-height: 1.6;
-}
+.info-content { margin-top: 18px; display: none; line-height: 1.6; }
 .info-card.open .info-content { display: block; }
 
 /* ---------- Buttons ---------- */
@@ -138,7 +132,7 @@ a { color: inherit; text-decoration: none; }
     position: fixed;
     top: 20px;
     left: 20px;
-    z-index: 6;
+    z-index: 11;
     background: #6b2cd8;
     border: none;
     color: #fff;
@@ -147,10 +141,7 @@ a { color: inherit; text-decoration: none; }
 }
 
 /* ---------- Progress Bar ---------- */
-#progressContainer {
-    display:none;
-    margin: 20px 0;
-}
+#progressContainer { display:block; margin: 20px 0; }
 .progress-bar {
     background: rgba(255,255,255,.1);
     border-radius: 8px;
@@ -161,9 +152,16 @@ a { color: inherit; text-decoration: none; }
     background: #6b2cd8;
     height: 100%;
     width: 0%;
-    transition: width 1s linear;
     border-radius: 8px;
+    transition: width 1s linear;
 }
+
+/* ---------- Testimonial Fade ---------- */
+#testimonialList li {
+    transition: opacity 0.8s ease;
+    opacity: 1;
+}
+#testimonialList li.fade-out { opacity: 0; }
 </style>
 </head>
 
@@ -176,10 +174,10 @@ a { color: inherit; text-decoration: none; }
 <div id="sidebar">
     <h2>AvalonFlow</h2>
     <button onclick="showPanel('dashboard')">Dashboard</button>
+    <button onclick="showPanel('ecosystem')">Ecosystem</button>
     <button onclick="showPanel('branches')">Branches</button>
     <button onclick="showPanel('rewards')">Rewards</button>
     <button onclick="showPanel('support')">Support</button>
-    <button onclick="showPanel('ecosystem')">Ecosystem</button>
     <button onclick="logout()">Logout</button>
 </div>
 
@@ -193,11 +191,7 @@ a { color: inherit; text-decoration: none; }
     <p id="testimonial">AvalonFlow is a structured support framework that helps simplify demanding
         workdays and creates room for additional earning potential.</p>
     <p><em>What members say:</em></p>
-    <ul id="testimonialList">
-        <li>“Things stopped feeling scattered.”</li>
-        <li>“I finally knew what to focus on.”</li>
-        <li>“Less pressure, clearer movement.”</li>
-    </ul>
+    <ul id="testimonialList"><li>“Things stopped feeling scattered.”</li></ul>
 
     <!-- Today’s Progress -->
     <div id="progressContainer">
@@ -208,35 +202,52 @@ a { color: inherit; text-decoration: none; }
     </div>
 </div>
 
+<!-- Ecosystem -->
+<div id="ecosystem" class="panel" style="display:none;">
+    <h3>Ecosystem Overview</h3>
+
+    <div class="panel">
+        <strong>🪽 The Logical Wing</strong><br>
+        <em>Where Structure Meets Intelligence</em>
+        <p>
+            Represents the operational core — powered by a hybrid intelligence infrastructure. By combining
+            the reliability of hardware-driven processes with the flexibility of human reasoning. 
+            This Wing isn’t just about mechanics; it’s about creating a system where progress becomes intelligent, consistent, and sustainable.
+        </p>
+        <blockquote>“When logic finds balance, systems begin to think — and life begins to flow.”</blockquote>
+    </div>
+
+    <div class="panel">
+        <strong>💫 The Emotional Wing</strong><br>
+        <em>The Living Core of AvalonFlow</em>
+        <p>
+            Forms the human rhythm of the ecosystem. Restores stability, guides gentle growth, and ensures
+            rewards from the Logical Wing translate into measurable progress and well-being.
+        </p>
+        <blockquote>This is how each branch sustains calm, intelligence, and long-term progress across every level in this ecosystem.</blockquote>
+    </div>
+</div>
+
 <!-- Branches -->
 <div id="branches" class="panel" style="display:none;">
     <h3>Branches</h3>
 
-    <!-- Collapsible Info Card -->
     <div class="info-card" id="infoCard">
         <div class="info-header" onclick="toggleInfo()">
             <strong>About the AvalonFlow Branches</strong>
             <span>▾</span>
         </div>
-
         <div class="info-content">
             <p><strong>🪽 AvalonCare — The Foundation Branch</strong><br>
             Clarity meets restoration. Focused on stability, guidance, and reducing overwhelm.</p>
-
             <p><strong>🪽 AvalonGrow — The Expansion Branch</strong><br>
             Growth meets opportunity. Supports progress, skill alignment, and financial expansion.</p>
-
             <p><strong>🪽 AvalonEase — The Mastery Branch</strong><br>
             Effortless control meets stability. Sustainable systems without sacrificing performance.</p>
-
-            <p>
-                Each branch plays a role in addressing common pressures that appear
-                in everyday work and life.
-            </p>
+            <p>Each branch plays a role in addressing common pressures that appear in everyday work and life.</p>
         </div>
     </div>
 
-    <!-- Unlock Buttons -->
     <button class="button" onclick="unlockBranch('care')">Unlock AvalonCare</button>
     <button class="button" onclick="unlockBranch('grow')">Unlock AvalonGrow</button>
     <button class="button" onclick="unlockBranch('ease')">Unlock AvalonEase</button>
@@ -253,31 +264,6 @@ a { color: inherit; text-decoration: none; }
     <h3>Support</h3>
     <p>If you have questions, reach out to us:</p>
     <a href="mailto:avalonflow@usa.com" class="button">Email Support</a>
-</div>
-
-<!-- Ecosystem -->
-<div id="ecosystem" class="panel" style="display:none;">
-    <h3>Ecosystem Overview</h3>
-
-    <div class="panel">
-        <strong>🪽 The Logical Wing</strong><br>
-        <em>Where Structure Meets Intelligence</em>
-        <p>
-            Represents the operational core — powered by a hybrid intelligence infrastructure. By combining
-            the reliability of hardware-driven processes with the flexibility of human reasoning. 
-        </p>
-        <blockquote>“When logic finds balance, systems begin to think — and life begins to flow.”</blockquote>
-    </div>
-
-    <div class="panel">
-        <strong>💫 The Emotional Wing</strong><br>
-        <em>The Living Core of AvalonFlow</em>
-        <p>
-            Forms the human rhythm of the ecosystem. Restores stability, guides gentle growth, and ensures
-            rewards from the Logical Wing translate into measurable progress and well-being.
-        </p>
-        <blockquote>This is how each branch sustains calm, intelligence, and long-term progress across every level in this ecosystem.</blockquote>
-    </div>
 </div>
 
 </div>
@@ -301,12 +287,14 @@ function particle(){
 setInterval(particle,800);
 
 /* ---------- Sidebar ---------- */
+const sidebar = document.getElementById('sidebar');
+const overlay = document.getElementById('overlay');
+const content = document.getElementById('content');
 function toggleSidebar(){
     sidebar.classList.toggle('open');
     overlay.classList.toggle('active');
+    content.classList.toggle('dimmed');
 }
-const sidebar = document.getElementById('sidebar');
-const overlay = document.getElementById('overlay');
 
 /* ---------- Panels ---------- */
 function showPanel(id){
@@ -345,18 +333,33 @@ function showProgress(){
     }
 }
 
-/* ---------- Testimonial Rotation ---------- */
+/* ---------- Daily Auto Progress ---------- */
+function updateDailyProgress(){
+    const now = new Date();
+    const start = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const end = new Date(now.getFullYear(), now.getMonth(), now.getDate()+1);
+    const progressPercent = ((now - start)/(end - start))*100;
+    document.getElementById('progressFill').style.width = progressPercent + '%';
+}
+setInterval(updateDailyProgress, 1000);
+updateDailyProgress();
+
+/* ---------- Testimonial Rotation (Fade) ---------- */
 const testimonials = [
-    "“Things stopped feeling scattered.”",
-    "“I finally knew what to focus on.”",
-    "“Less pressure, clearer movement.”"
+    "AvalonFlow is a structured support framework that helps simplify demanding workdays and creates room for additional earning potential.",
+    "Things stopped feeling scattered.",
+    "I finally knew what to focus on."
 ];
 let tIndex = 0;
+const testimonialLi = document.querySelector('#testimonialList li');
 setInterval(()=>{
-    const ul = document.getElementById('testimonialList');
-    ul.children[0].innerText = testimonials[tIndex];
-    tIndex = (tIndex+1)%testimonials.length;
-},4000);
+    testimonialLi.classList.add('fade-out');
+    setTimeout(()=>{
+        testimonialLi.innerText = testimonials[tIndex];
+        testimonialLi.classList.remove('fade-out');
+        tIndex = (tIndex+1)%testimonials.length;
+    }, 800);
+}, 4000);
 
 /* ---------- Logout ---------- */
 function logout(){
