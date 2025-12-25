@@ -6,114 +6,144 @@
 <title>AvalonFlow Dashboard</title>
 
 <style>
+/* ---------- Base ---------- */
 body {
     font-family: Arial, sans-serif;
     margin: 0;
-    background: radial-gradient(circle at bottom, #1a0d3a, #0d0d0d);
+    background: #0d0d0d;
     color: #fff;
     overflow-x: hidden;
 }
+button { cursor: pointer; }
+a { color: inherit; text-decoration: none; }
 
-/* Floating background */
+/* ---------- Floating Background ---------- */
 #floating-bg {
     position: fixed;
     inset: 0;
     z-index: 0;
     pointer-events: none;
+    background: radial-gradient(circle at bottom, #1a0d3a, #0d0d0d);
+    overflow: hidden;
+}
+.particle {
+    position: absolute;
+    border-radius: 50%;
+    opacity: .6;
+    animation: floatParticles linear infinite;
+    box-shadow: 0 0 10px #6b2cd8, 0 0 20px #6b2cd8;
+}
+@keyframes floatParticles {
+    0% { transform: translateY(100vh) scale(.3); opacity: 0; }
+    50% { opacity: 1; }
+    100% { transform: translateY(-10vh) scale(1); opacity: 0; }
 }
 
-/* Sidebar */
-.sidebar {
+/* ---------- Sidebar (Overlay) ---------- */
+#sidebar {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 240px;
+    top: 0; left: 0;
+    width: 280px;
     height: 100%;
-    background: rgba(255,255,255,0.08);
-    backdrop-filter: blur(12px);
-    padding: 20px;
-    z-index: 2;
-    transition: transform 0.3s ease;
+    background: rgba(15,15,25,.95);
+    backdrop-filter: blur(14px);
+    z-index: 5;
+    padding: 25px;
+    transform: translateX(-100%);
+    transition: transform .3s ease;
 }
-.sidebar.closed { transform: translateX(-250px); }
+#sidebar.open { transform: translateX(0); }
 
-.sidebar h2 {
+#sidebar h2 {
     color: #6b2cd8;
     margin-top: 0;
 }
-
-.sidebar a {
-    display: block;
-    color: #fff;
-    text-decoration: none;
+#sidebar button {
+    width: 100%;
     margin: 12px 0;
-    padding: 8px;
-    border-radius: 6px;
-}
-.sidebar a:hover {
-    background: rgba(107,44,216,0.2);
+    padding: 12px;
+    border: none;
+    border-radius: 10px;
+    background: rgba(255,255,255,.1);
+    color: #fff;
+    font-size: 16px;
 }
 
-/* Toggle */
-.toggle {
+/* ---------- Overlay Blur ---------- */
+#overlay {
     position: fixed;
-    top: 15px;
-    left: 15px;
-    background: #6b2cd8;
-    padding: 10px 14px;
-    border-radius: 8px;
-    cursor: pointer;
-    z-index: 3;
+    inset: 0;
+    background: rgba(0,0,0,.6);
+    backdrop-filter: blur(4px);
+    z-index: 4;
+    display: none;
 }
+#overlay.active { display: block; }
 
-/* Main */
-.main {
-    margin-left: 260px;
+/* ---------- Content ---------- */
+#content {
+    position: relative;
+    z-index: 1;
     padding: 40px;
-    transition: margin-left 0.3s ease;
-}
-.sidebar.closed ~ .main {
-    margin-left: 20px;
+    max-width: 1100px;
+    margin: auto;
 }
 
-/* Panels */
+/* ---------- Panels ---------- */
 .panel {
-    background: rgba(255,255,255,0.12);
-    backdrop-filter: blur(14px);
-    border-radius: 14px;
-    padding: 22px;
-    margin-bottom: 22px;
+    background: rgba(255,255,255,.12);
+    backdrop-filter: blur(12px);
+    border-radius: 18px;
+    padding: 28px;
+    margin-bottom: 28px;
+    box-shadow: 0 10px 30px rgba(0,0,0,.35);
 }
-
 .panel h3 {
     color: #6b2cd8;
     margin-top: 0;
 }
 
-/* Branch cards */
-.branch {
-    margin-bottom: 18px;
+/* ---------- Collapsible Info Card ---------- */
+.info-card {
+    margin-bottom: 25px;
 }
-.branch.locked {
-    opacity: 0.45;
+.info-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
 }
-.branch.locked button {
-    pointer-events: auto;
+.info-content {
+    margin-top: 18px;
+    display: none;
+    line-height: 1.6;
 }
+.info-card.open .info-content { display: block; }
 
+/* ---------- Buttons ---------- */
 .button {
     background: #6b2cd8;
     color: #fff;
     border: none;
-    padding: 10px 16px;
-    border-radius: 8px;
-    cursor: pointer;
-    margin-top: 10px;
+    border-radius: 10px;
+    padding: 12px 18px;
+    margin: 10px 0;
+    width: 100%;
+    font-size: 16px;
 }
-.button.secondary {
-    background: rgba(255,255,255,0.15);
+
+/* ---------- Toggle Button ---------- */
+#menuBtn {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 6;
+    background: #6b2cd8;
+    border: none;
+    color: #fff;
+    padding: 12px 14px;
+    border-radius: 10px;
 }
-.hidden { display: none; }
 </style>
 </head>
 
@@ -121,116 +151,130 @@ body {
 
 <div id="floating-bg"></div>
 
-<div class="toggle" onclick="toggleSidebar()">☰</div>
+<button id="menuBtn" onclick="toggleSidebar()">☰</button>
 
-<div class="sidebar" id="sidebar">
+<div id="sidebar">
     <h2>AvalonFlow</h2>
-    <a href="#" onclick="showPanel('dashboard')">Dashboard</a>
-    <a href="#" onclick="showPanel('branches')">Branches</a>
-    <a href="#" onclick="showPanel('rewards')">Rewards</a>
-    <a href="#" onclick="showPanel('support')">Support</a>
-    <a href="#" onclick="logout()">Logout</a>
+    <button onclick="showPanel('dashboard')">Dashboard</button>
+    <button onclick="showPanel('branches')">Branches</button>
+    <button onclick="showPanel('rewards')">Rewards</button>
+    <button onclick="showPanel('support')">Support</button>
+    <button onclick="logout()">Logout</button>
 </div>
 
-<div class="main">
+<div id="overlay" onclick="toggleSidebar()"></div>
 
-    <!-- DASHBOARD / INTRO -->
-    <section id="dashboard" class="panel">
-        <h3>Welcome to AvalonFlow</h3>
-        <p>
-            <strong>AvalonFlow</strong> is a structured support framework that helps simplify
-            demanding workdays that you might face and creates room for additional earning potential.
-        </p>
+<div id="content">
 
-        <p><em>What members say:</em></p>
-        <ul>
-            <li>“Things stopped feeling scattered.”</li>
-            <li>“I finally knew what to focus on.”</li>
-            <li>“Less pressure, clearer movement.”</li>
-        </ul>
-    </section>
+<!-- Dashboard -->
+<div id="dashboard" class="panel">
+    <h3>Welcome</h3>
+    <p>
+        AvalonFlow is a structured support framework that helps simplify demanding
+        workdays and creates room for additional earning potential.
+    </p>
+</div>
 
-    <!-- BRANCHES -->
-    <section id="branches" class="panel hidden">
-        <h3>Branches</h3>
+<!-- Branches -->
+<div id="branches" class="panel" style="display:none;">
+    <h3>Branches</h3>
 
-        <div id="care" class="branch locked">
-            <h4>AvalonCare</h4>
-            <p>Foundation access and structured orientation.</p>
-            <button class="button" onclick="payCare()">Unlock AvalonCare</button>
+    <!-- Collapsible Info Card -->
+    <div class="info-card" id="infoCard">
+        <div class="info-header" onclick="toggleInfo()">
+            <strong>About the AvalonFlow Branches</strong>
+            <span>▾</span>
         </div>
 
-        <div id="grow" class="branch locked">
-            <h4>AvalonGrow</h4>
-            <p>Growth-level systems and expansion.</p>
-            <button class="button" onclick="payGrow()">Unlock AvalonGrow</button>
+        <div class="info-content">
+            <p><strong>🪽 AvalonCare — The Foundation Branch</strong><br>
+            Clarity meets restoration. Focused on stability, guidance, and reducing overwhelm.</p>
+
+            <p><strong>🪽 AvalonGrow — The Expansion Branch</strong><br>
+            Growth meets opportunity. Supports progress, skill alignment, and financial expansion.</p>
+
+            <p><strong>🪽 AvalonEase — The Mastery Branch</strong><br>
+            Effortless control meets stability. Sustainable systems without sacrificing performance.</p>
+
+            <p>
+                Each branch plays a role in addressing common pressures that appear
+                in everyday work and life.
+            </p>
         </div>
+    </div>
 
-        <div id="ease" class="branch locked">
-            <h4>AvalonEase</h4>
-            <p>Ease, delegation, and sustainability.</p>
-            <button class="button" onclick="payEase()">Unlock AvalonEase</button>
-        </div>
-    </section>
+    <!-- Unlock Buttons -->
+    <button class="button" onclick="openPayment('care')">Unlock AvalonCare</button>
+    <button class="button" onclick="openPayment('grow')">Unlock AvalonGrow</button>
+    <button class="button" onclick="openPayment('ease')">Unlock AvalonEase</button>
+</div>
 
-    <!-- REWARDS -->
-    <section id="rewards" class="panel hidden">
-        <h3>Rewards / Progress</h3>
-        <p>Status updates will appear here as access expands.</p>
-    </section>
+<!-- Rewards -->
+<div id="rewards" class="panel" style="display:none;">
+    <h3>Rewards / Progress</h3>
+    <p>All branches currently locked.</p>
+</div>
 
-    <!-- SUPPORT -->
-    <section id="support" class="panel hidden">
-        <h3>Support</h3>
-        <p>Email: <strong>avalonflow@usa.com</strong></p>
-    </section>
+<!-- Support -->
+<div id="support" class="panel" style="display:none;">
+‎        <h3>Support</h3>
+‎        <p>If you have questions, reach out to us:</p>
+‎        <a href="mailto:avalonflow@usa.com" class="button">Email Support</a>
+‎    </div>
 
 </div>
 
 <script>
+/* Floating particles */
+const bg = document.getElementById('floating-bg');
+const colors = ['#6b2cd8','#9b59b6','#8e44ad'];
+function particle(){
+    const p = document.createElement('div');
+    p.className = 'particle';
+    const s = Math.random()*20+10;
+    p.style.width = s+'px';
+    p.style.height = s+'px';
+    p.style.left = Math.random()*100+'vw';
+    p.style.background = `radial-gradient(circle, ${colors[Math.floor(Math.random()*3)]}, transparent)`;
+    p.style.animationDuration = (Math.random()*20+10)+'s';
+    bg.appendChild(p);
+    setTimeout(()=>p.remove(),30000);
+}
+setInterval(particle,800);
+
 /* Sidebar */
 function toggleSidebar(){
-    document.getElementById('sidebar').classList.toggle('closed');
+    sidebar.classList.toggle('open');
+    overlay.classList.toggle('active');
 }
 
-/* Navigation */
+/* Panels */
 function showPanel(id){
-    document.querySelectorAll('.panel').forEach(p => p.classList.add('hidden'));
-    document.getElementById(id).classList.remove('hidden');
+    document.querySelectorAll('.panel').forEach(p=>p.style.display='none');
+    document.getElementById(id).style.display='block';
+    toggleSidebar();
+}
+
+/* Info Card */
+function toggleInfo(){
+    document.getElementById('infoCard').classList.toggle('open');
 }
 
 /* Payments */
-function payCare(){
-    window.location.href = "https://app.paymento.io/payment-link/aaf970b845624de0b5eea78726134e79?redirect_url=dashboard.html?unlock=care";
+function openPayment(branch){
+    const links = {
+        care: 'https://app.paymento.io/payment-link/aaf970b845624de0b5eea78726134e79',
+        grow: 'https://app.paymento.io/payment-link/829c6748054a418f8226cb20387729f8',
+        ease: 'https://app.paymento.io/payment-link/aae78710e60447daaa17733d4d287186'
+    };
+    window.open(links[branch], '_blank');
 }
-function payGrow(){
-    window.location.href = "https://app.paymento.io/payment-link/829c6748054a418f8226cb20387729f8?redirect_url=dashboard.html?unlock=grow";
-}
-function payEase(){
-    window.location.href = "https://app.paymento.io/payment-link/aae78710e60447daaa17733d4d287186?redirect_url=dashboard.html?unlock=ease";
-}
-
-/* Auto Unlock */
-const params = new URLSearchParams(window.location.search);
-const unlock = params.get("unlock");
-
-if(unlock){
-    localStorage.setItem("avalon_"+unlock, "true");
-}
-
-["care","grow","ease"].forEach(b=>{
-    if(localStorage.getItem("avalon_"+b)){
-        const el = document.getElementById(b);
-        el.classList.remove("locked");
-        el.innerHTML += "<p><strong>Access Granted ✔</strong></p>";
-    }
-});
 
 /* Logout */
 function logout(){
-    window.location.href = "index.html";
+    window.location.href = 'index.html';
 }
 </script>
 
 </body>
-        </html>
+    </html>
