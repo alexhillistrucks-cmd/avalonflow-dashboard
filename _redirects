@@ -1,1 +1,5 @@
-/*    /:splat    200
+# Redirect old .html URLs to clean URLs
+/*.html    /:splat    301
+
+# Serve pages without .html
+/*        /:splat.html   200
