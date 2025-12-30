@@ -1,62 +1,194 @@
 <!DOCTYPE html>
-<html lang="en" data-requires-login="true">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AvalonFlow Ecosystem</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AvalonFlow Ecosystem</title>
 
-    <!-- GLOBAL STYLE -->
-    <link rel="stylesheet" href="/css/style.css">
+  <!-- INLINE ECOSYSTEM CSS -->
+  <style>
+    /* ---------- Global Body & Font ---------- */
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #1a0d3a;
+      color: #fff;
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* ---------- Sidebar ---------- */
+    #sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 280px;
+      height: 100%;
+      background: rgba(15,15,25,0.95);
+      backdrop-filter: blur(14px);
+      z-index: 5;
+      padding: 25px;
+      transform: translateX(-100%);
+      transition: transform 0.3s ease;
+    }
+    #sidebar.open { transform: translateX(0); }
+    #sidebar h2 { color: #6b2cd8; margin-top: 0; }
+    #sidebar button {
+      width: 100%;
+      margin: 12px 0;
+      padding: 12px;
+      border: none;
+      border-radius: 10px;
+      background: rgba(255,255,255,0.1);
+      color: #fff;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    /* ---------- Overlay ---------- */
+    #overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(4px);
+      z-index: 4;
+      display: none;
+    }
+    #overlay.active { display: block; }
+
+    /* ---------- Main Content ---------- */
+    #content {
+      position: relative;
+      z-index: 1;
+      padding: 40px;
+      max-width: 1100px;
+      margin: auto;
+      padding-bottom: 80px;
+    }
+
+    /* ---------- Glass Cards ---------- */
+    .glass-card {
+      background: rgba(255,255,255,0.12);
+      backdrop-filter: blur(12px);
+      border-radius: 18px;
+      padding: 28px;
+      margin-bottom: 28px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .glass-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 12px 35px rgba(0,0,0,0.5);
+    }
+    .glass-card strong { color: #b393ff; font-size: 18px; }
+
+    /* ---------- Buttons / Links ---------- */
+    .button, button, .glass-card a {
+      display: inline-block;
+      background-color: #6b2cd8;
+      color: white;
+      padding: 10px 15px;
+      text-decoration: none;
+      border-radius: 8px;
+      margin-top: 10px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .button:hover, button:hover, .glass-card a:hover {
+      background-color: #7f3fe5;
+      box-shadow: 0 6px 15px rgba(0,0,0,0.4);
+    }
+
+    /* ---------- Floating Background ---------- */
+    #floating-bg {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background: radial-gradient(circle at bottom, #1a0d3a, #0d0d0d);
+      overflow: hidden;
+    }
+
+    /* ---------- Particle Styles ---------- */
+    .particle {
+      position: absolute;
+      border-radius: 50%;
+      opacity: 0.6;
+      animation: floatParticles linear infinite;
+      box-shadow: 0 0 10px #6b2cd8, 0 0 20px #6b2cd8;
+    }
+    @keyframes floatParticles {
+      0% { transform: translateY(100vh) scale(0.3); opacity: 0; }
+      50% { opacity: 1; }
+      100% { transform: translateY(-10vh) scale(1); opacity: 0; }
+    }
+
+    /* ---------- Footer ---------- */
+    footer {
+      text-align: center;
+      padding: 20px;
+      font-size: 14px;
+      color: #ccc;
+      background: rgba(15,15,25,0.95);
+      backdrop-filter: blur(12px);
+      box-shadow: 0 -5px 20px rgba(0,0,0,0.4);
+      position: fixed;
+      width: 100%;
+      bottom: 0;
+    }
+  </style>
 </head>
-<body>
+<body data-requires-login="true">
 
-<!-- Particle background -->
-<div id="floating-bg"></div>
+  <!-- Particle background -->
+  <div id="floating-bg"></div>
 
-<!-- Sidebar toggle button -->
-<button id="menuBtn" onclick="toggleSidebar()">☰</button>
+  <!-- Sidebar toggle button -->
+  <button id="menuBtn" onclick="toggleSidebar()">☰</button>
 
-<!-- Sidebar -->
-<div id="sidebar">
+  <!-- Sidebar -->
+  <div id="sidebar">
     <h2>AvalonFlow</h2>
-    <a href="/dashboard.html"><button>Dashboard</button></a>
-    <a href="/ecosystem.html"><button>Ecosystem</button></a>
-    <a href="/branches.html"><button>Branches</button></a>
-    <a href="/rewards.html"><button>Rewards</button></a>
-    <a href="/support.html"><button>Support</button></a>
+    <a href="dashboard.html"><button>Dashboard</button></a>
+    <a href="ecosystem.html"><button>Ecosystem</button></a>
+    <a href="branches.html"><button>Branches</button></a>
+    <a href="rewards.html"><button>Rewards</button></a>
+    <a href="support.html"><button>Support</button></a>
     <button onclick="logout()">Logout</button>
-</div>
+  </div>
 
-<!-- Overlay -->
-<div id="overlay" onclick="toggleSidebar()"></div>
+  <!-- Overlay -->
+  <div id="overlay" onclick="toggleSidebar()"></div>
 
-<!-- Main content -->
-<div id="content">
+  <!-- Main content -->
+  <div id="content">
     <div class="panel">
-        <h3>Ecosystem Overview</h3>
+      <h3>Ecosystem Overview</h3>
 
-        <!-- Logical Wing Card -->
-        <div class="glass-card">
-            <strong>🪽 The Logical Wing</strong><br>
-            <em>Where Structure Meets Intelligence</em>
-            <p>Represents the operational core — powered by a hybrid intelligence infrastructure that combines reliable systems with thoughtful human reasoning.</p>
-            <blockquote>“When logic finds balance, systems begin to think — and life begins to flow.”</blockquote>
-        </div>
+      <!-- Logical Wing Card -->
+      <div class="glass-card">
+        <strong>🪽 The Logical Wing</strong><br>
+        <em>Where Structure Meets Intelligence</em>
+        <p>Represents the operational core — powered by a hybrid intelligence infrastructure that combines reliable systems with thoughtful human reasoning.</p>
+        <blockquote>“When logic finds balance, systems begin to think — and life begins to flow.”</blockquote>
+      </div>
 
-        <!-- Emotional Wing Card -->
-        <div class="glass-card">
-            <strong>💫 The Emotional Wing</strong><br>
-            <em>The Living Core of AvalonFlow</em>
-            <p>Supports stability, rhythm, and long-term well-being — ensuring progress translates into calm, clarity, and meaningful rewards.</p>
-            <blockquote>Each wing contributes on how the branches impact stability across work, growth, and life.</blockquote>
-        </div>
+      <!-- Emotional Wing Card -->
+      <div class="glass-card">
+        <strong>💫 The Emotional Wing</strong><br>
+        <em>The Living Core of AvalonFlow</em>
+        <p>Supports stability, rhythm, and long-term well-being — ensuring progress translates into calm, clarity, and meaningful rewards.</p>
+        <blockquote>Each wing contributes on how the branches impact stability across work, growth, and life.</blockquote>
+      </div>
     </div>
-</div>
+  </div>
 
-<!-- Footer -->
-<footer>© 2025 AvalonFlow | Powered by Centrical™</footer>
+  <!-- Footer -->
+  <footer>© 2025 AvalonFlow | Powered by Centrical™</footer>
 
-<!-- SCRIPT -->
-<script src="/js/script.js"></script>
+  <!-- Script -->
+  <script src="js/script.js"></script>
 </body>
     </html>
