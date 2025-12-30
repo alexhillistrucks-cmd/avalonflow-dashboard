@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-requires-login="true">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -19,11 +19,11 @@
 <!-- Sidebar -->
 <div id="sidebar">
     <h2>AvalonFlow</h2>
-    <a href="dashboard.html"><button>Dashboard</button></a>
-    <a href="ecosystem.html"><button>Ecosystem</button></a>
-    <a href="branches.html"><button>Branches</button></a>
-    <a href="rewards.html"><button>Rewards</button></a>
-    <a href="support.html"><button>Support</button></a>
+    <a href="/dashboard.html"><button>Dashboard</button></a>
+    <a href="/ecosystem.html"><button>Ecosystem</button></a>
+    <a href="/branches.html"><button>Branches</button></a>
+    <a href="/rewards.html"><button>Rewards</button></a>
+    <a href="/support.html"><button>Support</button></a>
     <button onclick="logout()">Logout</button>
 </div>
 
@@ -35,39 +35,38 @@
     <h3>Rewards / Progress</h3>
     <p>Track your progress on the Logical Wing branches below:</p>
 
+    <!-- AvalonCare Card -->
     <div class="glass-card">
         <strong>AvalonCare — The Foundation Branch</strong>
         <div class="progress-bar">
             <div class="progress-fill" id="avalonCareFill"></div>
         </div>
-        <p class="locked-text" id="avalonCareLocked">
-            🔒 Locked — Complete payment to unlock
-        </p>
+        <p class="locked-text" id="avalonCareLocked">🔒 Locked — Complete payment to unlock</p>
     </div>
 
+    <!-- AvalonGrow Card -->
     <div class="glass-card">
         <strong>AvalonGrow — The Expansion Branch</strong>
         <div class="progress-bar">
             <div class="progress-fill" id="avalonGrowFill"></div>
         </div>
-        <p class="locked-text" id="avalonGrowLocked">
-            🔒 Locked — Complete payment to unlock
-        </p>
+        <p class="locked-text" id="avalonGrowLocked">🔒 Locked — Complete payment to unlock</p>
     </div>
 
+    <!-- AvalonEase Card -->
     <div class="glass-card">
         <strong>AvalonEase — The Mastery Branch</strong>
         <div class="progress-bar">
             <div class="progress-fill" id="avalonEaseFill"></div>
         </div>
-        <p class="locked-text" id="avalonEaseLocked">
-            🔒 Locked — Complete payment to unlock
-        </p>
+        <p class="locked-text" id="avalonEaseLocked">🔒 Locked — Complete payment to unlock</p>
     </div>
 </div>
 
+<!-- Footer -->
 <footer>© 2025 AvalonFlow | Powered by Centrical™</footer>
 
+<!-- SCRIPT -->
 <script src="/js/script.js"></script>
 </body>
     </html>
