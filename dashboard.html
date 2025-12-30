@@ -1,332 +1,394 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AvalonFlow Dashboard</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AvalonFlow Dashboard</title>
 
-    <style>
-    /* ---------- Global Body & Font ---------- */
-    body {
-        font-family: 'Arial', sans-serif;
-        background-color: #1a0d3a;
-        color: #fff;
-        margin: 0;
-        padding: 0;
-        overflow-x: hidden;
-        position: relative;
-    }
+    <style>
+        /* ---------- Base ---------- */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background: #0d0d0d;
+            color: #fff;
+            overflow-x: hidden;
+        }
 
-    /* ---------- Sidebar ---------- */
-    #sidebar {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 280px;
-        height: 100%;
-        background: rgba(15,15,25,0.95);
-        backdrop-filter: blur(14px);
-        z-index: 5;
-        padding: 25px;
-        transform: translateX(-100%);
-        transition: transform 0.3s ease;
-    }
-    #sidebar.open { transform: translateX(0); }
-    #sidebar h2 { color: #6b2cd8; margin-top: 0; }
-    #sidebar button {
-        width: 100%;
-        margin: 12px 0;
-        padding: 12px;
-        border: none;
-        border-radius: 10px;
-        background: rgba(255,255,255,0.1);
-        color: #fff;
-        font-size: 16px;
-        cursor: pointer;
-    }
+        button {
+            cursor: pointer;
+        }
 
-    /* ---------- Overlay ---------- */
-    #overlay {
-        position: fixed;
-        inset: 0;
-        background: rgba(0,0,0,0.6);
-        backdrop-filter: blur(4px);
-        z-index: 4;
-        display: none;
-    }
-    #overlay.active { display: block; }
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
 
-    /* ---------- Main Content ---------- */
-    #content {
-        position: relative;
-        z-index: 1;
-        padding: 40px;
-        max-width: 1100px;
-        margin: auto;
-        padding-bottom: 80px;
-    }
+        /* ---------- Floating Background ---------- */
+        #floating-bg {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            background: radial-gradient(circle at bottom, #1a0d3a, #0d0d0d);
+            overflow: hidden;
+        }
 
-    /* ---------- Glass Cards ---------- */
-    .glass-card {
-        background: rgba(255,255,255,0.12);
-        backdrop-filter: blur(12px);
-        border-radius: 18px;
-        padding: 28px;
-        margin-bottom: 28px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.35);
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-    .glass-card:hover {
-        transform: translateY(-8px);
-        box-shadow: 0 12px 35px rgba(0,0,0,0.5);
-    }
-    .glass-card strong {
-        color: #b393ff;
-        font-size: 18px;
-    }
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.6;
+            animation: floatParticles linear infinite;
+            box-shadow: 0 0 10px #6b2cd8, 0 0 20px #6b2cd8;
+        }
 
-    /* ---------- Buttons / Links ---------- */
-    .button, button, .glass-card a {
-        display: inline-block;
-        background-color: #6b2cd8;
-        color: white;
-        padding: 10px 15px;
-        text-decoration: none;
-        border-radius: 8px;
-        margin-top: 10px;
-        border: none;
-        cursor: pointer;
-        transition: all 0.3s ease;
-    }
-    .button:hover, button:hover, .glass-card a:hover {
-        background-color: #7f3fe5;
-        box-shadow: 0 6px 15px rgba(0,0,0,0.4);
-    }
+        @keyframes floatParticles {
+            0% {
+                transform: translateY(100vh) scale(0.3);
+                opacity: 0;
+            }
+            50% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-10vh) scale(1);
+                opacity: 0;
+            }
+        }
 
-    /* ---------- Footer ---------- */
-    footer {
-        text-align: center;
-        padding: 20px;
-        font-size: 14px;
-        color: #ccc;
-        background: rgba(15,15,25,0.95);
-        backdrop-filter: blur(12px);
-        box-shadow: 0 -5px 20px rgba(0,0,0,0.4);
-        position: fixed;
-        width: 100%;
-        bottom: 0;
-    }
+        /* ---------- Sidebar ---------- */
+        #sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 280px;
+            height: 100%;
+            background: rgba(15, 15, 25, 0.95);
+            backdrop-filter: blur(14px);
+            z-index: 5;
+            padding: 25px;
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+        }
 
-    /* ---------- Floating Background ---------- */
-    #floating-bg {
-        position: fixed;
-        inset: 0;
-        z-index: 0;
-        pointer-events: none;
-        background: radial-gradient(circle at bottom, #1a0d3a, #0d0d0d);
-        overflow: hidden;
-    }
+        #sidebar.open {
+            transform: translateX(0);
+        }
 
-    /* ---------- Particle Styles ---------- */
-    .particle {
-        position: absolute;
-        border-radius: 50%;
-        opacity: 0.6;
-        animation: floatParticles linear infinite;
-        box-shadow: 0 0 10px #6b2cd8, 0 0 20px #6b2cd8;
-    }
-    @keyframes floatParticles {
-        0% { transform: translateY(100vh) scale(0.3); opacity: 0; }
-        50% { opacity: 1; }
-        100% { transform: translateY(-10vh) scale(1); opacity: 0; }
-    }
+        #sidebar h2 {
+            color: #6b2cd8;
+            margin-top: 0;
+        }
 
-    /* ---------- Fade Out for Testimonials ---------- */
-    .fade-out { opacity: 0; transition: opacity 0.8s ease; }
+        #sidebar button {
+            width: 100%;
+            margin: 12px 0;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            font-size: 16px;
+        }
 
-    /* ---------- Dashboard Progress Bar ---------- */
-    #progressContainer {
-        width: 100%;
-        height: 22px;
-        background: rgba(255,255,255,0.1);
-        border-radius: 12px;
-        overflow: hidden;
-        margin: 20px 0;
-        display: none;
-    }
-    #progressFill {
-        height: 100%;
-        width: 0%;
-        background: linear-gradient(90deg, #6b2cd8, #b393ff);
-        border-radius: 12px;
-        transition: width 0.5s ease;
-    }
-    </style>
+        /* ---------- Overlay ---------- */
+        #overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+            z-index: 4;
+            display: none;
+        }
+
+        #overlay.active {
+            display: block;
+        }
+
+        /* ---------- Content ---------- */
+        #content {
+            position: relative;
+            z-index: 1;
+            padding: 40px;
+            max-width: 1100px;
+            margin: auto;
+            padding-bottom: 80px;
+        }
+
+        /* ---------- Panels ---------- */
+        .panel {
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(12px);
+            border-radius: 18px;
+            padding: 28px;
+            margin-bottom: 28px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+        }
+
+        .panel h3 {
+            color: #6b2cd8;
+            margin-top: 0;
+        }
+
+        /* ---------- Glass Cards ---------- */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(12px);
+            border-radius: 18px;
+            padding: 28px;
+            margin-bottom: 28px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+        }
+
+        /* ---------- Buttons ---------- */
+        .button {
+            background: #6b2cd8;
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            padding: 12px 18px;
+            margin: 10px 0;
+            width: 100%;
+            font-size: 16px;
+        }
+
+        /* ---------- Menu Button ---------- */
+        #menuBtn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 6;
+            background: #6b2cd8;
+            border: none;
+            color: #fff;
+            padding: 12px 14px;
+            border-radius: 10px;
+        }
+
+        /* ---------- Progress ---------- */
+        #progressContainer {
+            display: none;
+            margin: 20px 0;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            width: 100%;
+            height: 16px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            background: linear-gradient(90deg, #6b2cd8, #b393ff);
+            height: 100%;
+            width: 0%;
+            transition: width 0.5s ease;
+            border-radius: 8px;
+        }
+
+        /* ---------- Fade ---------- */
+        .fade-out {
+            opacity: 0;
+            transition: opacity 0.8s;
+        }
+
+        /* ---------- Footer ---------- */
+        footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            padding: 18px 0;
+            font-size: 14px;
+            color: #aaa;
+            background: rgba(15, 15, 25, 0.95);
+            backdrop-filter: blur(12px);
+            box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.4);
+            z-index: 6;
+        }
+    </style>
 </head>
+
 <body>
 
-<div id="floating-bg"></div>
-<button id="menuBtn" onclick="toggleSidebar()">☰</button>
+    <div id="floating-bg"></div>
 
-<div id="sidebar">
-    <h2>AvalonFlow</h2>
-    <a href="dashboard.html"><button>Dashboard</button></a>
-    <a href="ecosystem.html"><button>Ecosystem</button></a>
-    <a href="branches.html"><button>Branches</button></a>
-    <a href="rewards.html"><button>Rewards</button></a>
-    <a href="support.html"><button>Support</button></a>
-    <button onclick="logout()">Logout</button>
-</div>
+    <button id="menuBtn" onclick="toggleSidebar()">☰</button>
 
-<div id="overlay" onclick="toggleSidebar()"></div>
+    <div id="sidebar">
+        <h2>AvalonFlow</h2>
+        <button onclick="showPanel('dashboard')">Dashboard</button>
+        <button onclick="showPanel('ecosystem')">Ecosystem</button>
+        <button onclick="showPanel('branches')">Branches</button>
+        <button onclick="showPanel('rewards')">Rewards</button>
+        <button onclick="showPanel('support')">Support</button>
+        <button onclick="logout()">Logout</button>
+    </div>
 
-<div id="content">
-    <div class="panel">
-        <h3>Welcome</h3>
+    <div id="overlay" onclick="toggleSidebar()"></div>
 
-        <div class="glass-card">
-            <h4>Your Path Inside AvalonFlow</h4>
-            <ol style="line-height:1.8; padding-left:18px;">
-                <li>Visit the Ecosystem</li>
-                <li>Understand how the branches work</li>
-                <li>Choose what aligns with you</li>
-                <li>Explore when ready</li>
-            </ol>
-        </div>
+    <div id="content">
+        <!-- Dashboard -->
+        <div id="dashboard" class="panel">
+            <h3>Welcome</h3>
 
-        <p id="testimonial">
-            AvalonFlow is a structured support framework designed to bring clarity
-            to demanding schedules — while creating room for measurable progress
-            and additional earning potential.
-        </p>
+            <div class="glass-card">
+                <h4>Your Path Inside AvalonFlow</h4>
+                <ol style="line-height: 1.8; padding-left: 18px;">
+                    <li>Visit the Ecosystem</li>
+                    <li>Understand how the branches work</li>
+                    <li>Choose what aligns with you</li>
+                    <li>Explore when ready</li>
+                </ol>
+            </div>
 
-        <p><em>Reflections from members:</em></p>
-        <ul id="testimonialList">
-            <li>“My shifts are demanding, and I don’t always have time to explore new options. What stood out for me was how simple and structured this felt.” — Charlotte</li>
-        </ul>
+            <p id="testimonial">
+                AvalonFlow is a structured support framework designed to bring clarity
+                to demanding schedules — while creating room for measurable progress
+                and additional earning potential.
+            </p>
 
-        <div id="progressContainer">
-            <h4>Current Progress — Logical Wing</h4>
-            <div class="progress-bar">
-                <div class="progress-fill" id="progressFill"></div>
-                <span id="progressPercent"></span>
-            </div>
-        </div>
+            <p><em>Reflections from members:</em></p>
+            <ul id="testimonialList">
+                <li>
+                    “My shifts are demanding, and I don’t always have time to explore new
+                    options. What stood out for me was how simple and structured this felt.
+                    It fits around my schedule without adding pressure.” — Charlotte,
+                    Patient Care Assistant
+                </li>
+            </ul>
 
-        <div class="glass-card">
-            <a href="https://linkly.link/2WFYR" target="_blank" class="button">
-                👉 View Framework Overview
-            </a>
-            <p style="margin-top:10px; font-size:14px; opacity:0.75;">
-                <em>Optional reference — designed for clarity, not persuasion.</em>
-            </p>
-        </div>
-    </div>
-</div>
+            <div id="progressContainer">
+                <h4>Current Progress — Logical Wing</h4>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill">
+                        <span id="progressPercent"></span>
+                    </div>
+                </div>
+            </div>
 
-<footer>
-    © 2025 AvalonFlow | Powered by Centrical™
-</footer>
+            <div class="glass-card">
+                <a href="https://linkly.link/2WFYR" target="_blank" style="font-size: 18px; font-weight: bold;">
+                    👉 View Framework Overview
+                </a>
+                <p style="margin-top: 10px; font-size: 14px; opacity: 0.75;">
+                    <em>Optional reference — designed for clarity, not persuasion.</em>
+                </p>
+            </div>
+        </div>
+    </div>
 
-<script>
-/* ---------- SIDEBAR TOGGLE ---------- */
-const sidebar = document.getElementById('sidebar');
-const overlay = document.getElementById('overlay');
-function toggleSidebar() {
-    sidebar.classList.toggle('open');
-    overlay.classList.toggle('active');
-}
+    <!-- Sticky Footer -->
+    <footer>
+        © 2025 AvalonFlow | Powered by Centrical™
+    </footer>
 
-/* ---------- LOGOUT ---------- */
-function logout() {
-    window.location.href = 'index.html';
-}
+    <script>
+        const bg = document.getElementById('floating-bg');
+        const colors = ['#6b2cd8', '#9b59b6', '#8e44ad'];
 
-/* ---------- PARTICLE BACKGROUND ---------- */
-const bg = document.getElementById('floating-bg');
-if (bg) {
-    const colors = ['#6b2cd8','#9b59b6','#8e44ad'];
-    function particle() {
-        const p = document.createElement('div');
-        p.className = 'particle';
-        const s = Math.random() * 20 + 10;
-        p.style.width = s + 'px';
-        p.style.height = s + 'px';
-        p.style.left = Math.random() * 100 + 'vw';
-        p.style.background = `radial-gradient(circle, ${colors[Math.floor(Math.random() * colors.length)]}, transparent)`;
-        p.style.animationDuration = (Math.random() * 20 + 10) + 's';
-        bg.appendChild(p);
-        setTimeout(() => p.remove(), 30000);
-    }
-    setInterval(particle, 800);
-}
+        function particle() {
+            const p = document.createElement('div');
+            p.className = 'particle';
+            const s = Math.random() * 20 + 10;
+            p.style.width = s + 'px';
+            p.style.height = s + 'px';
+            p.style.left = Math.random() * 100 + 'vw';
+            p.style.background = `radial-gradient(circle, ${colors[Math.floor(Math.random() * 3)]}, transparent)`;
+            p.style.animationDuration = (Math.random() * 20 + 10) + 's';
+            bg.appendChild(p);
+            setTimeout(() => p.remove(), 30000);
+        }
 
-/* ---------- DASHBOARD LOGICAL WING PROGRESS ---------- */
-const progressFill = document.getElementById('progressFill');
-const progressContainer = document.getElementById('progressContainer');
+        setInterval(particle, 800);
 
-if (progressFill && progressContainer) {
-    progressContainer.style.display = 'block';
-    const fillDuration = 12 * 60 * 60 * 1000; // 12 hours
-    let startTime = localStorage.getItem('logicalWingStart');
-    if (!startTime) {
-        startTime = Date.now();
-        localStorage.setItem('logicalWingStart', startTime);
-    } else {
-        startTime = parseInt(startTime);
-    }
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('overlay');
 
-    function updateDashboardProgress() {
-        const now = Date.now();
-        let elapsed = now - startTime;
-        if (elapsed >= fillDuration) {
-            startTime = now;
-            localStorage.setItem('logicalWingStart', startTime);
-            elapsed = 0;
-        }
+        function toggleSidebar() {
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('active');
+        }
 
-        const timeProgress = (elapsed / fillDuration) * 100;
-        let branchProgress = 0; // no branches unlocked logic in dashboard-only
-        const totalProgress = Math.min(timeProgress + branchProgress, 100);
-        animateProgress(progressFill, totalProgress);
-    }
+        function showPanel(id) {
+            document.querySelectorAll('.panel').forEach(p => p.style.display = 'none');
+            document.getElementById(id).style.display = 'block';
+            toggleSidebar();
+        }
 
-    setInterval(updateDashboardProgress, 1000);
-}
+        /* ---------- DASHBOARD LOGICAL WING PROGRESS ---------- */
+        const progressFill = document.getElementById("progressFill");
+        const progressContainer = document.getElementById("progressContainer");
 
-/* ---------- Animate Progress Function ---------- */
-function animateProgress(element, targetPercent) {
-    let current = parseFloat(element.style.width) || 0;
-    const step = 0.5;
-    function fillStep() {
-        if (current < targetPercent) {
-            current = Math.min(current + step, targetPercent);
-            element.style.width = current + '%';
-            requestAnimationFrame(fillStep);
-        }
-    }
-    requestAnimationFrame(fillStep);
-}
+        if (progressFill && progressContainer) {
+            progressContainer.style.display = "block";
+            const fillDuration = 12 * 60 * 60 * 1000;
+            let startTime = localStorage.getItem("logicalWingStart");
 
-/* ---------- TESTIMONIAL ROTATION ---------- */
-const testimonialLi = document.querySelector('#testimonialList li');
-if (testimonialLi) {
-    const testimonials = [
-        "“My shifts are demanding, and I don’t always have time to explore new options. What stood out for me was how simple and structured this felt.” — Charlotte",
-        "“As an educator, I value clarity and systems that make sense. This felt grounded and realistic.” — Emily",
-        "“I finally saw progress without feeling overwhelmed.” — Ava"
-    ];
-    let tIndex = 0;
-    setInterval(() => {
-        testimonialLi.classList.add('fade-out');
-        setTimeout(() => {
-            testimonialLi.innerText = testimonials[tIndex];
-            testimonialLi.classList.remove('fade-out');
-            tIndex = (tIndex + 1) % testimonials.length;
-        }, 800);
-    }, 4000);
-}
-</script>
+            if (!startTime) {
+                startTime = Date.now();
+                localStorage.setItem("logicalWingStart", startTime);
+            } else {
+                startTime = parseInt(startTime);
+            }
+
+            function updateDashboardProgress() {
+                const now = Date.now();
+                let elapsed = now - startTime;
+
+                if (elapsed >= fillDuration) {
+                    startTime = now;
+                    localStorage.setItem("logicalWingStart", startTime);
+                    elapsed = 0;
+                }
+
+                const timeProgress = (elapsed / fillDuration) * 100;
+                const branchProgress = 0;
+                const totalProgress = Math.min(timeProgress + branchProgress, 100);
+
+                animateProgress(progressFill, totalProgress);
+            }
+
+            setInterval(updateDashboardProgress, 1000);
+        }
+
+        function animateProgress(element, targetPercent) {
+            let current = parseFloat(element.style.width) || 0;
+            const step = 0.5;
+
+            function fillStep() {
+                if (current < targetPercent) {
+                    current = Math.min(current + step, targetPercent);
+                    element.style.width = current + "%";
+                    requestAnimationFrame(fillStep);
+                }
+            }
+
+            requestAnimationFrame(fillStep);
+        }
+
+        const testimonials = [
+            "“My shifts are demanding, and I don’t always have time to explore new options. What stood out for me was how simple and structured this felt.” — Charlotte",
+            "“As an educator, I value clarity and systems that make sense. This felt grounded and realistic.” — Emily",
+            "“I finally saw progress without feeling overwhelmed.” — Ava"
+        ];
+
+        let tIndex = 0;
+        const testimonialLi = document.querySelector("#testimonialList li");
+
+        setInterval(() => {
+            testimonialLi.classList.add("fade-out");
+            setTimeout(() => {
+                testimonialLi.innerText = testimonials[tIndex];
+                testimonialLi.classList.remove("fade-out");
+                tIndex = (tIndex + 1) % testimonials.length;
+            }, 800);
+        }, 4000);
+
+        function logout() {
+            window.location.href = "index.html";
+        }
+    </script>
 
 </body>
-  </html>
+      </html>
