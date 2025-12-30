@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AvalonFlow Ecosystem</title>
+    <title>AvalonFlow Dashboard</title>
 
     <style>
     /* ---------- Global Body & Font ---------- */
@@ -140,6 +140,27 @@
         50% { opacity: 1; }
         100% { transform: translateY(-10vh) scale(1); opacity: 0; }
     }
+
+    /* ---------- Fade Out for Testimonials ---------- */
+    .fade-out { opacity: 0; transition: opacity 0.8s ease; }
+
+    /* ---------- Dashboard Progress Bar ---------- */
+    #progressContainer {
+        width: 100%;
+        height: 22px;
+        background: rgba(255,255,255,0.1);
+        border-radius: 12px;
+        overflow: hidden;
+        margin: 20px 0;
+        display: none;
+    }
+    #progressFill {
+        height: 100%;
+        width: 0%;
+        background: linear-gradient(90deg, #6b2cd8, #b393ff);
+        border-radius: 12px;
+        transition: width 0.5s ease;
+    }
     </style>
 </head>
 <body>
@@ -160,31 +181,46 @@
 <div id="overlay" onclick="toggleSidebar()"></div>
 
 <div id="content">
-    <h3>The AvalonFlow Ecosystem</h3>
-    <p>Explore the structure that supports your progress and clarity:</p>
+    <div class="panel">
+        <h3>Welcome</h3>
 
-    <div class="glass-card">
-        <strong>Logical Wing</strong>
-        <p>Designed to help manage your schedule, align priorities, and track progress seamlessly.</p>
-    </div>
+        <div class="glass-card">
+            <h4>Your Path Inside AvalonFlow</h4>
+            <ol style="line-height:1.8; padding-left:18px;">
+                <li>Visit the Ecosystem</li>
+                <li>Understand how the branches work</li>
+                <li>Choose what aligns with you</li>
+                <li>Explore when ready</li>
+            </ol>
+        </div>
 
-    <div class="glass-card">
-        <strong>Mastery & Growth Wing</strong>
-        <p>Supports skill expansion, financial growth, and building sustainable systems.</p>
-    </div>
-
-    <div class="glass-card">
-        <strong>Community & Reflection Wing</strong>
-        <p>Provides shared insights, testimonials, and optional context from fellow members.</p>
-    </div>
-
-    <div class="glass-card">
-        <a href="https://linkly.link/2WFYR" target="_blank" class="button">
-            👉 View Ecosystem Overview
-        </a>
-        <p style="margin-top:10px; font-size:14px; opacity:0.75;">
-            <em>Optional reference — designed for clarity, not persuasion.</em>
+        <p id="testimonial">
+            AvalonFlow is a structured support framework designed to bring clarity
+            to demanding schedules — while creating room for measurable progress
+            and additional earning potential.
         </p>
+
+        <p><em>Reflections from members:</em></p>
+        <ul id="testimonialList">
+            <li>“My shifts are demanding, and I don’t always have time to explore new options. What stood out for me was how simple and structured this felt.” — Charlotte</li>
+        </ul>
+
+        <div id="progressContainer">
+            <h4>Current Progress — Logical Wing</h4>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+                <span id="progressPercent"></span>
+            </div>
+        </div>
+
+        <div class="glass-card">
+            <a href="https://linkly.link/2WFYR" target="_blank" class="button">
+                👉 View Framework Overview
+            </a>
+            <p style="margin-top:10px; font-size:14px; opacity:0.75;">
+                <em>Optional reference — designed for clarity, not persuasion.</em>
+            </p>
+        </div>
     </div>
 </div>
 
@@ -224,7 +260,73 @@ if (bg) {
     }
     setInterval(particle, 800);
 }
+
+/* ---------- DASHBOARD LOGICAL WING PROGRESS ---------- */
+const progressFill = document.getElementById('progressFill');
+const progressContainer = document.getElementById('progressContainer');
+
+if (progressFill && progressContainer) {
+    progressContainer.style.display = 'block';
+    const fillDuration = 12 * 60 * 60 * 1000; // 12 hours
+    let startTime = localStorage.getItem('logicalWingStart');
+    if (!startTime) {
+        startTime = Date.now();
+        localStorage.setItem('logicalWingStart', startTime);
+    } else {
+        startTime = parseInt(startTime);
+    }
+
+    function updateDashboardProgress() {
+        const now = Date.now();
+        let elapsed = now - startTime;
+        if (elapsed >= fillDuration) {
+            startTime = now;
+            localStorage.setItem('logicalWingStart', startTime);
+            elapsed = 0;
+        }
+
+        const timeProgress = (elapsed / fillDuration) * 100;
+        let branchProgress = 0; // no branches unlocked logic in dashboard-only
+        const totalProgress = Math.min(timeProgress + branchProgress, 100);
+        animateProgress(progressFill, totalProgress);
+    }
+
+    setInterval(updateDashboardProgress, 1000);
+}
+
+/* ---------- Animate Progress Function ---------- */
+function animateProgress(element, targetPercent) {
+    let current = parseFloat(element.style.width) || 0;
+    const step = 0.5;
+    function fillStep() {
+        if (current < targetPercent) {
+            current = Math.min(current + step, targetPercent);
+            element.style.width = current + '%';
+            requestAnimationFrame(fillStep);
+        }
+    }
+    requestAnimationFrame(fillStep);
+}
+
+/* ---------- TESTIMONIAL ROTATION ---------- */
+const testimonialLi = document.querySelector('#testimonialList li');
+if (testimonialLi) {
+    const testimonials = [
+        "“My shifts are demanding, and I don’t always have time to explore new options. What stood out for me was how simple and structured this felt.” — Charlotte",
+        "“As an educator, I value clarity and systems that make sense. This felt grounded and realistic.” — Emily",
+        "“I finally saw progress without feeling overwhelmed.” — Ava"
+    ];
+    let tIndex = 0;
+    setInterval(() => {
+        testimonialLi.classList.add('fade-out');
+        setTimeout(() => {
+            testimonialLi.innerText = testimonials[tIndex];
+            testimonialLi.classList.remove('fade-out');
+            tIndex = (tIndex + 1) % testimonials.length;
+        }, 800);
+    }, 4000);
+}
 </script>
 
 </body>
-                                    </html>
+  </html>
