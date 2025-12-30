@@ -5,15 +5,15 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AvalonFlow Ecosystem</title>
 
-<!-- Inline CSS -->
 <style>
 /* ---------- Global Body & Font ---------- */
-body {
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
     font-family: 'Arial', sans-serif;
     background-color: #1a0d3a;
     color: #fff;
-    margin: 0;
-    padding: 0;
     overflow-x: hidden;
     position: relative;
 }
@@ -63,7 +63,9 @@ body {
     z-index: 1;
     padding: 40px;
     max-width: 1100px;
-    margin: auto;
+    margin-left: 300px; /* space for sidebar */
+    min-height: calc(100vh - 60px);
+    box-sizing: border-box;
     padding-bottom: 80px;
 }
 
@@ -83,7 +85,7 @@ body {
 }
 .glass-card strong { color: #b393ff; font-size: 18px; }
 
-/* ---------- Buttons ---------- */
+/* ---------- Buttons / Links ---------- */
 .button, button, .glass-card a {
     display: inline-block;
     background-color: #6b2cd8;
@@ -103,6 +105,7 @@ body {
 
 /* ---------- Footer ---------- */
 footer {
+    height: 60px;
     text-align: center;
     padding: 20px;
     font-size: 14px;
@@ -124,6 +127,8 @@ footer {
     background: radial-gradient(circle at bottom, #1a0d3a, #0d0d0d);
     overflow: hidden;
 }
+
+/* ---------- Particle Styles ---------- */
 .particle {
     position: absolute;
     border-radius: 50%;
@@ -136,14 +141,16 @@ footer {
     50% { opacity: 1; }
     100% { transform: translateY(-10vh) scale(1); opacity: 0; }
 }
+
+/* ---------- Fade Out for Testimonials ---------- */
+.fade-out { opacity: 0; transition: opacity 0.8s ease; }
 </style>
 </head>
 <body data-requires-login="true">
 
-<!-- Floating Particle Background -->
 <div id="floating-bg"></div>
 
-<!-- Sidebar Toggle -->
+<!-- Sidebar toggle button -->
 <button id="menuBtn" onclick="toggleSidebar()">☰</button>
 
 <!-- Sidebar -->
@@ -165,7 +172,6 @@ footer {
     <div class="panel">
         <h3>Ecosystem Overview</h3>
 
-        <!-- Logical Wing Card -->
         <div class="glass-card">
             <strong>🪽 The Logical Wing</strong><br>
             <em>Where Structure Meets Intelligence</em>
@@ -173,7 +179,6 @@ footer {
             <blockquote>“When logic finds balance, systems begin to think — and life begins to flow.”</blockquote>
         </div>
 
-        <!-- Emotional Wing Card -->
         <div class="glass-card">
             <strong>💫 The Emotional Wing</strong><br>
             <em>The Living Core of AvalonFlow</em>
@@ -186,14 +191,7 @@ footer {
 <!-- Footer -->
 <footer>© 2025 AvalonFlow | Powered by Centrical™</footer>
 
-<!-- Inline JS -->
 <script>
-// ------------------- LOGOUT -------------------
-function logout() {
-    localStorage.removeItem('loggedIn');
-    window.location.href = 'index.html';
-}
-
 // ------------------- PAGE ACCESS CONTROL -------------------
 if (document.body.dataset.requiresLogin === "true") {
     if (localStorage.getItem('loggedIn') !== 'true') {
@@ -208,12 +206,14 @@ function toggleSidebar() {
     if (sidebar) sidebar.classList.toggle('open');
     if (overlay) overlay.classList.toggle('active');
 }
+window.toggleSidebar = toggleSidebar;
 
 // ------------------- PARTICLE BACKGROUND -------------------
 const bg = document.getElementById('floating-bg');
 if (bg) {
     const colors = ['#6b2cd8','#9b59b6','#8e44ad'];
     const totalParticles = 40;
+
     function createParticle() {
         const p = document.createElement('div');
         p.className = 'particle';
@@ -225,9 +225,10 @@ if (bg) {
         bg.appendChild(p);
         setTimeout(() => p.remove(), 25000);
     }
+
     for(let i=0;i<totalParticles;i++) setTimeout(createParticle, i*150);
     setInterval(createParticle, 1000);
 }
 </script>
 </body>
-  </html>
+    </html>
