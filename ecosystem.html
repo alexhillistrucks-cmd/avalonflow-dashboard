@@ -253,7 +253,10 @@
             document.getElementById(id).style.display = 'block';
             toggleSidebar();
         }
-
+        // Show Ecosystem panel automatically when page loads
+           document.addEventListener('DOMContentLoaded', () => {
+           showPanel('ecosystem');
+        });
         function logout() {
             window.location.href = "index.html";
         }
@@ -261,3 +264,4 @@
 </body>
 
         </html>
+
