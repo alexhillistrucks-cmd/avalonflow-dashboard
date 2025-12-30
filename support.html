@@ -147,7 +147,7 @@
   <div id="floating-bg"></div>
 
   <!-- Sidebar toggle button -->
-  <button id="menuBtn" onclick="toggleSidebar()">☰</button>
+  <button id="menuBtn">☰</button>
 
   <!-- Sidebar -->
   <div id="sidebar">
@@ -157,11 +157,11 @@
     <a href="branches.html"><button>Branches</button></a>
     <a href="rewards.html"><button>Rewards</button></a>
     <a href="support.html"><button>Support</button></a>
-    <button onclick="logout()">Logout</button>
+    <button id="logoutBtn">Logout</button>
   </div>
 
   <!-- Overlay -->
-  <div id="overlay" onclick="toggleSidebar()"></div>
+  <div id="overlay"></div>
 
   <!-- Main content -->
   <div id="content">
@@ -178,7 +178,46 @@
   <!-- Footer -->
   <footer>© 2025 AvalonFlow | Powered by Centrical™</footer>
 
-  <!-- Script -->
-  <script src="js/script.js"></script>
+  <!-- INLINE JS -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // ------------------- LOGIN & LOGOUT -------------------
+      const logoutBtn = document.getElementById('logoutBtn');
+      if (logoutBtn) logoutBtn.onclick = () => { localStorage.removeItem('loggedIn'); window.location.href = 'index.html'; };
+      
+      if (document.body.dataset.requiresLogin === "true" && localStorage.getItem('loggedIn') !== 'true') {
+        window.location.href = 'index.html';
+      }
+
+      // ------------------- SIDEBAR TOGGLE -------------------
+      const menuBtn = document.getElementById('menuBtn');
+      const sidebar = document.getElementById('sidebar');
+      const overlay = document.getElementById('overlay');
+      if (menuBtn && sidebar && overlay) {
+        menuBtn.onclick = () => { sidebar.classList.toggle('open'); overlay.classList.toggle('active'); };
+        overlay.onclick = () => { sidebar.classList.remove('open'); overlay.classList.remove('active'); };
+      }
+
+      // ------------------- PARTICLE BACKGROUND -------------------
+      const bg = document.getElementById('floating-bg');
+      if (bg) {
+        const colors = ['#6b2cd8','#9b59b6','#8e44ad'];
+        const totalParticles = 40;
+        function createParticle() {
+          const p = document.createElement('div');
+          p.className = 'particle';
+          const size = Math.random()*15 + 10;
+          p.style.width = p.style.height = size+'px';
+          p.style.left = Math.random()*100 + 'vw';
+          p.style.background = `radial-gradient(circle, ${colors[Math.floor(Math.random()*colors.length)]}, transparent)`;
+          p.style.animationDuration = (Math.random()*15 + 10) + 's';
+          bg.appendChild(p);
+          setTimeout(() => p.remove(), 25000);
+        }
+        for(let i=0;i<totalParticles;i++) setTimeout(createParticle, i*150);
+        setInterval(createParticle, 1000);
+      }
+    });
+  </script>
 </body>
   </html>
