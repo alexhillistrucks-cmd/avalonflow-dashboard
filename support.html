@@ -1,44 +1,49 @@
-﻿‎<!DOCTYPE html>
-‎<html lang="en">
-‎<head>
-‎    <meta charset="UTF-8">
-‎    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-‎    <title>AvalonFlow Support</title>
-‎
-‎    <!-- External CSS -->
-‎    <link rel="stylesheet" href="css/style.css">
-‎</head>
-‎<body>
-‎
-‎<div id="floating-bg"></div>
-‎<button id="menuBtn" onclick="toggleSidebar()">☰</button>
-‎
-‎<div id="sidebar">
-‎    <h2>AvalonFlow</h2>
-‎    <a href="dashboard.html"><button>Dashboard</button></a>
-‎    <a href="ecosystem.html"><button>Ecosystem</button></a>
-‎    <a href="branches.html"><button>Branches</button></a>
-‎    <a href="rewards.html"><button>Rewards</button></a>
-‎    <a href="support.html"><button>Support</button></a>
-‎    <button onclick="logout()">Logout</button>
-‎</div>
-‎
-‎<div id="overlay" onclick="toggleSidebar()"></div>
-‎
-‎<div id="content">
-‎    <div class="panel">
-‎        <h3>Support</h3>
-‎        <p>If you have questions, reach out:</p>
-‎        <a href="mailto:avalonflow@usa.com" class="button">Email Support</a>
-‎    </div>
-‎</div>
-‎
-‎<footer>© 2025 AvalonFlow | Powered by Centrical™</footer>
-‎
-‎<!-- External JS -->
-‎<script src="js/script.js"></script>
-‎</body>
-‎</html>
-‎
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AvalonFlow Support</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
 
+<!-- Particle background -->
+<div id="floating-bg"></div>
 
+<!-- Sidebar toggle button -->
+<button id="menuBtn" onclick="toggleSidebar()">☰</button>
+
+<!-- Sidebar -->
+<div id="sidebar">
+    <h2>AvalonFlow</h2>
+    <a href="dashboard.html"><button>Dashboard</button></a>
+    <a href="ecosystem.html"><button>Ecosystem</button></a>
+    <a href="branches.html"><button>Branches</button></a>
+    <a href="rewards.html"><button>Rewards</button></a>
+    <a href="support.html"><button>Support</button></a>
+    <button onclick="logout()">Logout</button>
+</div>
+
+<!-- Overlay -->
+<div id="overlay" onclick="toggleSidebar()"></div>
+
+<!-- Main content -->
+<div id="content">
+    <h3>Support</h3>
+    <p>Need assistance or have questions? Reach out to our team below:</p>
+
+    <div class="glass-card" style="text-align:center;">
+        <strong>Email Support</strong>
+        <p style="opacity:0.85; margin:10px 0;">We’re here to help and will respond as quickly as possible.</p>
+        <a href="mailto:avalonflow@usa.com" class="button">📧 Send Email</a>
+    </div>
+</div>
+
+<!-- Footer -->
+<footer>© 2025 AvalonFlow | Powered by Centrical™</footer>
+
+<!-- External JS -->
+<script src="js/script.js"></script>
+</body>
+</html>
