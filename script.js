@@ -1,70 +1,94 @@
-// ==================== AvalonFlow Script ====================
+// ==================== AvalonFlow Core Script ====================
 document.addEventListener('DOMContentLoaded', () => {
 
-  // ------------------- DEMO LOGIN -------------------
+  /* ============================================================
+     AUTHENTICATION (DEMO)
+  ============================================================ */
+
   function login() {
-    const avalonFlowID = document.getElementById("AvalonFlowID")?.value;
-    const password = document.getElementById("password")?.value;
+    const idInput = document.getElementById('AvalonFlowID');
+    const pwInput = document.getElementById('password');
+    const errorBox = document.getElementById('loginError');
 
-    const demoAvalonFlowID = "AVF-2739XG-LUX78";
-    const demoPassword = "avalon123";
+    if (!idInput || !pwInput) return;
 
-    if (avalonFlowID === demoAvalonFlowID && password === demoPassword) {
-      localStorage.setItem('loggedIn', 'true'); // store login state
-      window.location.href = "dashboard.html";
-    } else {
-      const loginError = document.getElementById("loginError");
-      if (loginError) loginError.innerText = "Access details not recognized. Please check and try again.";
+    const demoID = 'AVF-2739XG-LUX78';
+    const demoPW = 'avalon123';
+
+    if (idInput.value === demoID && pwInput.value === demoPW) {
+      localStorage.setItem('loggedIn', 'true');
+      window.location.href = 'dashboard.html';
+    } else if (errorBox) {
+      errorBox.textContent =
+        'Access details not recognized. Please check and try again.';
     }
   }
   window.login = login;
 
-  // ------------------- LOGOUT -------------------
   function logout() {
     localStorage.removeItem('loggedIn');
     window.location.href = 'index.html';
   }
   window.logout = logout;
 
-  // ------------------- PAGE ACCESS CONTROL -------------------
-  if (document.body.dataset.requiresLogin === "true") {
+  /* ============================================================
+     PAGE ACCESS CONTROL
+  ============================================================ */
+
+  if (document.body.dataset.requiresLogin === 'true') {
     if (localStorage.getItem('loggedIn') !== 'true') {
-      window.location.href = 'index.html';
+      window.location.replace('index.html');
+      return;
     }
   }
 
-  // ------------------- SIDEBAR TOGGLE -------------------
+  /* ============================================================
+     SIDEBAR / OVERLAY
+  ============================================================ */
+
   const sidebar = document.getElementById('sidebar');
   const overlay = document.getElementById('overlay');
+
   function toggleSidebar() {
-    if (sidebar) sidebar.classList.toggle('open');
-    if (overlay) overlay.classList.toggle('active');
+    sidebar?.classList.toggle('open');
+    overlay?.classList.toggle('active');
   }
   window.toggleSidebar = toggleSidebar;
 
-  // ------------------- PARTICLE BACKGROUND -------------------
+  /* ============================================================
+     PARTICLE BACKGROUND
+  ============================================================ */
+
   const bg = document.getElementById('floating-bg');
   if (bg) {
-    const colors = ['#6b2cd8','#9b59b6','#8e44ad'];
-    const totalParticles = 40;
+    const colors = ['#6b2cd8', '#9b59b6', '#8e44ad'];
+    const maxParticles = 40;
 
-    function createParticle() {
+    function spawnParticle() {
       const p = document.createElement('div');
       p.className = 'particle';
-      const size = Math.random()*15 + 10;
-      p.style.width = p.style.height = size+'px';
-      p.style.left = Math.random()*100 + 'vw';
-      p.style.background = `radial-gradient(circle, ${colors[Math.floor(Math.random()*colors.length)]}, transparent)`;
-      p.style.animationDuration = (Math.random()*15 + 10) + 's';
+
+      const size = Math.random() * 15 + 10;
+      p.style.width = p.style.height = `${size}px`;
+      p.style.left = `${Math.random() * 100}vw`;
+      p.style.background =
+        `radial-gradient(circle, ${colors[Math.floor(Math.random() * colors.length)]}, transparent)`;
+      p.style.animationDuration = `${Math.random() * 15 + 10}s`;
+
       bg.appendChild(p);
       setTimeout(() => p.remove(), 25000);
     }
 
-    for(let i=0;i<totalParticles;i++) setTimeout(createParticle, i*150);
-    setInterval(createParticle, 1000);
+    for (let i = 0; i < maxParticles; i++) {
+      setTimeout(spawnParticle, i * 150);
+    }
+    setInterval(spawnParticle, 1000);
   }
 
-  // ------------------- BRANCH & REWARDS -------------------
+  /* ============================================================
+     BRANCH UNLOCKING & PAYMENTS
+  ============================================================ */
+
   const unlockedBranches = {};
 
   function unlockBranch(branch) {
@@ -73,113 +97,140 @@ document.addEventListener('DOMContentLoaded', () => {
       grow: 'https://app.paymento.io/payment-link/829c6748054a418f8226cb20387729f8',
       ease: 'https://app.paymento.io/payment-link/0ddcf9e099234b39ae2acbac693d527f'
     };
-    if (links[branch]) window.open(links[branch], '_blank');
-    unlockedBranches[branch] = true;
-    updateRewardsProgress();
-    updateDashboardProgress();
+
+    if (links[branch]) {
+      window.open(links[branch], '_blank');
+      unlockedBranches[branch] = true;
+      updateDashboardProgress();
+      updateRewardsProgress();
+    }
   }
   window.unlockBranch = unlockBranch;
 
-  // ------------------- DASHBOARD PROGRESS -------------------
+  /* ============================================================
+     DASHBOARD PROGRESS (12-HOUR LOGICAL WING)
+  ============================================================ */
+
   const progressFill = document.getElementById('progressFill');
   const progressContainer = document.getElementById('progressContainer');
+  const FILL_DURATION = 12 * 60 * 60 * 1000;
 
   function updateDashboardProgress() {
-    if (!progressFill || !progressContainer) return;
+    if (!progressFill) return;
 
-    const fillDuration = 12*60*60*1000; // 12 hours
-    let startTime = parseInt(localStorage.getItem('logicalWingStart')) || Date.now();
-    localStorage.setItem('logicalWingStart', startTime);
+    let start =
+      Number(localStorage.getItem('logicalWingStart')) || Date.now();
+    localStorage.setItem('logicalWingStart', start);
 
-    let elapsed = Date.now() - startTime;
-    if (elapsed >= fillDuration) {
-      startTime = Date.now();
-      localStorage.setItem('logicalWingStart', startTime);
+    let elapsed = Date.now() - start;
+    if (elapsed >= FILL_DURATION) {
+      start = Date.now();
+      localStorage.setItem('logicalWingStart', start);
       elapsed = 0;
     }
 
-    let timeProgress = (elapsed / fillDuration) * 100;
-    let branchProgress = 0;
-    if (unlockedBranches.care) branchProgress += 33;
-    if (unlockedBranches.grow) branchProgress += 33;
-    if (unlockedBranches.ease) branchProgress += 34;
+    const timePercent = (elapsed / FILL_DURATION) * 100;
 
-    animateProgress(progressFill, Math.min(timeProgress + branchProgress, 100));
+    let branchPercent = 0;
+    if (unlockedBranches.care) branchPercent += 33;
+    if (unlockedBranches.grow) branchPercent += 33;
+    if (unlockedBranches.ease) branchPercent += 34;
+
+    animateProgress(
+      progressFill,
+      Math.min(timePercent + branchPercent, 100)
+    );
   }
 
-  if (progressFill && progressContainer) {
+  if (progressContainer && progressFill) {
     progressContainer.style.display = 'block';
     setInterval(updateDashboardProgress, 1000);
   }
 
-  // ------------------- REWARDS -------------------
-  const rewardsMapping = [
-    {id:'avalonCareFill', lockedId:'avalonCareLocked', branch:'care', maxPercent:33},
-    {id:'avalonGrowFill', lockedId:'avalonGrowLocked', branch:'grow', maxPercent:33},
-    {id:'avalonEaseFill', lockedId:'avalonEaseLocked', branch:'ease', maxPercent:34}
+  /* ============================================================
+     REWARDS PROGRESS
+  ============================================================ */
+
+  const rewards = [
+    { fill: 'avalonCareFill', lock: 'avalonCareLocked', key: 'care', max: 33 },
+    { fill: 'avalonGrowFill', lock: 'avalonGrowLocked', key: 'grow', max: 33 },
+    { fill: 'avalonEaseFill', lock: 'avalonEaseLocked', key: 'ease', max: 34 }
   ];
 
   function animateProgress(el, target) {
     let current = parseFloat(el.style.width) || 0;
-    const step = 0.5;
-    function stepFn() {
-      if(current < target) {
-        current = Math.min(current + step, target);
-        el.style.width = current + '%';
-        requestAnimationFrame(stepFn);
+
+    function step() {
+      if (current < target) {
+        current = Math.min(current + 0.5, target);
+        el.style.width = `${current}%`;
+        requestAnimationFrame(step);
       }
     }
-    requestAnimationFrame(stepFn);
+    requestAnimationFrame(step);
   }
 
   function updateRewardsProgress() {
-    const dashboardFill = document.getElementById('progressFill');
-    if (!dashboardFill) return;
-    const currentPercent = parseFloat(dashboardFill.style.width) || 0;
+    if (!progressFill) return;
 
-    rewardsMapping.forEach(item => {
-      const fill = document.getElementById(item.id);
-      const locked = document.getElementById(item.lockedId);
-      if (fill && locked) {
-        if (unlockedBranches[item.branch]) {
-          locked.style.display = 'none';
-          animateProgress(fill, Math.min(currentPercent, item.maxPercent));
-        } else {
-          fill.style.width = '0%';
-          locked.style.display = 'block';
-        }
+    const dashboardPercent =
+      parseFloat(progressFill.style.width) || 0;
+
+    rewards.forEach(r => {
+      const fillEl = document.getElementById(r.fill);
+      const lockEl = document.getElementById(r.lock);
+      if (!fillEl || !lockEl) return;
+
+      if (unlockedBranches[r.key]) {
+        lockEl.style.display = 'none';
+        animateProgress(fillEl, Math.min(dashboardPercent, r.max));
+      } else {
+        fillEl.style.width = '0%';
+        lockEl.style.display = 'block';
       }
     });
   }
+
   setInterval(updateRewardsProgress, 1000);
 
-  // ------------------- TESTIMONIAL ROTATION -------------------
-  const testimonialLi = document.querySelector('#testimonialList li');
-  if (testimonialLi) {
+  /* ============================================================
+     TESTIMONIAL ROTATION
+  ============================================================ */
+
+  const testimonialItem =
+    document.querySelector('#testimonialList li');
+
+  if (testimonialItem) {
     const testimonials = [
-      "“My shifts are demanding, and I don’t always have time to explore new options. What stood out for me was how simple and structured this felt.” — Charlotte",
-      "“As an educator, I value clarity and systems that make sense. This felt grounded and realistic.” — Emily",
-      "“I finally saw progress without feeling overwhelmed.” — Ava"
+      '“My shifts are demanding, and I don’t always have time to explore new options.” — Charlotte',
+      '“As an educator, I value clarity and structure. This felt grounded.” — Emily',
+      '“I finally saw progress without feeling overwhelmed.” — Ava'
     ];
-    let tIndex = 0;
+
+    let index = 0;
     setInterval(() => {
-      testimonialLi.classList.add('fade-out');
+      testimonialItem.classList.add('fade-out');
       setTimeout(() => {
-        testimonialLi.innerText = testimonials[tIndex];
-        testimonialLi.classList.remove('fade-out');
-        tIndex = (tIndex + 1) % testimonials.length;
+        testimonialItem.textContent = testimonials[index];
+        testimonialItem.classList.remove('fade-out');
+        index = (index + 1) % testimonials.length;
       }, 800);
     }, 4000);
   }
 
-  // ------------------- COLLAPSIBLE CARDS -------------------
+  /* ============================================================
+     COLLAPSIBLE INFO CARDS
+  ============================================================ */
+
   function toggleInfo(id) {
-    const card = document.getElementById(id);
-    if (card) card.classList.toggle('open');
+    document.getElementById(id)?.classList.toggle('open');
   }
   window.toggleInfo = toggleInfo;
 
-  // ------------------- INITIAL SYNC -------------------
+  /* ============================================================
+     INITIAL SYNC
+  ============================================================ */
+
   updateDashboardProgress();
   updateRewardsProgress();
 
