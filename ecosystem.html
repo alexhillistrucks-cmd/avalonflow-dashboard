@@ -1,247 +1,263 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AvalonFlow Ecosystem</title>
-<style>
-    /* ---------- Global Body & Font ---------- */
-    body {
-        font-family: 'Arial', sans-serif;
-        background-color: #1a0d3a;
-        color: #fff;
-        margin: 0;
-        padding: 0;
-        overflow-x: hidden;
-        position: relative;
-    }
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AvalonFlow Ecosystem</title>
 
-    /* ---------- Sidebar ---------- */
-    #sidebar {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 280px;
-        height: 100%;
-        background: rgba(15,15,25,0.95);
-        backdrop-filter: blur(14px);
-        z-index: 5;
-        padding: 25px;
-        transform: translateX(-100%);
-        transition: transform 0.3s ease;
-    }
-    #sidebar.open { transform: translateX(0); }
-    #sidebar h2 { color: #6b2cd8; margin-top: 0; }
-    #sidebar button {
-        width: 100%;
-        margin: 12px 0;
-        padding: 12px;
-        border: none;
-        border-radius: 10px;
-        background: rgba(255,255,255,0.1);
-        color: #fff;
-        font-size: 16px;
-        cursor: pointer;
-    }
+    <style>
+        /* ---------- Base ---------- */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background: #0d0d0d;
+            color: #fff;
+            overflow-x: hidden;
+        }
 
-    /* ---------- Overlay ---------- */
-    #overlay {
-        position: fixed;
-        inset: 0;
-        background: rgba(0,0,0,0.6);
-        backdrop-filter: blur(4px);
-        z-index: 4;
-        display: none;
-    }
-    #overlay.active { display: block; }
+        button {
+            cursor: pointer;
+        }
 
-    /* ---------- Main Content ---------- */
-    #content {
-        position: relative;
-        z-index: 1;
-        padding: 40px;
-        max-width: 1100px;
-        margin: auto;
-        padding-bottom: 80px;
-    }
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
 
-    /* ---------- Glass Cards ---------- */
-    .glass-card {
-        background: rgba(255,255,255,0.12);
-        backdrop-filter: blur(12px);
-        border-radius: 18px;
-        padding: 28px;
-        margin-bottom: 28px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.35);
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-    .glass-card:hover {
-        transform: translateY(-8px);
-        box-shadow: 0 12px 35px rgba(0,0,0,0.5);
-    }
+        /* ---------- Floating Background ---------- */
+        #floating-bg {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            background: radial-gradient(circle at bottom, #1a0d3a, #0d0d0d);
+            overflow: hidden;
+        }
 
-    /* ---------- Buttons / Links ---------- */
-    .button, button, .glass-card a {
-        display: inline-block;
-        background-color: #6b2cd8;
-        color: white;
-        padding: 10px 15px;
-        text-decoration: none;
-        border-radius: 8px;
-        margin-top: 10px;
-        border: none;
-        cursor: pointer;
-        transition: all 0.3s ease;
-    }
-    .button:hover, button:hover, .glass-card a:hover {
-        background-color: #7f3fe5;
-        box-shadow: 0 6px 15px rgba(0,0,0,0.4);
-    }
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.6;
+            animation: floatParticles linear infinite;
+            box-shadow: 0 0 10px #6b2cd8, 0 0 20px #6b2cd8;
+        }
 
-    /* ---------- Floating Background ---------- */
-    #floating-bg {
-        position: fixed;
-        inset: 0;
-        z-index: 0;
-        pointer-events: none;
-        background: radial-gradient(circle at bottom, #1a0d3a, #0d0d0d);
-        overflow: hidden;
-    }
-    .particle {
-        position: absolute;
-        border-radius: 50%;
-        opacity: 0.6;
-        animation: floatParticles linear infinite;
-        box-shadow: 0 0 10px #6b2cd8, 0 0 20px #6b2cd8;
-    }
-    @keyframes floatParticles {
-        0% { transform: translateY(100vh) scale(0.3); opacity: 0; }
-        50% { opacity: 1; }
-        100% { transform: translateY(-10vh) scale(1); opacity: 0; }
-    }
+        @keyframes floatParticles {
+            0% {
+                transform: translateY(100vh) scale(0.3);
+                opacity: 0;
+            }
 
-    /* ---------- Notification Toast ---------- */
-    #toast {
-        position: fixed;
-        bottom: 80px;
-        right: 20px;
-        background: #6b2cd8;
-        padding: 12px 20px;
-        border-radius: 8px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.5);
-        color: #fff;
-        opacity: 0;
-        transform: translateY(20px);
-        transition: opacity 0.5s ease, transform 0.5s ease;
-        z-index: 999;
-    }
-    #toast.show {
-        opacity: 1;
-        transform: translateY(0);
-    }
+            50% {
+                opacity: 1;
+            }
 
-    /* ---------- Mobile Optimization ---------- */
-    @media (max-width: 768px) {
-        #content { padding: 20px; }
-        #sidebar { width: 220px; padding: 20px; }
-        .glass-card { padding: 20px; }
-    }
-</style>
+            100% {
+                transform: translateY(-10vh) scale(1);
+                opacity: 0;
+            }
+        }
+
+        /* ---------- Sidebar ---------- */
+        #sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 280px;
+            height: 100%;
+            background: rgba(15, 15, 25, 0.95);
+            backdrop-filter: blur(14px);
+            z-index: 5;
+            padding: 25px;
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+        }
+
+        #sidebar.open {
+            transform: translateX(0);
+        }
+
+        #sidebar h2 {
+            color: #6b2cd8;
+            margin-top: 0;
+        }
+
+        #sidebar button {
+            width: 100%;
+            margin: 12px 0;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            font-size: 16px;
+        }
+
+        /* ---------- Overlay ---------- */
+        #overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+            z-index: 4;
+            display: none;
+        }
+
+        #overlay.active {
+            display: block;
+        }
+
+        /* ---------- Content ---------- */
+        #content {
+            position: relative;
+            z-index: 1;
+            padding: 40px;
+            max-width: 1100px;
+            margin: auto;
+            padding-bottom: 80px;
+        }
+
+        /* ---------- Panels ---------- */
+        .panel {
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(12px);
+            border-radius: 18px;
+            padding: 28px;
+            margin-bottom: 28px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+        }
+
+        .panel h3 {
+            color: #6b2cd8;
+            margin-top: 0;
+        }
+
+        /* ---------- Glass Cards ---------- */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(12px);
+            border-radius: 18px;
+            padding: 28px;
+            margin-bottom: 28px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+        }
+
+        /* ---------- Buttons ---------- */
+        .button {
+            background: #6b2cd8;
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            padding: 12px 18px;
+            margin: 10px 0;
+            width: 100%;
+            font-size: 16px;
+        }
+
+        /* ---------- Footer ---------- */
+        footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            padding: 18px 0;
+            font-size: 14px;
+            color: #aaa;
+            background: rgba(15, 15, 25, 0.95);
+            backdrop-filter: blur(12px);
+            box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.4);
+            z-index: 6;
+        }
+    </style>
 </head>
+
 <body>
-<div id="floating-bg"></div>
-<button id="menuBtn" onclick="toggleSidebar()" aria-label="Toggle Menu">☰</button>
+    <div id="floating-bg"></div>
 
-<div id="sidebar">
-    <h2>AvalonFlow</h2>
-    <a href="dashboard.html"><button aria-label="Go to Dashboard">Dashboard</button></a>
-    <a href="ecosystem.html"><button aria-label="Go to Ecosystem">Ecosystem</button></a>
-    <a href="branches.html"><button aria-label="Go to Branches">Branches</button></a>
-    <a href="rewards.html"><button aria-label="Go to Rewards">Rewards</button></a>
-    <a href="support.html"><button aria-label="Go to Support">Support</button></a>
-    <button onclick="logout()" aria-label="Logout">Logout</button>
-</div>
+    <button id="menuBtn" onclick="toggleSidebar()">☰</button>
 
-<div id="overlay" onclick="toggleSidebar()"></div>
+    <div id="sidebar">
+        <h2>AvalonFlow</h2>
+        <button onclick="showPanel('dashboard')">Dashboard</button>
+        <button onclick="showPanel('ecosystem')">Ecosystem</button>
+        <button onclick="showPanel('branches')">Branches</button>
+        <button onclick="showPanel('rewards')">Rewards</button>
+        <button onclick="showPanel('support')">Support</button>
+        <button onclick="logout()">Logout</button>
+    </div>
 
-<div id="content">
-    <div class="panel">
+    <div id="overlay" onclick="toggleSidebar()"></div>
+
+    <!-- Ecosystem -->
+    <div id="ecosystem" class="panel" style="display:none;">
         <h3>Ecosystem Overview</h3>
+
         <div class="glass-card">
-            <h4>Core Features</h4>
-            <ul style="line-height:1.8;">
-                <li>Explore AvalonFlow branches and their purpose</li>
-                <li>Understand the Logical Wing progress</li>
-                <li>Track rewards and unlocked privileges</li>
-                <li>Discover support resources and connections</li>
-            </ul>
-            <button onclick="exploreEcosystem('core')" aria-label="Explore Core Ecosystem">Explore Core</button>
+            <strong>🪽 The Logical Wing</strong><br>
+            <em>Where Structure Meets Intelligence</em>
+            <p>
+                Represents the operational core — powered by a hybrid intelligence
+                infrastructure that combines reliable systems with thoughtful human
+                reasoning, enabling steady and sustainable progress.
+            </p>
+            <blockquote>“When logic finds balance, systems begin to think — and life begins to flow.”</blockquote>
         </div>
 
         <div class="glass-card">
-            <h4>Advanced Features</h4>
-            <ul style="line-height:1.8;">
-                <li>See detailed branch analytics</li>
-                <li>Visualize personal progress timeline</li>
-                <li>Receive notifications on branch updates</li>
-            </ul>
-            <button onclick="exploreEcosystem('advanced')" aria-label="Explore Advanced Ecosystem">Explore Advanced</button>
+            <strong>💫 The Emotional Wing</strong><br>
+            <em>The Living Core of AvalonFlow</em>
+            <p>
+                Supports stability, rhythm, and long-term well-being — ensuring
+                progress translates into calm, clarity, and meaningful rewards.
+            </p>
+            <blockquote>Each wing contributes on how the branches impact stability across work, growth, and life.</blockquote>
         </div>
     </div>
-</div>
 
-<footer>© 2025 AvalonFlow | Powered by Centrical™</footer>
-<div id="toast" role="alert" aria-live="assertive"></div>
+    <!-- Sticky Footer -->
+    <footer>
+        © 2025 AvalonFlow | Powered by Centrical™
+    </footer>
 
-<script>
-    // ------------------- SIDEBAR TOGGLE -------------------
-    const sidebar = document.getElementById('sidebar');
-    const overlay = document.getElementById('overlay');
-    function toggleSidebar(){
-        sidebar.classList.toggle('open');
-        overlay.classList.toggle('active');
-    }
+    <script>
+        const bg = document.getElementById('floating-bg');
+        const colors = ['#6b2cd8', '#9b59b6', '#8e44ad'];
 
-    // ------------------- PARTICLE BACKGROUND -------------------
-    const bg = document.getElementById('floating-bg');
-    if(bg){
-        const colors = ['#6b2cd8','#9b59b6','#8e44ad'];
-        function particle(){
-            const p=document.createElement('div');
-            p.className='particle';
-            const s=Math.random()*20 +10;
-            p.style.width=s+'px';
-            p.style.height=s+'px';
-            p.style.left=Math.random()*100+'vw';
-            p.style.background=`radial-gradient(circle, ${colors[Math.floor(Math.random()*colors.length)]}, transparent)`;
-            p.style.animationDuration=(Math.random()*20+10)+'s';
+        function particle() {
+            const p = document.createElement('div');
+            p.className = 'particle';
+            const s = Math.random() * 20 + 10;
+            p.style.width = s + 'px';
+            p.style.height = s + 'px';
+            p.style.left = Math.random() * 100 + 'vw';
+            p.style.background = `radial-gradient(circle, ${colors[Math.floor(Math.random() * 3)]}, transparent)`;
+            p.style.animationDuration = (Math.random() * 20 + 10) + 's';
             bg.appendChild(p);
-            setTimeout(()=>p.remove(),30000);
+            setTimeout(() => p.remove(), 30000);
         }
-        setInterval(particle,800);
-    }
 
-    // ------------------- ECOSYSTEM INTERACTIONS -------------------
-    function exploreEcosystem(section){
-        // Store interaction in localStorage for persistence
-        let explored = JSON.parse(localStorage.getItem('exploredEcosystem')) || {};
-        explored[section]=true;
-        localStorage.setItem('exploredEcosystem', JSON.stringify(explored));
-        showToast(`${section.charAt(0).toUpperCase()+section.slice(1)} explored!`);
-    }
+        setInterval(particle, 800);
 
-    // ------------------- TOAST NOTIFICATION -------------------
-    function showToast(msg){
-        const toast=document.getElementById('toast');
-        toast.innerText=msg;
-        toast.classList.add('show');
-        setTimeout(()=>toast.classList.remove('show'),2500);
-    }
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('overlay');
 
-    // ------------------- LOGOUT -------------------
-    function logout(){
-        window.location.href='index.html';
-    }
-</script>
+        function toggleSidebar() {
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('active');
+        }
+
+        function showPanel(id) {
+            document.querySelectorAll('.panel').forEach(p => p.style.display = 'none');
+            document.getElementById(id).style.display = 'block';
+            toggleSidebar();
+        }
+
+        function logout() {
+            window.location.href = "index.html";
+        }
+    </script>
 </body>
-    </html>
+
+        </html>
