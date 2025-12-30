@@ -1,267 +1,252 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>AvalonFlow Ecosystem</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AvalonFlow Ecosystem</title>
 
-    <style>
-        /* ---------- Base ---------- */
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            background: #0d0d0d;
-            color: #fff;
-            overflow-x: hidden;
-        }
+    <style>
+        /* ---------- Base ---------- */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background: #0d0d0d;
+            color: #fff;
+            overflow-x: hidden;
+        }
 
-        button {
-            cursor: pointer;
-        }
+        button {
+            cursor: pointer;
+        }
 
-        a {
-            color: inherit;
-            text-decoration: none;
-        }
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
 
-        /* ---------- Floating Background ---------- */
-        #floating-bg {
-            position: fixed;
-            inset: 0;
-            z-index: 0;
-            pointer-events: none;
-            background: radial-gradient(circle at bottom, #1a0d3a, #0d0d0d);
-            overflow: hidden;
-        }
+        /* ---------- Floating Background ---------- */
+        #floating-bg {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            background: radial-gradient(circle at bottom, #1a0d3a, #0d0d0d);
+            overflow: hidden;
+        }
 
-        .particle {
-            position: absolute;
-            border-radius: 50%;
-            opacity: 0.6;
-            animation: floatParticles linear infinite;
-            box-shadow: 0 0 10px #6b2cd8, 0 0 20px #6b2cd8;
-        }
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.6;
+            animation: floatParticles linear infinite;
+            box-shadow: 0 0 10px #6b2cd8, 0 0 20px #6b2cd8;
+        }
 
-        @keyframes floatParticles {
-            0% {
-                transform: translateY(100vh) scale(0.3);
-                opacity: 0;
-            }
+        @keyframes floatParticles {
+            0% {
+                transform: translateY(100vh) scale(0.3);
+                opacity: 0;
+            }
+            50% { opacity: 1; }
+            100% {
+                transform: translateY(-10vh) scale(1);
+                opacity: 0;
+            }
+        }
 
-            50% {
-                opacity: 1;
-            }
+        /* ---------- Sidebar ---------- */
+        #sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 280px;
+            height: 100%;
+            background: rgba(15, 15, 25, 0.95);
+            backdrop-filter: blur(14px);
+            z-index: 5;
+            padding: 25px;
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+        }
 
-            100% {
-                transform: translateY(-10vh) scale(1);
-                opacity: 0;
-            }
-        }
+        #sidebar.open { transform: translateX(0); }
 
-        /* ---------- Sidebar ---------- */
-        #sidebar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 280px;
-            height: 100%;
-            background: rgba(15, 15, 25, 0.95);
-            backdrop-filter: blur(14px);
-            z-index: 5;
-            padding: 25px;
-            transform: translateX(-100%);
-            transition: transform 0.3s ease;
-        }
+        #sidebar h2 { color: #6b2cd8; margin-top: 0; }
 
-        #sidebar.open {
-            transform: translateX(0);
-        }
+        #sidebar button {
+            width: 100%;
+            margin: 12px 0;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            font-size: 16px;
+        }
 
-        #sidebar h2 {
-            color: #6b2cd8;
-            margin-top: 0;
-        }
+        /* ---------- Overlay ---------- */
+        #overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+            z-index: 4;
+            display: none;
+        }
 
-        #sidebar button {
-            width: 100%;
-            margin: 12px 0;
-            padding: 12px;
-            border: none;
-            border-radius: 10px;
-            background: rgba(255, 255, 255, 0.1);
-            color: #fff;
-            font-size: 16px;
-        }
+        #overlay.active { display: block; }
 
-        /* ---------- Overlay ---------- */
-        #overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.6);
-            backdrop-filter: blur(4px);
-            z-index: 4;
-            display: none;
-        }
+        /* ---------- Content ---------- */
+        #content {
+            position: relative;
+            z-index: 1;
+            padding: 40px;
+            max-width: 1100px;
+            margin: auto;
+            padding-bottom: 80px;
+        }
 
-        #overlay.active {
-            display: block;
-        }
+        /* ---------- Panels ---------- */
+        .panel {
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(12px);
+            border-radius: 18px;
+            padding: 28px;
+            margin-bottom: 28px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+            display: none; /* panels hidden by default */
+        }
 
-        /* ---------- Content ---------- */
-        #content {
-            position: relative;
-            z-index: 1;
-            padding: 40px;
-            max-width: 1100px;
-            margin: auto;
-            padding-bottom: 80px;
-        }
+        .panel h3 { color: #6b2cd8; margin-top: 0; }
 
-        /* ---------- Panels ---------- */
-        .panel {
-            background: rgba(255, 255, 255, 0.12);
-            backdrop-filter: blur(12px);
-            border-radius: 18px;
-            padding: 28px;
-            margin-bottom: 28px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
-        }
+        /* ---------- Glass Cards ---------- */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(12px);
+            border-radius: 18px;
+            padding: 28px;
+            margin-bottom: 28px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+        }
 
-        .panel h3 {
-            color: #6b2cd8;
-            margin-top: 0;
-        }
+        /* ---------- Buttons ---------- */
+        .button {
+            background: #6b2cd8;
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            padding: 12px 18px;
+            margin: 10px 0;
+            width: 100%;
+            font-size: 16px;
+        }
 
-        /* ---------- Glass Cards ---------- */
-        .glass-card {
-            background: rgba(255, 255, 255, 0.12);
-            backdrop-filter: blur(12px);
-            border-radius: 18px;
-            padding: 28px;
-            margin-bottom: 28px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
-        }
-
-        /* ---------- Buttons ---------- */
-        .button {
-            background: #6b2cd8;
-            color: #fff;
-            border: none;
-            border-radius: 10px;
-            padding: 12px 18px;
-            margin: 10px 0;
-            width: 100%;
-            font-size: 16px;
-        }
-
-        /* ---------- Footer ---------- */
-        footer {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            text-align: center;
-            padding: 18px 0;
-            font-size: 14px;
-            color: #aaa;
-            background: rgba(15, 15, 25, 0.95);
-            backdrop-filter: blur(12px);
-            box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.4);
-            z-index: 6;
-        }
-    </style>
+        /* ---------- Footer ---------- */
+        footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            padding: 18px 0;
+            font-size: 14px;
+            color: #aaa;
+            background: rgba(15, 15, 25, 0.95);
+            backdrop-filter: blur(12px);
+            box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.4);
+            z-index: 6;
+        }
+    </style>
 </head>
 
 <body>
-    <div id="floating-bg"></div>
+    <div id="floating-bg"></div>
+    <button id="menuBtn" onclick="toggleSidebar()">☰</button>
 
-    <button id="menuBtn" onclick="toggleSidebar()">☰</button>
+    <div id="sidebar">
+        <h2>AvalonFlow</h2>
+        <button onclick="showPanel('dashboard')">Dashboard</button>
+        <button onclick="showPanel('ecosystem')">Ecosystem</button>
+        <button onclick="showPanel('branches')">Branches</button>
+        <button onclick="showPanel('rewards')">Rewards</button>
+        <button onclick="showPanel('support')">Support</button>
+        <button onclick="logout()">Logout</button>
+    </div>
 
-    <div id="sidebar">
-        <h2>AvalonFlow</h2>
-        <button onclick="showPanel('dashboard')">Dashboard</button>
-        <button onclick="showPanel('ecosystem')">Ecosystem</button>
-        <button onclick="showPanel('branches')">Branches</button>
-        <button onclick="showPanel('rewards')">Rewards</button>
-        <button onclick="showPanel('support')">Support</button>
-        <button onclick="logout()">Logout</button>
-    </div>
+    <div id="overlay" onclick="toggleSidebar()"></div>
 
-    <div id="overlay" onclick="toggleSidebar()"></div>
+    <!-- Ecosystem -->
+    <div id="ecosystem" class="panel">
+        <h3>Ecosystem Overview</h3>
 
-    <!-- Ecosystem -->
-    <div id="ecosystem" class="panel" style="display:none;">
-        <h3>Ecosystem Overview</h3>
+        <div class="glass-card">
+            <strong>🪽 The Logical Wing</strong><br>
+            <em>Where Structure Meets Intelligence</em>
+            <p>
+                Represents the operational core — powered by a hybrid intelligence
+                infrastructure that combines reliable systems with thoughtful human
+                reasoning, enabling steady and sustainable progress.
+            </p>
+            <blockquote>“When logic finds balance, systems begin to think — and life begins to flow.”</blockquote>
+        </div>
 
-        <div class="glass-card">
-            <strong>🪽 The Logical Wing</strong><br>
-            <em>Where Structure Meets Intelligence</em>
-            <p>
-                Represents the operational core — powered by a hybrid intelligence
-                infrastructure that combines reliable systems with thoughtful human
-                reasoning, enabling steady and sustainable progress.
-            </p>
-            <blockquote>“When logic finds balance, systems begin to think — and life begins to flow.”</blockquote>
-        </div>
+        <div class="glass-card">
+            <strong>💫 The Emotional Wing</strong><br>
+            <em>The Living Core of AvalonFlow</em>
+            <p>
+                Supports stability, rhythm, and long-term well-being — ensuring
+                progress translates into calm, clarity, and meaningful rewards.
+            </p>
+            <blockquote>Each wing contributes on how the branches impact stability across work, growth, and life.</blockquote>
+        </div>
+    </div>
 
-        <div class="glass-card">
-            <strong>💫 The Emotional Wing</strong><br>
-            <em>The Living Core of AvalonFlow</em>
-            <p>
-                Supports stability, rhythm, and long-term well-being — ensuring
-                progress translates into calm, clarity, and meaningful rewards.
-            </p>
-            <blockquote>Each wing contributes on how the branches impact stability across work, growth, and life.</blockquote>
-        </div>
-    </div>
+    <!-- Sticky Footer -->
+    <footer>
+        © 2025 AvalonFlow | Powered by Centrical™
+    </footer>
 
-    <!-- Sticky Footer -->
-    <footer>
-        © 2025 AvalonFlow | Powered by Centrical™
-    </footer>
+    <script>
+        const bg = document.getElementById('floating-bg');
+        const colors = ['#6b2cd8','#9b59b6','#8e44ad'];
 
-    <script>
-        const bg = document.getElementById('floating-bg');
-        const colors = ['#6b2cd8', '#9b59b6', '#8e44ad'];
+        function particle() {
+            const p = document.createElement('div');
+            p.className = 'particle';
+            const s = Math.random() * 20 + 10;
+            p.style.width = s + 'px';
+            p.style.height = s + 'px';
+            p.style.left = Math.random() * 100 + 'vw';
+            p.style.background = `radial-gradient(circle, ${colors[Math.floor(Math.random()*3)]}, transparent)`;
+            p.style.animationDuration = (Math.random() * 20 + 10) + 's';
+            bg.appendChild(p);
+            setTimeout(() => p.remove(), 30000);
+        }
+        setInterval(particle, 800);
 
-        function particle() {
-            const p = document.createElement('div');
-            p.className = 'particle';
-            const s = Math.random() * 20 + 10;
-            p.style.width = s + 'px';
-            p.style.height = s + 'px';
-            p.style.left = Math.random() * 100 + 'vw';
-            p.style.background = `radial-gradient(circle, ${colors[Math.floor(Math.random() * 3)]}, transparent)`;
-            p.style.animationDuration = (Math.random() * 20 + 10) + 's';
-            bg.appendChild(p);
-            setTimeout(() => p.remove(), 30000);
-        }
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('overlay');
 
-        setInterval(particle, 800);
+        function toggleSidebar() {
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('active');
+        }
 
-        const sidebar = document.getElementById('sidebar');
-        const overlay = document.getElementById('overlay');
+        function showPanel(id) {
+            document.querySelectorAll('.panel').forEach(p => p.style.display = 'none');
+            document.getElementById(id).style.display = 'block';
+            toggleSidebar(); // optional
+        }
 
-        function toggleSidebar() {
-            sidebar.classList.toggle('open');
-            overlay.classList.toggle('active');
-        }
+        function logout() {
+            window.location.href = "index.html";
+        }
 
-        function showPanel(id) {
-            document.querySelectorAll('.panel').forEach(p => p.style.display = 'none');
-            document.getElementById(id).style.display = 'block';
-            toggleSidebar();
-        }
-        // Show Ecosystem panel automatically when page loads
-           document.addEventListener('DOMContentLoaded', () => {
-           showPanel('ecosystem');
-        });
-        function logout() {
-            window.location.href = "index.html";
-        }
-    </script>
+        // -----------------------------
+        // Option 2: Show Ecosystem automatically
+        window.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('ecosystem').style.display = 'block';
+        });
+    </script>
 </body>
-
-        </html>
-
+                                                   </html>
