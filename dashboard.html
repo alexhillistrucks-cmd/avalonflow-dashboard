@@ -124,7 +124,6 @@
             padding: 28px;
             margin-bottom: 28px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
-            display: none;
         }
 
         .panel h3 {
@@ -218,19 +217,19 @@
 
     <div id="sidebar">
         <h2>AvalonFlow</h2>
-        <button onclick="showPanel('dashboard')">Dashboard</button>
-        <button onclick="showPanel('ecosystem')">Ecosystem</button>
-        <button onclick="showPanel('branches')">Branches</button>
-        <button onclick="showPanel('rewards')">Rewards</button>
-        <button onclick="showPanel('support')">Support</button>
+        <button onclick="window.location.href='dashboard.html'">Dashboard</button>
+        <button onclick="window.location.href='ecosystem.html'">Ecosystem</button>
+        <button onclick="window.location.href='branches.html'">Branches</button>
+        <button onclick="window.location.href='rewards.html'">Rewards</button>
+        <button onclick="window.location.href='support.html'">Support</button>
         <button onclick="logout()">Logout</button>
     </div>
 
     <div id="overlay" onclick="toggleSidebar()"></div>
 
+    <!-- Dashboard Panel -->
     <div id="content">
-        <!-- Dashboard -->
-        <div id="dashboard" class="panel" style="display:block;">
+        <div id="dashboard" class="panel">
             <h3>Welcome</h3>
 
             <div class="glass-card">
@@ -277,38 +276,6 @@
                 </p>
             </div>
         </div>
-
-        <!-- Ecosystem -->
-        <div id="ecosystem" class="panel">
-            <h3>Ecosystem</h3>
-            <div class="glass-card">
-                <p>Ecosystem panel placeholder.</p>
-            </div>
-        </div>
-
-        <!-- Branches -->
-        <div id="branches" class="panel">
-            <h3>Branches</h3>
-            <div class="glass-card">
-                <p>Branches panel placeholder.</p>
-            </div>
-        </div>
-
-        <!-- Rewards -->
-        <div id="rewards" class="panel">
-            <h3>Rewards</h3>
-            <div class="glass-card">
-                <p>Rewards panel placeholder.</p>
-            </div>
-        </div>
-
-        <!-- Support -->
-        <div id="support" class="panel">
-            <h3>Support</h3>
-            <div class="glass-card">
-                <p>Support panel placeholder.</p>
-            </div>
-        </div>
     </div>
 
     <!-- Sticky Footer -->
@@ -341,12 +308,6 @@
         function toggleSidebar() {
             sidebar.classList.toggle('open');
             overlay.classList.toggle('active');
-        }
-
-        function showPanel(id) {
-            document.querySelectorAll('.panel').forEach(p => p.style.display = 'none');
-            document.getElementById(id).style.display = 'block';
-            toggleSidebar();
         }
 
         /* ---------- DASHBOARD LOGICAL WING PROGRESS ---------- */
@@ -424,4 +385,5 @@
     </script>
 
 </body>
-    </html>
+
+        </html>
