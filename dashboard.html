@@ -1,87 +1,242 @@
 <!DOCTYPE html>
-<html lang="en" data-requires-login="true">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AvalonFlow Dashboard</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AvalonFlow Dashboard</title>
 
-    <!-- GLOBAL STYLE -->
-    <link rel="stylesheet" href="/css/style.css">
+  <!-- INLINE DASHBOARD CSS -->
+  <style>
+    /* ---------- Global Body & Font ---------- */
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #1a0d3a;
+      color: #fff;
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* ---------- Sidebar ---------- */
+    #sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 280px;
+      height: 100%;
+      background: rgba(15,15,25,0.95);
+      backdrop-filter: blur(14px);
+      z-index: 5;
+      padding: 25px;
+      transform: translateX(-100%);
+      transition: transform 0.3s ease;
+    }
+    #sidebar.open { transform: translateX(0); }
+    #sidebar h2 { color: #6b2cd8; margin-top: 0; }
+    #sidebar button {
+      width: 100%;
+      margin: 12px 0;
+      padding: 12px;
+      border: none;
+      border-radius: 10px;
+      background: rgba(255,255,255,0.1);
+      color: #fff;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    /* ---------- Overlay ---------- */
+    #overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(4px);
+      z-index: 4;
+      display: none;
+    }
+    #overlay.active { display: block; }
+
+    /* ---------- Main Content ---------- */
+    #content {
+      position: relative;
+      z-index: 1;
+      padding: 40px;
+      max-width: 1100px;
+      margin: auto;
+      padding-bottom: 80px;
+    }
+
+    /* ---------- Glass Cards ---------- */
+    .glass-card {
+      background: rgba(255,255,255,0.12);
+      backdrop-filter: blur(12px);
+      border-radius: 18px;
+      padding: 28px;
+      margin-bottom: 28px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .glass-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 12px 35px rgba(0,0,0,0.5);
+    }
+
+    /* ---------- Branch Headers inside Cards ---------- */
+    .glass-card strong { color: #b393ff; font-size: 18px; }
+
+    /* ---------- Buttons ---------- */
+    .button, button, .glass-card a {
+      display: inline-block;
+      background-color: #6b2cd8;
+      color: white;
+      padding: 10px 15px;
+      text-decoration: none;
+      border-radius: 8px;
+      margin-top: 10px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .button:hover, button:hover, .glass-card a:hover {
+      background-color: #7f3fe5;
+      box-shadow: 0 6px 15px rgba(0,0,0,0.4);
+    }
+
+    /* ---------- Dashboard Progress Bar ---------- */
+    #progressContainer {
+      width: 100%;
+      height: 22px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 12px;
+      overflow: hidden;
+      margin: 20px 0;
+      display: none;
+    }
+    #progressFill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #6b2cd8, #b393ff);
+      border-radius: 12px;
+      transition: width 0.5s ease;
+    }
+
+    /* ---------- Footer ---------- */
+    footer {
+      text-align: center;
+      padding: 20px;
+      font-size: 14px;
+      color: #ccc;
+      background: rgba(15,15,25,0.95);
+      backdrop-filter: blur(12px);
+      box-shadow: 0 -5px 20px rgba(0,0,0,0.4);
+      position: fixed;
+      width: 100%;
+      bottom: 0;
+    }
+
+    /* ---------- Floating Background ---------- */
+    #floating-bg {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background: radial-gradient(circle at bottom, #1a0d3a, #0d0d0d);
+      overflow: hidden;
+    }
+
+    /* ---------- Particles ---------- */
+    .particle {
+      position: absolute;
+      border-radius: 50%;
+      opacity: 0.6;
+      animation: floatParticles linear infinite;
+      box-shadow: 0 0 10px #6b2cd8, 0 0 20px #6b2cd8;
+    }
+    @keyframes floatParticles {
+      0% { transform: translateY(100vh) scale(0.3); opacity: 0; }
+      50% { opacity: 1; }
+      100% { transform: translateY(-10vh) scale(1); opacity: 0; }
+    }
+
+    /* ---------- Fade Out for Testimonials ---------- */
+    .fade-out { opacity: 0; transition: opacity 0.8s ease; }
+  </style>
 </head>
-<body>
+<body data-requires-login="true">
 
-<div id="floating-bg"></div>
+  <div id="floating-bg"></div>
 
-<!-- Sidebar toggle -->
-<button id="menuBtn" onclick="toggleSidebar()">☰</button>
+  <!-- Sidebar toggle -->
+  <button id="menuBtn" onclick="toggleSidebar()">☰</button>
 
-<!-- Sidebar -->
-<div id="sidebar">
+  <!-- Sidebar -->
+  <div id="sidebar">
     <h2>AvalonFlow</h2>
-    <a href="/dashboard.html"><button>Dashboard</button></a>
-    <a href="/ecosystem.html"><button>Ecosystem</button></a>
-    <a href="/branches.html"><button>Branches</button></a>
-    <a href="/rewards.html"><button>Rewards</button></a>
-    <a href="/support.html"><button>Support</button></a>
+    <a href="dashboard.html"><button>Dashboard</button></a>
+    <a href="ecosystem.html"><button>Ecosystem</button></a>
+    <a href="branches.html"><button>Branches</button></a>
+    <a href="rewards.html"><button>Rewards</button></a>
+    <a href="support.html"><button>Support</button></a>
     <button onclick="logout()">Logout</button>
-</div>
+  </div>
 
-<!-- Overlay -->
-<div id="overlay" onclick="toggleSidebar()"></div>
+  <!-- Overlay -->
+  <div id="overlay" onclick="toggleSidebar()"></div>
 
-<!-- Main content -->
-<div id="content">
+  <!-- Main content -->
+  <div id="content">
     <div class="panel">
-        <h3>Welcome to AvalonFlow</h3>
+      <h3>Welcome to AvalonFlow</h3>
 
-        <!-- Glass card -->
-        <div class="glass-card">
-            <h4>Your Path Inside AvalonFlow</h4>
-            <ol style="line-height:1.8; padding-left:18px;">
-                <li>Visit the Ecosystem</li>
-                <li>Understand how the branches work</li>
-                <li>Choose what aligns with you</li>
-                <li>Explore when ready</li>
-            </ol>
+      <!-- Glass card -->
+      <div class="glass-card">
+        <h4>Your Path Inside AvalonFlow</h4>
+        <ol style="line-height:1.8; padding-left:18px;">
+          <li>Visit the Ecosystem</li>
+          <li>Understand how the branches work</li>
+          <li>Choose what aligns with you</li>
+          <li>Explore when ready</li>
+        </ol>
+      </div>
+
+      <!-- Testimonials -->
+      <p id="testimonial">
+        AvalonFlow is a structured support framework designed to bring clarity
+        to demanding schedules — while creating room for measurable progress
+        and additional earning potential.
+      </p>
+      <p><em>Reflections from members:</em></p>
+      <ul id="testimonialList">
+        <li>“My shifts are demanding, and I don’t always have time to explore new options. What stood out for me was how simple and structured this felt.” — Charlotte</li>
+      </ul>
+
+      <!-- Logical Wing Progress -->
+      <div id="progressContainer">
+        <h4>Current Progress — Logical Wing</h4>
+        <div class="progress-bar">
+          <div class="progress-fill" id="progressFill"></div>
         </div>
+      </div>
 
-        <!-- Testimonials -->
-        <p id="testimonial">
-            AvalonFlow is a structured support framework designed to bring clarity
-            to demanding schedules — while creating room for measurable progress
-            and additional earning potential.
+      <!-- Framework Overview -->
+      <div class="glass-card">
+        <a href="https://linkly.link/2WFYR" target="_blank" class="button">
+          👉 View Framework Overview
+        </a>
+        <p style="margin-top:10px; font-size:14px; opacity:0.75;">
+          <em>Optional reference — designed for clarity, not persuasion.</em>
         </p>
-        <p><em>Reflections from members:</em></p>
-        <ul id="testimonialList">
-            <li>“My shifts are demanding, and I don’t always have time to explore new options. What stood out for me was how simple and structured this felt.” — Charlotte</li>
-        </ul>
-
-        <!-- Logical Wing Progress -->
-        <div id="progressContainer">
-            <h4>Current Progress — Logical Wing</h4>
-            <div class="progress-bar">
-                <div class="progress-fill" id="progressFill"></div>
-            </div>
-        </div>
-
-        <!-- Framework Overview -->
-        <div class="glass-card">
-            <a href="https://linkly.link/2WFYR" target="_blank" class="button">
-                👉 View Framework Overview
-            </a>
-            <p style="margin-top:10px; font-size:14px; opacity:0.75;">
-                <em>Optional reference — designed for clarity, not persuasion.</em>
-            </p>
-        </div>
+      </div>
     </div>
-</div>
+  </div>
 
-<!-- Footer -->
-<footer>
+  <!-- Footer -->
+  <footer>
     © 2025 AvalonFlow | Powered by Centrical™
-</footer>
+  </footer>
 
-<!-- SCRIPT -->
-<script src="/js/script.js"></script>
+  <!-- Script -->
+  <script src="js/script.js"></script>
 </body>
-        </html>
+</html>
