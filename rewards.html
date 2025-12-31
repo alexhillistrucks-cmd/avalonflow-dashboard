@@ -53,6 +53,20 @@
     }
     #overlay.active { display: block; }
 
+    #menuBtn {
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        z-index: 6;
+        background: #6b2cd8;
+        border: none;
+        color: #fff;
+        padding: 12px 14px;
+        border-radius: 10px;
+        cursor: pointer;
+        font-size: 20px;
+    }
+
     #content {
         position: relative;
         z-index: 1;
@@ -91,20 +105,6 @@
         margin: 10px 0;
         width: 100%;
         font-size: 16px;
-    }
-
-    #menuBtn {
-        position: fixed;
-        top: 20px;
-        left: 20px;
-        z-index: 6;
-        background: #6b2cd8;
-        border: none;
-        color: #fff;
-        padding: 12px 14px;
-        border-radius: 10px;
-        cursor: pointer;
-        font-size: 20px;
     }
 
     .progress-bar {
@@ -280,33 +280,35 @@ function updateRewardsProgress(){
     const now=Date.now();
     let unlockedBranches=JSON.parse(localStorage.getItem('unlockedBranches'))||{};
     let unlockTimes=JSON.parse(localStorage.getItem('unlockTimes'))||{};
+    
     rewardsMapping.forEach(item=>{
         const fill=document.getElementById(item.id);
         const lockedText=document.getElementById(item.lockedId);
         if(fill && lockedText){
-            if(unlockedBranches[item.branch]){
-                const elapsed=now - unlockTimes[item.branch];
-                if(elapsed >= branchDurations[item.branch]){
-                    delete unlockedBranches[item.branch];
-                    delete unlockTimes[item.branch];
-                    localStorage.setItem('unlockedBranches',JSON.stringify(unlockedBranches));
-                    localStorage.setItem('unlockTimes',JSON.stringify(unlockTimes));
-                    fill.style.width='0%';
-                    lockedText.style.display='block';
-                    lockedText.textContent='🔒 Locked — Complete payment to unlock';
-                } else {
-                    lockedText.style.display='none';
-                    animateProgress(fill,item.maxPercent * Math.min(elapsed/branchDurations[item.branch],1));
-                }
-            } else {
+            const unlocked = unlockedBranches[item.branch];
+            const elapsed = unlocked ? now - unlockTimes[item.branch] : 0;
+
+            if(!unlocked || elapsed < 0){
                 fill.style.width='0%';
                 lockedText.style.display='block';
                 lockedText.textContent='🔒 Locked — Complete payment to unlock';
+            } else if(elapsed >= branchDurations[item.branch]){
+                delete unlockedBranches[item.branch];
+                delete unlockTimes[item.branch];
+                localStorage.setItem('unlockedBranches',JSON.stringify(unlockedBranches));
+                localStorage.setItem('unlockTimes',JSON.stringify(unlockTimes));
+                fill.style.width='0%';
+                lockedText.style.display='block';
+                lockedText.textContent='🔒 Locked — Complete payment to unlock';
+            } else {
+                lockedText.style.display='none';
+                animateProgress(fill, item.maxPercent * (elapsed/branchDurations[item.branch]));
             }
         }
     });
 }
 
+// Payment redirect handling
 window.addEventListener("load",()=>{
     const notification=document.getElementById("rewardNotification");
     const params=new URLSearchParams(window.location.search);
@@ -314,6 +316,7 @@ window.addEventListener("load",()=>{
     const status=params.get("status");
     let unlockedBranches=JSON.parse(localStorage.getItem('unlockedBranches'))||{};
     let unlockTimes=JSON.parse(localStorage.getItem('unlockTimes'))||{};
+
     if(branch && status==='success'){
         unlockedBranches[branch]=true;
         unlockTimes[branch]=Date.now();
@@ -327,6 +330,7 @@ window.addEventListener("load",()=>{
         notification.classList.add("show");
         setTimeout(()=>notification.classList.remove("show"),3000);
     }
+
     updateRewardsProgress();
     window.history.replaceState({}, document.title, window.location.pathname);
 });
@@ -341,7 +345,8 @@ function resetLogoutTimer(){
 ['click','mousemove','keydown','scroll','touchstart'].forEach(evt=>document.addEventListener(evt,resetLogoutTimer));
 resetLogoutTimer();
 
+// Update progress every minute
 setInterval(updateRewardsProgress,60000);
 </script>
 </body>
-                                                 </html>
+                                         </html>
