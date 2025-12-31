@@ -140,10 +140,28 @@
             transition: top 0.5s ease, opacity 0.5s ease;
             z-index: 9999;
             opacity: 0;
+            max-width: 350px;
+            white-space: normal;
+            overflow: hidden;
         }
         .notification-bar.show {
             top: 20px;
             opacity: 1;
+        }
+        .notification-bar::before {
+            content: '';
+            position: absolute;
+            left: -50%;
+            top: 0;
+            width: 50%;
+            height: 100%;
+            background: rgba(255,255,255,0.3);
+            transform: skewX(-25deg);
+            animation: liquidWave 2s linear infinite;
+        }
+        @keyframes liquidWave {
+            0% { left: -50%; }
+            100% { left: 100%; }
         }
 
         /* ---------- Mini TV Video ---------- */
@@ -274,7 +292,7 @@
             window.location.href = 'index.html';
         }
 
-        /* Ecosystem Notification (Dashboard style) */
+        /* Ecosystem Notification (Dashboard style with shimmer) */
         window.addEventListener("load", () => {
             const notification = document.getElementById("ecosystemNotification");
 
@@ -319,4 +337,4 @@
         resetLogoutTimer(); // initialize
     </script>
 </body>
-                                                          </html>
+    </html>
