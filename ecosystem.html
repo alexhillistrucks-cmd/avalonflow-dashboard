@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -15,15 +14,8 @@
             color: #fff;
             overflow-x: hidden;
         }
-
-        button {
-            cursor: pointer;
-        }
-
-        a {
-            color: inherit;
-            text-decoration: none;
-        }
+        button { cursor: pointer; }
+        a { color: inherit; text-decoration: none; }
 
         /* ---------- Floating Background ---------- */
         #floating-bg {
@@ -34,7 +26,6 @@
             background: radial-gradient(circle at bottom, #1a0d3a, #0d0d0d);
             overflow: hidden;
         }
-
         .particle {
             position: absolute;
             border-radius: 50%;
@@ -42,21 +33,10 @@
             animation: floatParticles linear infinite;
             box-shadow: 0 0 10px #6b2cd8, 0 0 20px #6b2cd8;
         }
-
         @keyframes floatParticles {
-            0% {
-                transform: translateY(100vh) scale(0.3);
-                opacity: 0;
-            }
-
-            50% {
-                opacity: 1;
-            }
-
-            100% {
-                transform: translateY(-10vh) scale(1);
-                opacity: 0;
-            }
+            0% { transform: translateY(100vh) scale(0.3); opacity: 0; }
+            50% { opacity: 1; }
+            100% { transform: translateY(-10vh) scale(1); opacity: 0; }
         }
 
         /* ---------- Sidebar ---------- */
@@ -73,23 +53,15 @@
             transform: translateX(-100%);
             transition: transform 0.3s ease;
         }
-
-        #sidebar.open {
-            transform: translateX(0);
-        }
-
-        #sidebar h2 {
-            color: #6b2cd8;
-            margin-top: 0;
-        }
-
+        #sidebar.open { transform: translateX(0); }
+        #sidebar h2 { color: #6b2cd8; margin-top: 0; }
         #sidebar button {
             width: 100%;
             margin: 12px 0;
             padding: 12px;
             border: none;
             border-radius: 10px;
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255,255,255,0.1);
             color: #fff;
             font-size: 16px;
         }
@@ -98,15 +70,12 @@
         #overlay {
             position: fixed;
             inset: 0;
-            background: rgba(0, 0, 0, 0.6);
+            background: rgba(0,0,0,0.6);
             backdrop-filter: blur(4px);
             z-index: 4;
             display: none;
         }
-
-        #overlay.active {
-            display: block;
-        }
+        #overlay.active { display: block; }
 
         /* ---------- Content ---------- */
         #content {
@@ -118,30 +87,16 @@
             padding-bottom: 80px;
         }
 
-        /* ---------- Panels ---------- */
-        .panel {
-            background: rgba(255, 255, 255, 0.12);
+        /* ---------- Panels & Glass Cards ---------- */
+        .panel, .glass-card {
+            background: rgba(255,255,255,0.12);
             backdrop-filter: blur(12px);
             border-radius: 18px;
             padding: 28px;
             margin-bottom: 28px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.35);
         }
-
-        .panel h3 {
-            color: #6b2cd8;
-            margin-top: 0;
-        }
-
-        /* ---------- Glass Cards ---------- */
-        .glass-card {
-            background: rgba(255, 255, 255, 0.12);
-            backdrop-filter: blur(12px);
-            border-radius: 18px;
-            padding: 28px;
-            margin-bottom: 28px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
-        }
+        .panel h3 { color: #6b2cd8; margin-top: 0; }
 
         /* ---------- Buttons ---------- */
         .button {
@@ -168,73 +123,77 @@
             border-radius: 10px;
         }
 
-        /* ---------- Footer ---------- */
-        footer {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            text-align: center;
-            padding: 18px 0;
-            font-size: 14px;
-            color: #aaa;
-            background: rgba(15, 15, 25, 0.95);
-            backdrop-filter: blur(12px);
-            box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.4);
-            z-index: 6;
-        }
-
-        /* ====== ADDED: Notification Bar ====== */
+        /* ---------- Notification Bar (Bluish Glass) ---------- */
         .notification-bar {
             position: fixed;
-            top: 20px;
+            top: -80px;
             right: 20px;
-            background: #1e90ff;
-            color: #ffffff;
+            background: rgba(30, 144, 255, 0.25);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(30,144,255,0.4);
+            color: #fff;
             padding: 12px 18px;
-            border-radius: 6px;
+            border-radius: 12px;
             font-size: 14px;
-            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+            box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+            transition: top 0.5s ease, opacity 0.5s ease;
+            z-index: 9999;
             opacity: 0;
-            transform: translateY(-10px);
-            transition: opacity 0.4s ease, transform 0.4s ease;
-            z-index: 7;
+            max-width: 400px;
+        }
+        .notification-bar.show {
+            top: 20px;
+            opacity: 1;
         }
 
-        .notification-bar.show {
-            opacity: 1;
-            transform: translateY(0);
+        /* ---------- Mini TV Video ---------- */
+        .video-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin: 20px auto;
+            border-radius: 16px;
+            overflow: hidden;
+            background: rgba(0,0,0,0.3);
+            backdrop-filter: blur(8px);
         }
-        /* ====== END ADD ====== */
+        .video-container video {
+            width: 100%;
+            display: block;
+        }
+        .video-controls {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 4px;
+        }
+        .video-controls input[type=range] {
+            width: 100px;
+        }
     </style>
 </head>
 
 <body>
-
     <div id="floating-bg"></div>
-
     <button id="menuBtn" onclick="toggleSidebar()">☰</button>
 
-    <!-- ====== ADDED: Notification HTML ====== -->
-    <div id="ecosystemNotification" class="notification-bar">
-        Welcome to the AvalonFlow ecosystem.
-    </div>
-    <!-- ====== END ADD ====== -->
+    <!-- Ecosystem Notification -->
+    <div id="ecosystemNotification" class="notification-bar"></div>
 
     <div id="sidebar">
         <h2>AvalonFlow</h2>
-        <button onclick="window.location.href='dashboard.html'">Dashboard</button>
-        <button onclick="window.location.href='ecosystem.html'">Ecosystem</button>
-        <button onclick="window.location.href='branches.html'">Branches</button>
-        <button onclick="window.location.href='rewards.html'">Rewards</button>
-        <button onclick="window.location.href='support.html'">Support</button>
+        <button onclick="navigateTo('dashboard.html')">Dashboard</button>
+        <button onclick="navigateTo('ecosystem.html')">Ecosystem</button>
+        <button onclick="navigateTo('branches.html')">Branches</button>
+        <button onclick="navigateTo('rewards.html')">Rewards</button>
+        <button onclick="navigateTo('support.html')">Support</button>
         <button onclick="logout()">Logout</button>
     </div>
 
     <div id="overlay" onclick="toggleSidebar()"></div>
 
-    <!-- Ecosystem Panel -->
     <div id="content">
+        <!-- Ecosystem Panel -->
         <div id="ecosystem" class="panel">
             <h3>Ecosystem Overview</h3>
 
@@ -247,6 +206,21 @@
                     reasoning, enabling steady and sustainable progress.
                 </p>
                 <blockquote>“When logic finds balance, systems begin to think — and life begins to flow.”</blockquote>
+            </div>
+
+            <!-- Mini TV Walkthrough -->
+            <p style="text-align:center; font-weight:bold; margin-top:20px;">
+                View the walkthrough snapshot of the hybrid mechanisms in motion
+            </p>
+            <div class="video-container">
+                <video id="ecosystemVideo" controls>
+                    <source src="https://drive.google.com/uc?export=download&id=1f-sc9cHIPxCnVhONrQBE7iFJCiG9yAA1" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+                <div class="video-controls">
+                    <label for="volumeControl" style="margin-right:6px;">Volume:</label>
+                    <input type="range" id="volumeControl" min="0" max="1" step="0.05" value="1">
+                </div>
             </div>
 
             <div class="glass-card">
@@ -267,45 +241,83 @@
     </footer>
 
     <script>
+        /* Floating particles */
         const bg = document.getElementById('floating-bg');
-        const colors = ['#6b2cd8', '#9b59b6', '#8e44ad'];
-
+        const colors = ['#6b2cd8','#9b59b6','#8e44ad'];
         function particle() {
             const p = document.createElement('div');
             p.className = 'particle';
-            const s = Math.random() * 20 + 10;
-            p.style.width = s + 'px';
-            p.style.height = s + 'px';
-            p.style.left = Math.random() * 100 + 'vw';
-            p.style.background = `radial-gradient(circle, ${colors[Math.floor(Math.random() * 3)]}, transparent)`;
-            p.style.animationDuration = (Math.random() * 20 + 10) + 's';
+            const s = Math.random()*20+10;
+            p.style.width = s+'px';
+            p.style.height = s+'px';
+            p.style.left = Math.random()*100+'vw';
+            p.style.background = `radial-gradient(circle, ${colors[Math.floor(Math.random()*3)]}, transparent)`;
+            p.style.animationDuration = (Math.random()*20+10)+'s';
             bg.appendChild(p);
-            setTimeout(() => p.remove(), 30000);
+            setTimeout(()=>p.remove(),30000);
         }
+        setInterval(particle,800);
 
-        setInterval(particle, 800);
-
+        /* Sidebar toggle */
         const sidebar = document.getElementById('sidebar');
         const overlay = document.getElementById('overlay');
-
-        function toggleSidebar() {
+        function toggleSidebar(){
             sidebar.classList.toggle('open');
             overlay.classList.toggle('active');
         }
-
-        function logout() {
-            window.location.href = "index.html";
+        function navigateTo(page){
+            window.location.href = page;
         }
 
-        /* ====== ADDED: Ecosystem Notification Logic ====== */
+        function logout(){
+            localStorage.removeItem("avalon_logged_in");
+            localStorage.removeItem("avalon_seen_ecosystem");
+            window.location.href = 'index.html';
+        }
+
+        /* Ecosystem Notification */
         window.addEventListener("load", () => {
-            const note = document.getElementById("ecosystemNotification");
-            setTimeout(() => note.classList.add("show"), 300);
-            setTimeout(() => note.classList.remove("show"), 3300);
+            const notification = document.getElementById("ecosystemNotification");
+
+            localStorage.setItem("avalon_logged_in","true");
+
+            let message;
+            if(!localStorage.getItem("avalon_seen_ecosystem")){
+                message = "Welcome — explore how each wing supports growth.";
+                localStorage.setItem("avalon_seen_ecosystem","true");
+            } else {
+                message = "Welcome back — continue exploring your path.";
+            }
+
+            notification.textContent = message;
+            setTimeout(()=>notification.classList.add("show"), 300);
+            setTimeout(()=>notification.classList.remove("show"), 3300);
         });
-        /* ====== END ADD ====== */
+
+        /* Video Volume Control */
+        const video = document.getElementById("ecosystemVideo");
+        const volumeControl = document.getElementById("volumeControl");
+        volumeControl.addEventListener("input", e => {
+            video.volume = e.target.value;
+        });
+
+        /* Auto Logout After 8 Hours of Inactivity */
+        let logoutTimer;
+        const logoutTime = 8 * 60 * 60 * 1000; // 8 hours
+
+        function resetLogoutTimer() {
+            clearTimeout(logoutTimer);
+            logoutTimer = setTimeout(()=> {
+                alert("No activity detected for 8 hours. Logging out.");
+                logout();
+            }, logoutTime);
+        }
+
+        ['click','mousemove','keydown','scroll','touchstart'].forEach(evt => {
+            document.addEventListener(evt, resetLogoutTimer);
+        });
+
+        resetLogoutTimer(); // initialize
     </script>
-
 </body>
-
     </html>
