@@ -60,13 +60,10 @@
         max-width: 1100px;
         margin: auto;
         padding-bottom: 80px;
+        padding-left: 70px; /* space for menu button */
     }
 
-    /* Title and menu inline */
     #titleContainer {
-        display: flex;
-        align-items: center;
-        gap: 12px; /* space between menu button and title */
         font-size: 24px;
         margin-bottom: 20px;
     }
@@ -97,6 +94,10 @@
     }
 
     #menuBtn {
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        z-index: 6;
         background: #6b2cd8;
         border: none;
         color: #fff;
@@ -127,7 +128,7 @@
         color: #ffaaaa;
         margin-top: 6px;
         opacity: 0.85;
-        display: block; /* always below the progress bar */
+        display: block;
     }
 
     #floating-bg {
@@ -186,21 +187,16 @@
     }
 
     @media (max-width:768px){
-        #content{padding:20px;}
-        #sidebar{width:220px;padding:20px;}
+        #content{padding:20px;padding-left:60px;}
         .glass-card{padding:20px;}
-        #titleContainer { font-size: 20px; gap: 8px; }
+        #titleContainer { font-size: 20px; }
     }
 </style>
 </head>
 <body>
 
 <div id="floating-bg"></div>
-
-<div id="titleContainer">
-    <button id="menuBtn" onclick="toggleSidebar()">☰</button>
-    <span>Rewards / Progress</span>
-</div>
+<button id="menuBtn" onclick="toggleSidebar()">☰</button>
 
 <div id="sidebar">
     <h2>AvalonFlow</h2>
@@ -215,6 +211,7 @@
 <div id="rewardNotification" class="notification-bar"></div>
 
 <div id="content">
+    <div id="titleContainer">Rewards / Progress</div>
     <p>Track your progress on the Logical Wing branches below:</p>
 
     <div class="glass-card">
@@ -347,6 +344,4 @@ resetLogoutTimer();
 setInterval(updateRewardsProgress,60000);
 </script>
 </body>
-        </html>
-
-
+                                                 </html>
