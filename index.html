@@ -55,6 +55,13 @@
         50% { opacity: 1; }
         100% { transform: translateY(-10vh) translateX(30vw) scale(1); opacity: 0; }
     }
+
+    /* ---------- Ticket Reference Display ---------- */
+    #ticketRef {
+        margin-top: 15px;
+        font-weight: bold;
+        color: #6b2cd8;
+    }
 </style>
 </head>
 <body>
@@ -73,6 +80,7 @@
         <input type="password" id="password" placeholder="Password" required>
         <button onclick="login()">Begin Exploring</button>
         <p id="loginError" style="color:red;"></p>
+        <p id="ticketRef"></p>
     </div>
 </main>
 
@@ -98,21 +106,29 @@ for(let i=0;i<totalParticles;i++){
     setTimeout(createParticle, i*200);
 }
 setInterval(createParticle, 1000);
-</script>
 
-<script src="script.js"></script>
-<script>
-// Override login to match your updated dashboard files
+/* ---------- Ticket Generator ---------- */
+function generateTicketReference(){
+    const stamp = Date.now().toString().slice(-6);
+    const rand = Math.random().toString(36).substring(2,6).toUpperCase();
+    return `AF-SESSION-${stamp}-${rand}`;
+}
+
+/* ---------- Login ---------- */
 function login() {
     const avalonFlowID = document.getElementById("AvalonFlowID").value;
     const password = document.getElementById("password").value;
 
-    const demoAvalonFlowID = "AVF-2739XG-LUX78";
-    const demoPassword = "avalon123";
+    const demoAvalonFlowID = "AVF-5281ZY-LUX90"; // New ID
+    const demoPassword = "SecureFlow2026!";       // Secure Password
+
+    // Generate session ticket on each login attempt
+    const ticket = generateTicketReference();
+    document.getElementById('ticketRef').textContent = `Session Ticket: ${ticket}`;
 
     if (avalonFlowID === demoAvalonFlowID && password === demoPassword) {
-        // Open the dashboard entry page
-        window.location.href = "dashboard.html";
+        // Pass ticket reference as query param if needed
+        window.location.href = `dashboard.html?ticket=${ticket}`;
     } else {
         document.getElementById("loginError").innerText =
             "Access details not recognized. Please check and try again.";
