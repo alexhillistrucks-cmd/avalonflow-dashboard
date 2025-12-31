@@ -187,45 +187,48 @@
 </head>
 
 <body>
+
     <div id="floating-bg"></div>
 
     <button id="menuBtn" onclick="toggleSidebar()">☰</button>
 
     <div id="sidebar">
         <h2>AvalonFlow</h2>
-        <button onclick="showPanel('dashboard')">Dashboard</button>
-        <button onclick="showPanel('ecosystem')">Ecosystem</button>
-        <button onclick="showPanel('branches')">Branches</button>
-        <button onclick="showPanel('rewards')">Rewards</button>
-        <button onclick="showPanel('support')">Support</button>
+        <button onclick="window.location.href='dashboard.html'">Dashboard</button>
+        <button onclick="window.location.href='ecosystem.html'">Ecosystem</button>
+        <button onclick="window.location.href='branches.html'">Branches</button>
+        <button onclick="window.location.href='rewards.html'">Rewards</button>
+        <button onclick="window.location.href='support.html'">Support</button>
         <button onclick="logout()">Logout</button>
     </div>
 
     <div id="overlay" onclick="toggleSidebar()"></div>
 
     <!-- Ecosystem Panel -->
-    <div id="ecosystem" class="panel">
-        <h3>Ecosystem Overview</h3>
+    <div id="content">
+        <div id="ecosystem" class="panel">
+            <h3>Ecosystem Overview</h3>
 
-        <div class="glass-card">
-            <strong>🪽 The Logical Wing</strong><br>
-            <em>Where Structure Meets Intelligence</em>
-            <p>
-                Represents the operational core — powered by a hybrid intelligence
-                infrastructure that combines reliable systems with thoughtful human
-                reasoning, enabling steady and sustainable progress.
-            </p>
-            <blockquote>“When logic finds balance, systems begin to think — and life begins to flow.”</blockquote>
-        </div>
+            <div class="glass-card">
+                <strong>🪽 The Logical Wing</strong><br>
+                <em>Where Structure Meets Intelligence</em>
+                <p>
+                    Represents the operational core — powered by a hybrid intelligence
+                    infrastructure that combines reliable systems with thoughtful human
+                    reasoning, enabling steady and sustainable progress.
+                </p>
+                <blockquote>“When logic finds balance, systems begin to think — and life begins to flow.”</blockquote>
+            </div>
 
-        <div class="glass-card">
-            <strong>💫 The Emotional Wing</strong><br>
-            <em>The Living Core of AvalonFlow</em>
-            <p>
-                Supports stability, rhythm, and long-term well-being — ensuring
-                progress translates into calm, clarity, and meaningful rewards.
-            </p>
-            <blockquote>Each wing contributes on how the branches impact stability across work, growth, and life.</blockquote>
+            <div class="glass-card">
+                <strong>💫 The Emotional Wing</strong><br>
+                <em>The Living Core of AvalonFlow</em>
+                <p>
+                    Supports stability, rhythm, and long-term well-being — ensuring
+                    progress translates into calm, clarity, and meaningful rewards.
+                </p>
+                <blockquote>Each wing contributes on how the branches impact stability across work, growth, and life.</blockquote>
+            </div>
         </div>
     </div>
 
@@ -261,16 +264,11 @@
             overlay.classList.toggle('active');
         }
 
-        function showPanel(id) {
-            document.querySelectorAll('.panel').forEach(p => p.style.display = 'none');
-            document.getElementById(id).style.display = 'block';
-            toggleSidebar();
-        }
-
         function logout() {
             window.location.href = "index.html";
         }
     </script>
+
 </body>
 
     </html>
