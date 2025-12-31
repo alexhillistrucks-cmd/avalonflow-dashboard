@@ -5,160 +5,174 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AvalonFlow Rewards</title>
 <style>
-    body {
-        font-family: 'Arial', sans-serif;
-        background-color: #1a0d3a;
-        color: #fff;
-        margin: 0;
-        padding: 0;
-        overflow-x: hidden;
-        position: relative;
-    }
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #1a0d3a;
+    color: #fff;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+    position: relative;
+}
 
-    /* ---------- Sidebar ---------- */
-    #sidebar {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 280px;
-        height: 100%;
-        background: rgba(15,15,25,0.95);
-        backdrop-filter: blur(14px);
-        z-index: 5;
-        padding: 25px;
-        transform: translateX(-100%);
-        transition: transform 0.3s ease;
-    }
-    #sidebar.open { transform: translateX(0); }
-    #sidebar h2 { color: #6b2cd8; margin-top: 0; }
-    #sidebar button {
-        width: 100%;
-        margin: 12px 0;
-        padding: 12px;
-        border: none;
-        border-radius: 10px;
-        background: rgba(255,255,255,0.1);
-        color: #fff;
-        font-size: 16px;
-        cursor: pointer;
-    }
+/* ---------- Sidebar ---------- */
+#sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 280px;
+    height: 100%;
+    background: rgba(15,15,25,0.95);
+    backdrop-filter: blur(14px);
+    z-index: 5;
+    padding: 25px;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+}
+#sidebar.open { transform: translateX(0); }
+#sidebar h2 { color: #6b2cd8; margin-top: 0; }
+#sidebar button {
+    width: 100%;
+    margin: 12px 0;
+    padding: 12px;
+    border: none;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.1);
+    color: #fff;
+    font-size: 16px;
+    cursor: pointer;
+}
 
-    #overlay {
-        position: fixed;
-        inset: 0;
-        background: rgba(0,0,0,0.6);
-        backdrop-filter: blur(4px);
-        z-index: 4;
-        display: none;
-    }
-    #overlay.active { display: block; }
+#menuBtn {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 999;
+    font-size: 24px;
+    background: rgba(255,255,255,0.1);
+    border: none;
+    border-radius: 8px;
+    color: #fff;
+    padding: 10px 14px;
+    cursor: pointer;
+}
 
-    #content {
-        position: relative;
-        z-index: 1;
-        padding: 40px;
-        max-width: 1100px;
-        margin: auto;
-        padding-bottom: 80px;
-    }
+#overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    backdrop-filter: blur(4px);
+    z-index: 4;
+    display: none;
+}
+#overlay.active { display: block; }
 
-    .glass-card {
-        background: rgba(255,255,255,0.12);
-        backdrop-filter: blur(12px);
-        border-radius: 18px;
-        padding: 28px;
-        margin-bottom: 28px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.35);
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-    .glass-card:hover {
-        transform: translateY(-8px);
-        box-shadow: 0 12px 35px rgba(0,0,0,0.5);
-    }
+#content {
+    position: relative;
+    z-index: 1;
+    padding: 40px;
+    max-width: 1100px;
+    margin: auto;
+    padding-bottom: 80px;
+}
 
-    .progress-bar {
-        width: 100%;
-        height: 18px;
-        background: rgba(255,255,255,0.08);
-        border-radius: 10px;
-        overflow: hidden;
-        margin: 10px 0;
-    }
-    .progress-fill {
-        height: 100%;
-        width: 0%;
-        background: linear-gradient(90deg, #6b2cd8, #b393ff);
-        border-radius: 10px;
-        transition: width 0.5s linear;
-    }
+.glass-card {
+    background: rgba(255,255,255,0.12);
+    backdrop-filter: blur(12px);
+    border-radius: 18px;
+    padding: 28px;
+    margin-bottom: 28px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.glass-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 35px rgba(0,0,0,0.5);
+}
 
-    .locked-text {
-        font-size: 14px;
-        color: #ffaaaa;
-        margin-top: 6px;
-        opacity: 0.85;
-    }
+.progress-bar {
+    width: 100%;
+    height: 18px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 10px 0;
+}
+.progress-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #6b2cd8, #b393ff);
+    border-radius: 10px;
+    transition: width 0.5s linear;
+}
 
-    #floating-bg {
-        position: fixed;
-        inset: 0;
-        z-index: 0;
-        pointer-events: none;
-        background: radial-gradient(circle at bottom, #1a0d3a, #0d0d0d);
-        overflow: hidden;
-    }
-    .particle {
-        position: absolute;
-        border-radius: 50%;
-        opacity: 0.6;
-        animation: floatParticles linear infinite;
-        box-shadow: 0 0 10px #6b2cd8, 0 0 20px #6b2cd8;
-    }
-    @keyframes floatParticles {
-        0% { transform: translateY(100vh) scale(0.3); opacity: 0; }
-        50% { opacity: 1; }
-        100% { transform: translateY(-10vh) scale(1); opacity: 0; }
-    }
+.locked-text {
+    font-size: 14px;
+    color: #ffaaaa;
+    margin-top: 6px;
+    opacity: 0.85;
+}
 
-    .notification-bar {
-        position: fixed;
-        top: -80px;
-        right: 20px;
-        background: rgba(30,144,255,0.25);
-        backdrop-filter: blur(12px);
-        border: 1px solid rgba(30,144,255,0.4);
-        color: #fff;
-        padding: 12px 18px;
-        border-radius: 12px;
-        font-size: 14px;
-        box-shadow: 0 6px 18px rgba(0,0,0,0.25);
-        transition: top 0.5s ease, opacity 0.5s ease;
-        z-index: 9999;
-        opacity: 0;
-        max-width: 350px;
-        white-space: normal;
-        overflow: hidden;
-    }
-    .notification-bar.show { top: 20px; opacity: 1; }
+#floating-bg {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background: radial-gradient(circle at bottom, #1a0d3a, #0d0d0d);
+    overflow: hidden;
+}
+.particle {
+    position: absolute;
+    border-radius: 50%;
+    opacity: 0.6;
+    animation: floatParticles linear infinite;
+    box-shadow: 0 0 10px #6b2cd8, 0 0 20px #6b2cd8;
+}
+@keyframes floatParticles {
+    0% { transform: translateY(100vh) scale(0.3); opacity: 0; }
+    50% { opacity: 1; }
+    100% { transform: translateY(-10vh) scale(1); opacity: 0; }
+}
 
-    footer {
-        text-align: center;
-        padding: 20px;
-        font-size: 14px;
-        color: #ccc;
-        background: rgba(15,15,25,0.95);
-        backdrop-filter: blur(12px);
-        box-shadow: 0 -5px 20px rgba(0,0,0,0.4);
-        position: fixed;
-        width: 100%;
-        bottom: 0;
-    }
+.notification-bar {
+    position: fixed;
+    top: -80px;
+    right: 20px;
+    background: rgba(30,144,255,0.25);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(30,144,255,0.4);
+    color: #fff;
+    padding: 12px 18px;
+    border-radius: 12px;
+    font-size: 14px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+    transition: top 0.5s ease, opacity 0.5s ease;
+    z-index: 9999;
+    opacity: 0;
+    max-width: 350px;
+    white-space: normal;
+    overflow: hidden;
+}
+.notification-bar.show { top: 20px; opacity: 1; }
 
-    @media (max-width:768px){
-        #content{padding:20px;}
-        #sidebar{width:220px;padding:20px;}
-        .glass-card{padding:20px;}
-    }
+footer {
+    text-align: center;
+    padding: 20px;
+    font-size: 14px;
+    color: #ccc;
+    background: rgba(15,15,25,0.95);
+    backdrop-filter: blur(12px);
+    box-shadow: 0 -5px 20px rgba(0,0,0,0.4);
+    position: fixed;
+    width: 100%;
+    bottom: 0;
+}
+
+@media (max-width:768px){
+    #content{padding:20px;}
+    #sidebar{width:220px;padding:20px;}
+    .glass-card{padding:20px;}
+}
 </style>
 </head>
 <body>
@@ -206,6 +220,7 @@
 <script>
 const sidebar=document.getElementById('sidebar');
 const overlay=document.getElementById('overlay');
+
 function toggleSidebar(){ sidebar.classList.toggle('open'); overlay.classList.toggle('active'); }
 function logout(){ window.location.href='index.html'; }
 
@@ -223,7 +238,7 @@ function particle(){
 }
 setInterval(particle,800);
 
-// Branch unlock durations in milliseconds
+// Branch unlocks and durations
 const branchDurations={ care:7*24*60*60*1000, grow:14*24*60*60*1000, ease:28*24*60*60*1000 };
 const rewardsMapping=[
     {id:'avalonCareFill', lockedId:'avalonCareLocked', branch:'care', maxPercent:33},
@@ -231,8 +246,18 @@ const rewardsMapping=[
     {id:'avalonEaseFill', lockedId:'avalonEaseLocked', branch:'ease', maxPercent:34}
 ];
 
-// Animate progress gradually
-function animateProgress(element,percent){ let current=parseFloat(element.style.width)||0; const step=0.5; function stepFill(){ if(current<percent){ current=Math.min(current+step,percent); element.style.width=current+'%'; requestAnimationFrame(stepFill); } } requestAnimationFrame(stepFill); }
+function animateProgress(element,percent){ 
+    let current=parseFloat(element.style.width)||0; 
+    const step=0.5; 
+    function stepFill(){ 
+        if(current<percent){ 
+            current=Math.min(current+step,percent); 
+            element.style.width=current+'%'; 
+            requestAnimationFrame(stepFill); 
+        } 
+    } 
+    requestAnimationFrame(stepFill); 
+}
 
 function updateRewardsProgress(){
     const now=Date.now();
@@ -241,9 +266,8 @@ function updateRewardsProgress(){
     rewardsMapping.forEach(item=>{
         const fill=document.getElementById(item.id);
         const lockedText=document.getElementById(item.lockedId);
-        if(fill&&lockedText){
+        if(fill && lockedText){
             if(unlockedBranches[item.branch]){
-                // Check if duration expired
                 const elapsed=now - unlockTimes[item.branch];
                 if(elapsed >= branchDurations[item.branch]){
                     delete unlockedBranches[item.branch];
@@ -289,7 +313,7 @@ window.addEventListener("load",()=>{
     window.history.replaceState({}, document.title, window.location.pathname);
 });
 
-// Auto logout after 8 hours
+// Auto logout
 let logoutTimer;
 const logoutTime=8*60*60*1000;
 function resetLogoutTimer(){
@@ -299,7 +323,7 @@ function resetLogoutTimer(){
 ['click','mousemove','keydown','scroll','touchstart'].forEach(evt=>document.addEventListener(evt,resetLogoutTimer));
 resetLogoutTimer();
 
-// Keep updating progress every minute for gradual fill
+// Keep updating progress every minute
 setInterval(updateRewardsProgress,60000);
 </script>
 </body>
