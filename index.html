@@ -14,14 +14,22 @@
         overflow: hidden;
         position: relative;
     }
+
+    /* ---------- Glass Header ---------- */
     header { 
-        background-color: #6b2cd8; 
+        background: rgba(107,44,216,0.4);
+        backdrop-filter: blur(15px);
+        -webkit-backdrop-filter: blur(15px);
+        border-radius: 18px;
         color: white; 
         padding: 20px; 
         text-align: center; 
         position: relative;
         z-index: 2;
+        margin: 20px;
+        box-shadow: 0 8px 30px rgba(0,0,0,0.3);
     }
+
     main { 
         max-width: 800px; 
         margin: 30px auto; 
@@ -29,9 +37,41 @@
         position: relative;
         z-index: 2;
     }
-    input { padding: 10px; margin: 10px 0; width: 100%; border-radius: 5px; border: 1px solid #ccc; }
-    button { background-color: #6b2cd8; color: white; padding: 10px; border: none; border-radius: 5px; cursor: pointer; width: 100%; }
-    .button { display: inline-block; background-color: #6b2cd8; color: white; padding: 8px 12px; text-decoration: none; border-radius: 5px; margin-top: 10px; }
+
+    /* ---------- Glass Inputs ---------- */
+    input { 
+        padding: 12px; 
+        margin: 10px 0; 
+        width: 100%; 
+        border-radius: 12px; 
+        border: none; 
+        background: rgba(255,255,255,0.15);
+        color: #fff;
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.25);
+    }
+
+    button { 
+        background-color: #6b2cd8; 
+        color: white; 
+        padding: 10px; 
+        border: none; 
+        border-radius: 5px; 
+        cursor: pointer; 
+        width: 100%; 
+    }
+
+    .button { 
+        display: inline-block; 
+        background-color: #6b2cd8; 
+        color: white; 
+        padding: 8px 12px; 
+        text-decoration: none; 
+        border-radius: 5px; 
+        margin-top: 10px; 
+    }
+
     #floating-bg {
         position: fixed;
         top:0; left:0;
@@ -42,6 +82,7 @@
         pointer-events: none;
         background: radial-gradient(circle at bottom, #1a0d3a, #0d0d0d);
     }
+
     .particle {
         position: absolute;
         border-radius: 50%;
@@ -50,17 +91,29 @@
         animation: floatParticles linear infinite;
         box-shadow: 0 0 10px #6b2cd8, 0 0 20px #6b2cd8;
     }
+
     @keyframes floatParticles {
         0% { transform: translateY(100vh) translateX(0) scale(0.3); opacity: 0; }
         50% { opacity: 1; }
         100% { transform: translateY(-10vh) translateX(30vw) scale(1); opacity: 0; }
     }
 
-    /* ---------- Ticket Reference Display ---------- */
+    /* ---------- Session Ticket Glass / Mini TV ---------- */
     #ticketRef {
         margin-top: 15px;
         font-weight: bold;
-        color: #6b2cd8;
+        color: #000;
+        background: rgba(255,255,255,0.2);
+        backdrop-filter: blur(15px);
+        -webkit-backdrop-filter: blur(15px);
+        border-radius: 12px;
+        padding: 12px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.25);
+        min-height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
     }
 
     /* ---------- Sticky Footer ---------- */
@@ -96,7 +149,9 @@
         <input type="password" id="password" placeholder="Password" required>
         <button onclick="login()">Begin Exploring</button>
         <p id="loginError" style="color:red;"></p>
-        <p id="ticketRef"></p>
+
+        <!-- Mini TV / Session Ticket -->
+        <div id="ticketRef"></div>
     </div>
 </main>
 
@@ -135,7 +190,22 @@ function generateTicketReference(){
     return `AF-SESSION-${stamp}-${rand}`;
 }
 
+/* ---------- Mini TV Messages ---------- */
+const tvMessages = [
+    "Keep your session ticket safe.",
+    "Always use a strong password.",
+    "Your session is unique per login.",
+    "Contact support with your ticket reference for help."
+];
+let tvIndex = 0;
+function rotateTicketMessages() {
+    const ticketDiv = document.getElementById('ticketRef');
+    ticketDiv.textContent = `${currentTicket} | ${tvMessages[tvIndex]}`;
+    tvIndex = (tvIndex + 1) % tvMessages.length;
+}
+
 /* ---------- Login ---------- */
+let currentTicket = "";
 function login() {
     const avalonFlowID = document.getElementById("AvalonFlowID").value;
     const password = document.getElementById("password").value;
@@ -143,13 +213,15 @@ function login() {
     const demoAvalonFlowID = "AVF-5281ZY-LUX90"; // New ID
     const demoPassword = "SecureFlow2026!";       // Secure Password
 
-    // Generate session ticket on each login attempt
-    const ticket = generateTicketReference();
-    document.getElementById('ticketRef').textContent = `Session Ticket: ${ticket}`;
+    // Generate session ticket
+    currentTicket = generateTicketReference();
+
+    // Start rotating messages
+    rotateTicketMessages();
+    setInterval(rotateTicketMessages, 4000);
 
     if (avalonFlowID === demoAvalonFlowID && password === demoPassword) {
-        // Pass ticket reference as query param if needed
-        window.location.href = `dashboard.html?ticket=${ticket}`;
+        window.location.href = `dashboard.html?ticket=${currentTicket}`;
     } else {
         document.getElementById("loginError").innerText =
             "Access details not recognized. Please check and try again.";
