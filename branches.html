@@ -45,19 +45,9 @@
         }
 
         @keyframes floatParticles {
-            0% {
-                transform: translateY(100vh) scale(0.3);
-                opacity: 0;
-            }
-
-            50% {
-                opacity: 1;
-            }
-
-            100% {
-                transform: translateY(-10vh) scale(1);
-                opacity: 0;
-            }
+            0% { transform: translateY(100vh) scale(0.3); opacity: 0; }
+            50% { opacity: 1; }
+            100% { transform: translateY(-10vh) scale(1); opacity: 0; }
         }
 
         /* ---------- Sidebar ---------- */
@@ -75,14 +65,9 @@
             transition: transform 0.3s ease;
         }
 
-        #sidebar.open {
-            transform: translateX(0);
-        }
+        #sidebar.open { transform: translateX(0); }
 
-        #sidebar h2 {
-            color: #6b2cd8;
-            margin-top: 0;
-        }
+        #sidebar h2 { color: #6b2cd8; margin-top: 0; }
 
         #sidebar button {
             width: 100%;
@@ -105,9 +90,7 @@
             display: none;
         }
 
-        #overlay.active {
-            display: block;
-        }
+        #overlay.active { display: block; }
 
         /* ---------- Content ---------- */
         #content {
@@ -117,21 +100,6 @@
             max-width: 1100px;
             margin: auto;
             padding-bottom: 80px;
-        }
-
-        /* ---------- Panels ---------- */
-        .panel {
-            background: rgba(255, 255, 255, 0.12);
-            backdrop-filter: blur(12px);
-            border-radius: 18px;
-            padding: 28px;
-            margin-bottom: 28px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
-        }
-
-        .panel h3 {
-            color: #6b2cd8;
-            margin-top: 0;
         }
 
         /* ---------- Glass Cards ---------- */
@@ -185,6 +153,62 @@
             gap: 12px;
             margin-top: 12px;
         }
+
+        /* ---------- Notification Bar ---------- */
+        .notification-bar {
+            position: fixed;
+            top: -80px;
+            right: 20px;
+            background: rgba(30, 144, 255, 0.25);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(30,144,255,0.4);
+            color: #fff;
+            padding: 12px 18px;
+            border-radius: 12px;
+            font-size: 14px;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+            transition: top 0.5s ease, opacity 0.5s ease;
+            z-index: 9999;
+            opacity: 0;
+            max-width: 350px;
+            white-space: normal;
+            overflow: hidden;
+        }
+
+        .notification-bar.show { top: 20px; opacity: 1; }
+
+        .notification-bar::before {
+            content: '';
+            position: absolute;
+            left: -50%;
+            top: 0;
+            width: 50%;
+            height: 100%;
+            background: rgba(255,255,255,0.3);
+            transform: skewX(-25deg);
+            animation: liquidWave 2s linear infinite;
+        }
+
+        @keyframes liquidWave { 0% { left: -50%; } 100% { left: 100%; } }
+
+        /* ---------- Mini TV Video ---------- */
+        .video-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin: 20px auto;
+            border-radius: 16px;
+            overflow: hidden;
+            background: rgba(0,0,0,0.3);
+            backdrop-filter: blur(8px);
+        }
+
+        .video-container video { width: 100%; display: block; }
+
+        .video-controls { display: flex; justify-content: flex-end; margin-top: 4px; }
+
+        .video-controls input[type=range] { width: 100px; }
+
     </style>
 </head>
 
@@ -206,6 +230,9 @@
 
     <div id="overlay" onclick="toggleSidebar()"></div>
 
+    <!-- Notification Bar -->
+    <div id="branchNotification" class="notification-bar"></div>
+
     <div id="content">
 
         <!-- Branches Header -->
@@ -224,8 +251,8 @@
             </div>
             <div class="branch-pay">
                 <img class="branch-logo"
-                    src="https://i.postimg.cc/W3nB6L7j/6bf751e011e8ae86963744c079ec2a9b.jpg"
-                    alt="AvalonCare Logo">
+                     src="https://i.postimg.cc/W3nB6L7j/6bf751e011e8ae86963744c079ec2a9b.jpg"
+                     alt="AvalonCare Logo">
                 <a href="https://app.paymento.io/payment-link/aaf970b845624de0b5eea78726134e79" target="_blank">
                     Pay with Tether USDT
                 </a>
@@ -242,8 +269,8 @@
             </div>
             <div class="branch-pay">
                 <img class="branch-logo"
-                    src="https://i.postimg.cc/W3nB6L7j/6bf751e011e8ae86963744c079ec2a9b.jpg"
-                    alt="AvalonGrow Logo">
+                     src="https://i.postimg.cc/W3nB6L7j/6bf751e011e8ae86963744c079ec2a9b.jpg"
+                     alt="AvalonGrow Logo">
                 <a href="https://app.paymento.io/payment-link/829c6748054a418f8226cb20387729f8" target="_blank">
                     Pay with Tether USDT
                 </a>
@@ -260,11 +287,24 @@
             </div>
             <div class="branch-pay">
                 <img class="branch-logo"
-                    src="https://i.postimg.cc/W3nB6L7j/6bf751e011e8ae86963744c079ec2a9b.jpg"
-                    alt="AvalonEase Logo">
+                     src="https://i.postimg.cc/W3nB6L7j/6bf751e011e8ae86963744c079ec2a9b.jpg"
+                     alt="AvalonEase Logo">
                 <a href="https://app.paymento.io/payment-link/0ddcf9e099234b39ae2acbac693d527f" target="_blank">
                     Pay with Tether USDT
                 </a>
+            </div>
+        </div>
+
+        <!-- Mini TV: Member Reflection -->
+        <p style="text-align:center; font-weight:bold; margin-top:20px;">View a Member Reflection</p>
+        <div class="video-container">
+            <video id="branchVideo" controls controlsList="nodownload">
+                <source src="assets/videos/VID_20250912_055134.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+            <div class="video-controls">
+                <label for="volumeControl" style="margin-right:6px;">Volume:</label>
+                <input type="range" id="volumeControl" min="0" max="1" step="0.05" value="1">
             </div>
         </div>
 
@@ -305,8 +345,34 @@
         function logout() {
             window.location.href = "index.html";
         }
+
+        // Show option 1 notification only
+        window.addEventListener("load", () => {
+            const notification = document.getElementById("branchNotification");
+            notification.textContent = "Select a branch to continue.";
+            setTimeout(()=>notification.classList.add("show"),300);
+            setTimeout(()=>notification.classList.remove("show"),3300);
+        });
+
+        // Video volume
+        const video = document.getElementById("branchVideo");
+        const volumeControl = document.getElementById("volumeControl");
+        volumeControl.addEventListener("input", e => { video.volume = e.target.value; });
+
+        // Auto logout
+        let logoutTimer;
+        const logoutTime = 8*60*60*1000;
+        function resetLogoutTimer(){
+            clearTimeout(logoutTimer);
+            logoutTimer = setTimeout(()=>{
+                alert("No activity detected for 8 hours. Logging out.");
+                logout();
+            },logoutTime);
+        }
+        ['click','mousemove','keydown','scroll','touchstart'].forEach(evt=>document.addEventListener(evt,resetLogoutTimer));
+        resetLogoutTimer();
     </script>
 
 </body>
 
-                </html>
+    </html>
