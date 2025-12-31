@@ -183,6 +183,29 @@
             box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.4);
             z-index: 6;
         }
+
+        /* ====== ADDED: Notification Bar ====== */
+        .notification-bar {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #1e90ff;
+            color: #ffffff;
+            padding: 12px 18px;
+            border-radius: 6px;
+            font-size: 14px;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: opacity 0.4s ease, transform 0.4s ease;
+            z-index: 7;
+        }
+
+        .notification-bar.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        /* ====== END ADD ====== */
     </style>
 </head>
 
@@ -191,6 +214,12 @@
     <div id="floating-bg"></div>
 
     <button id="menuBtn" onclick="toggleSidebar()">☰</button>
+
+    <!-- ====== ADDED: Notification HTML ====== -->
+    <div id="ecosystemNotification" class="notification-bar">
+        Welcome to the AvalonFlow ecosystem.
+    </div>
+    <!-- ====== END ADD ====== -->
 
     <div id="sidebar">
         <h2>AvalonFlow</h2>
@@ -267,11 +296,16 @@
         function logout() {
             window.location.href = "index.html";
         }
+
+        /* ====== ADDED: Ecosystem Notification Logic ====== */
+        window.addEventListener("load", () => {
+            const note = document.getElementById("ecosystemNotification");
+            setTimeout(() => note.classList.add("show"), 300);
+            setTimeout(() => note.classList.remove("show"), 3300);
+        });
+        /* ====== END ADD ====== */
     </script>
 
 </body>
 
     </html>
-
-
-
