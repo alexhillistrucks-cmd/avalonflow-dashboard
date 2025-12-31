@@ -180,25 +180,27 @@
             z-index: 6;
         }
 
-        /* ---------- Notification Bar ---------- */
+        /* ---------- Notification Bar (Bluish Glass) ---------- */
         .notification-bar {
             position: fixed;
-            top: 20px;
+            top: -80px;
             right: 20px;
-            background: #1e90ff;
-            color: #ffffff;
+            background: rgba(30, 144, 255, 0.25);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(30,144,255,0.4);
+            color: #fff;
             padding: 12px 18px;
-            border-radius: 6px;
+            border-radius: 12px;
             font-size: 14px;
             box-shadow: 0 6px 18px rgba(0,0,0,0.25);
-            opacity: 0;
-            transform: translateY(-10px);
-            transition: opacity 0.4s ease, transform 0.4s ease;
+            transition: top 0.5s ease, opacity 0.5s ease;
             z-index: 9999;
+            opacity: 0;
         }
         .notification-bar.show {
+            top: 20px;
             opacity: 1;
-            transform: translateY(0);
         }
     </style>
 </head>
@@ -267,6 +269,7 @@
         </div>
     </div>
 
+    <!-- Sticky Footer -->
     <footer>
         © 2025 AvalonFlow | Powered by Centrical™
     </footer>
@@ -344,28 +347,24 @@
             },800);
         },4000);
 
-        /* Dashboard Notification Logic */
+        /* Dashboard Notification */
         window.addEventListener("load", () => {
             const notification = document.getElementById("dashboardNotification");
 
-            // Mark user as logged in
-            localStorage.setItem("avalon_logged_in", "true");
+            localStorage.setItem("avalon_logged_in","true");
 
             let message;
-
-            if (!localStorage.getItem("avalon_seen_dashboard")) {
+            if(!localStorage.getItem("avalon_seen_dashboard")){
                 message = "Hi there — signed in successfully.";
-                localStorage.setItem("avalon_seen_dashboard", "true");
+                localStorage.setItem("avalon_seen_dashboard","true");
             } else {
                 message = "Hi there — welcome back.";
             }
 
             notification.textContent = message;
-
-            // Show notification
-            setTimeout(() => notification.classList.add("show"), 300);
-            setTimeout(() => notification.classList.remove("show"), 3300);
+            setTimeout(()=>notification.classList.add("show"), 300);
+            setTimeout(()=>notification.classList.remove("show"), 3300);
         });
     </script>
 </body>
-                                                                 </html>
+    </html>
