@@ -6,181 +6,179 @@
 <title>AvalonFlow Support</title>
 
 <style>
-/* ---------- Base ---------- */
-body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    background: #0d0d0d;
-    color: #fff;
-    overflow-x: hidden;
-}
-button { cursor: pointer; }
-a { color: inherit; text-decoration: none; }
+    /* ---------- Base ---------- */
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        background: #0d0d0d;
+        color: #fff;
+        overflow-x: hidden;
+    }
+    button { cursor: pointer; }
+    a { color: inherit; text-decoration: none; }
 
-/* ---------- Floating Background ---------- */
-#floating-bg {
-    position: fixed;
-    inset: 0;
-    z-index: 0;
-    pointer-events: none;
-    background: radial-gradient(circle at bottom, #1a0d3a, #0d0d0d);
-}
+    /* ---------- Floating Background ---------- */
+    #floating-bg {
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        pointer-events: none;
+        background: radial-gradient(circle at bottom, #1a0d3a, #0d0d0d);
+        overflow: hidden;
+    }
+    .particle {
+        position: absolute;
+        border-radius: 50%;
+        opacity: 0.6;
+        animation: floatParticles linear infinite;
+        box-shadow: 0 0 10px #6b2cd8, 0 0 20px #6b2cd8;
+    }
+    @keyframes floatParticles {
+        0% { transform: translateY(100vh) scale(0.3); opacity: 0; }
+        50% { opacity: 1; }
+        100% { transform: translateY(-10vh) scale(1); opacity: 0; }
+    }
 
-/* ---------- Sidebar ---------- */
-#sidebar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 280px;
-    height: 100%;
-    background: rgba(15,15,25,0.95);
-    backdrop-filter: blur(14px);
-    z-index: 5;
-    padding: 25px;
-    transform: translateX(-100%);
-    transition: transform 0.3s ease;
-}
-#sidebar.open { transform: translateX(0); }
-#sidebar h2 { color: #6b2cd8; margin-top: 0; }
-#sidebar button {
-    width: 100%;
-    margin: 12px 0;
-    padding: 12px;
-    border: none;
-    border-radius: 10px;
-    background: rgba(255,255,255,0.1);
-    color: #fff;
-    font-size: 16px;
-}
+    /* ---------- Sidebar ---------- */
+    #sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 280px;
+        height: 100%;
+        background: rgba(15, 15, 25, 0.95);
+        backdrop-filter: blur(14px);
+        z-index: 5;
+        padding: 25px;
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+    }
+    #sidebar.open { transform: translateX(0); }
+    #sidebar h2 { color: #6b2cd8; margin-top: 0; }
+    #sidebar button {
+        width: 100%;
+        margin: 12px 0;
+        padding: 12px;
+        border: none;
+        border-radius: 10px;
+        background: rgba(255,255,255,0.1);
+        color: #fff;
+        font-size: 16px;
+    }
 
-/* ---------- Overlay ---------- */
-#overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.6);
-    backdrop-filter: blur(4px);
-    z-index: 4;
-    display: none;
-}
-#overlay.active { display: block; }
+    /* ---------- Overlay ---------- */
+    #overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.6);
+        backdrop-filter: blur(4px);
+        z-index: 4;
+        display: none;
+    }
+    #overlay.active { display: block; }
 
-/* ---------- Content ---------- */
-#content {
-    position: relative;
-    z-index: 1;
-    padding: 40px;
-    max-width: 1100px;
-    margin: auto;
-    padding-bottom: 120px;
-}
+    /* ---------- Content ---------- */
+    #content {
+        position: relative;
+        z-index: 1;
+        padding: 40px;
+        max-width: 1100px;
+        margin: auto;
+        padding-bottom: 80px;
+    }
 
-/* ---------- Glass Card ---------- */
-.glass-card {
-    background: rgba(255,255,255,0.12);
-    backdrop-filter: blur(12px);
-    border-radius: 18px;
-    padding: 28px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.35);
-}
+    /* ---------- Panels & Glass Cards ---------- */
+    .panel, .glass-card {
+        background: rgba(255,255,255,0.12);
+        backdrop-filter: blur(12px);
+        border-radius: 18px;
+        padding: 28px;
+        margin-bottom: 28px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+    }
+    .panel h3 { color: #6b2cd8; margin-top: 0; }
 
-/* ---------- Mini TV ---------- */
-.mini-tv {
-    background: rgba(0,0,0,0.45);
-    border-radius: 14px;
-    padding: 18px;
-    margin: 18px 0;
-    border: 1px solid rgba(107,44,216,0.35);
-    font-size: 15px;
-    min-height: 60px;
-    display: flex;
-    align-items: center;
-}
+    /* ---------- Buttons ---------- */
+    .button {
+        background: #6b2cd8;
+        color: #fff;
+        border: none;
+        border-radius: 10px;
+        padding: 12px 18px;
+        margin: 10px 0;
+        width: 100%;
+        font-size: 16px;
+    }
 
-/* ---------- Buttons ---------- */
-.button {
-    background: #6b2cd8;
-    color: #fff;
-    border: none;
-    border-radius: 10px;
-    padding: 12px 18px;
-    margin-top: 12px;
-    width: 100%;
-    font-size: 16px;
-}
+    /* ---------- Menu Button ---------- */
+    #menuBtn {
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        z-index: 6;
+        background: #6b2cd8;
+        border: none;
+        color: #fff;
+        padding: 12px 14px;
+        border-radius: 10px;
+    }
 
-/* ---------- Input ---------- */
-.input {
-    width: 100%;
-    padding: 12px;
-    border-radius: 10px;
-    border: none;
-    margin-top: 12px;
-    background: rgba(255,255,255,0.15);
-    color: #fff;
-}
+    /* ---------- Footer ---------- */
+    footer {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        text-align: center;
+        padding: 18px 0;
+        font-size: 14px;
+        color: #aaa;
+        background: rgba(15,15,25,0.95);
+        backdrop-filter: blur(12px);
+        box-shadow: 0 -5px 20px rgba(0,0,0,0.4);
+        z-index: 6;
+    }
 
-/* ---------- Menu Button ---------- */
-#menuBtn {
-    position: fixed;
-    top: 20px;
-    left: 20px;
-    z-index: 6;
-    background: #6b2cd8;
-    border: none;
-    color: #fff;
-    padding: 12px 14px;
-    border-radius: 10px;
-}
+    /* ---------- Notification Bar ---------- */
+    .notification-bar {
+        position: fixed;
+        top: -80px;
+        right: 20px;
+        background: rgba(30, 144, 255, 0.25);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid rgba(30,144,255,0.4);
+        color: #fff;
+        padding: 12px 18px;
+        border-radius: 12px;
+        font-size: 14px;
+        box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+        transition: top 0.5s ease, opacity 0.5s ease;
+        z-index: 9999;
+        opacity: 0;
+    }
+    .notification-bar.show { top: 20px; opacity: 1; }
 
-/* ---------- Footer ---------- */
-footer {
-    position: fixed;
-    bottom: 0;
-    width: 100%;
-    text-align: center;
-    padding: 18px 0;
-    font-size: 14px;
-    color: #aaa;
-    background: rgba(15,15,25,0.95);
-    backdrop-filter: blur(12px);
-    box-shadow: 0 -5px 20px rgba(0,0,0,0.4);
-    z-index: 6;
-}
+    /* ---------- Live Status ---------- */
+    #liveStatusBadge {
+        display: inline-block;
+        margin-bottom: 12px;
+        font-weight: bold;
+    }
 
-/* ---------- Notification ---------- */
-.notification-bar {
-    position: fixed;
-    top: -80px;
-    right: 20px;
-    background: rgba(30,144,255,0.25);
-    backdrop-filter: blur(12px);
-    border: 1px solid rgba(30,144,255,0.4);
-    color: #fff;
-    padding: 12px 18px;
-    border-radius: 12px;
-    font-size: 14px;
-    transition: top 0.5s ease;
-    z-index: 9999;
-}
-.notification-bar.show { top: 20px; }
-
-/* ---------- Live Status Badge ---------- */
-.status-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 8px 14px;
-    border-radius: 20px;
-    font-size: 14px;
-    margin-bottom: 15px;
-}
-.status-dot {
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    background: #00ff6a;
-    box-shadow: 0 0 10px #00ff6a;
-}
+    /* ---------- Mini TV ---------- */
+    #miniTV {
+        width: 100%;
+        height: 180px;
+        background: #0f0f1a;
+        border-radius: 12px;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #6b2cd8;
+        font-size: 18px;
+    }
 </style>
 </head>
 
@@ -188,98 +186,90 @@ footer {
 <div id="floating-bg"></div>
 <button id="menuBtn" onclick="toggleSidebar()">☰</button>
 
+<!-- Notification -->
 <div id="supportNotification" class="notification-bar"></div>
 
+<!-- Sidebar -->
 <div id="sidebar">
     <h2>AvalonFlow</h2>
-    <button onclick="nav('dashboard.html')">Dashboard</button>
-    <button onclick="nav('ecosystem.html')">Ecosystem</button>
-    <button onclick="nav('branches.html')">Branches</button>
-    <button onclick="nav('rewards.html')">Rewards</button>
-    <button onclick="nav('support.html')">Support</button>
+    <button onclick="navigateTo('dashboard.html')">Dashboard</button>
+    <button onclick="navigateTo('ecosystem.html')">Ecosystem</button>
+    <button onclick="navigateTo('branches.html')">Branches</button>
+    <button onclick="navigateTo('rewards.html')">Rewards</button>
+    <button onclick="navigateTo('support.html')">Support</button>
     <button onclick="logout()">Logout</button>
 </div>
-
 <div id="overlay" onclick="toggleSidebar()"></div>
 
 <div id="content">
-<div class="glass-card">
-
-<div class="status-badge">
-    <span class="status-dot"></span>
-    Support Desk Online
-</div>
-
-<p><strong>Behind every smooth interaction is a dedicated team member. 👩‍💼💻</strong></p>
-
-<!-- MINI TV -->
-<div class="mini-tv" id="miniTV"></div>
-
-<p>Generate a ticket reference before contacting support for faster resolution.</p>
-
-<input id="issueInput" class="input" placeholder="Brief issue description (optional)" />
-
-<button class="button" onclick="generateTicket()">Generate Ticket Reference</button>
-
-<p id="ticketResult" style="margin-top:15px;font-weight:bold;"></p>
-
-<a href="mailto:avalonflow@usa.com"
-   class="button"
-   onclick="notify('Include your ticket reference in the email.')">
-   Email Support
-</a>
-
-</div>
+    <div class="glass-card">
+        <p>Behind every smooth interaction is a dedicated team member. 👩‍💼💻</p>
+        <div id="liveStatusBadge">Checking status...</div>
+        <div id="miniTV">Mini TV — Support Desk Overview</div>
+        <a href="mailto:avalonflow@usa.com" class="button" onclick="showToast('Email client opened!')" aria-label="Email Support">Email Support</a>
+        <button class="button" onclick="generateTicket()" aria-label="Generate Ticket">Generate Ticket</button>
+    </div>
 </div>
 
 <footer>© 2025 AvalonFlow | Powered by Centrical™</footer>
 
 <script>
 /* ---------- Sidebar ---------- */
-function toggleSidebar(){
-    sidebar.classList.toggle('open');
-    overlay.classList.toggle('active');
+const sidebar=document.getElementById('sidebar');
+const overlay=document.getElementById('overlay');
+function toggleSidebar(){ sidebar.classList.toggle('open'); overlay.classList.toggle('active'); }
+function navigateTo(url){ window.location.href=url; }
+function logout(){ window.location.href='index.html'; }
+
+/* ---------- Particles ---------- */
+const bg=document.getElementById('floating-bg');
+const colors=['#6b2cd8','#9b59b6','#8e44ad'];
+function particle(){ 
+    const p=document.createElement('div'); p.className='particle';
+    const s=Math.random()*20+10;
+    p.style.width=s+'px'; p.style.height=s+'px';
+    p.style.left=Math.random()*100+'vw';
+    p.style.background=`radial-gradient(circle, ${colors[Math.floor(Math.random()*colors.length)]}, transparent)`;
+    p.style.animationDuration=(Math.random()*20+10)+'s';
+    bg.appendChild(p); setTimeout(()=>p.remove(),30000);
 }
-function nav(p){ location.href=p; }
-function logout(){ location.href='index.html'; }
+setInterval(particle,800);
 
 /* ---------- Notification ---------- */
-function notify(msg){
+function showToast(msg){
     const n=document.getElementById('supportNotification');
     n.textContent=msg;
     n.classList.add('show');
     setTimeout(()=>n.classList.remove('show'),3000);
 }
 
-/* ---------- Ticket Generator ---------- */
+/* ---------- Live Status Badge ---------- */
+function updateLiveStatus(){
+    const now=new Date();
+    const utcHour=now.getUTCHours();
+    const utcDay=now.getUTCDay();
+    const etHour=(utcHour-5+24)%24; // EST
+    const isOfficeHours=(utcDay>=1 && utcDay<=5) && (etHour>=9 && etHour<18);
+    document.getElementById('liveStatusBadge').textContent=isOfficeHours?'🟢 Live':'⚪ Offline';
+}
+updateLiveStatus();
+setInterval(updateLiveStatus,60000);
+
+/* ---------- Ticket Reference Generator ---------- */
 function generateTicket(){
-    const stamp=Date.now().toString().slice(-6);
-    const rand=Math.random().toString(36).substring(2,6).toUpperCase();
-    const ref=`AF-SUP-${stamp}-${rand}`;
-    document.getElementById('ticketResult').textContent =
-        `Ticket Reference: ${ref}`;
-    notify('Ticket reference generated.');
+    const ticket='TCK-'+Math.floor(100000+Math.random()*900000);
+    showToast('Ticket Generated: '+ticket);
 }
 
-/* ---------- Mini TV ---------- */
-const tvMessages = [
-    "Support desk is available to guide you through every step.",
-    "Having issues? Generate a ticket reference before emailing.",
-    "Clear communication speeds up resolution.",
-    "Our support team is standing by."
-];
-let tvIndex = 0;
-function rotateTV(){
-    document.getElementById('miniTV').textContent = tvMessages[tvIndex];
-    tvIndex = (tvIndex + 1) % tvMessages.length;
+/* ---------- Auto Logout ---------- */
+let logoutTimer;
+const logoutTime=8*60*60*1000;
+function resetLogoutTimer(){
+    clearTimeout(logoutTimer);
+    logoutTimer=setTimeout(()=>{ alert('No activity detected for 8 hours. Logging out.'); logout(); },logoutTime);
 }
-rotateTV();
-setInterval(rotateTV, 4000);
-
-/* ---------- Welcome ---------- */
-window.onload = () => {
-    notify('Get assistance or clarification here.');
-};
+['click','mousemove','keydown','scroll','touchstart'].forEach(evt=>document.addEventListener(evt,resetLogoutTimer));
+resetLogoutTimer();
 </script>
 </body>
         </html>
