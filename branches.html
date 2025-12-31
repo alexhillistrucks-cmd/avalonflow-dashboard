@@ -23,6 +23,7 @@
         a {
             color: inherit;
             text-decoration: none;
+            font-weight: bold;
         }
 
         /* ---------- Floating Background ---------- */
@@ -141,22 +142,6 @@
             padding: 28px;
             margin-bottom: 28px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 16px;
-        }
-
-        /* ---------- Buttons ---------- */
-        .button {
-            background: #6b2cd8;
-            color: #fff;
-            border: none;
-            border-radius: 10px;
-            padding: 12px 18px;
-            margin: 10px 0;
-            width: 100%;
-            font-size: 16px;
         }
 
         /* ---------- Menu Button ---------- */
@@ -186,6 +171,19 @@
             backdrop-filter: blur(12px);
             box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.4);
             z-index: 6;
+        }
+
+        .branch-logo {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+        }
+
+        .branch-pay {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 12px;
         }
     </style>
 </head>
@@ -218,54 +216,56 @@
 
         <!-- AvalonCare Glass Card -->
         <div class="glass-card">
-            <a href="https://app.paymento.io/payment-link/aaf970b845624de0b5eea78726134e79" target="_blank">
-                <img src="https://i.postimg.cc/W3nB6L7j/6bf751e011e8ae86963744c079ec2a9b.jpg"
-                    alt="AvalonCare Logo" style="width:80px; height:80px; border-radius:50%; object-fit:cover;">
-            </a>
-            <div style="text-align:center;">
+            <div>
                 <strong>🪽 AvalonCare — The Foundation Branch</strong><br>
                 <span style="font-size:14px; opacity:0.85;">
                     Focuses on stability, clarity, and easing daily pressure.
                 </span>
             </div>
+            <div class="branch-pay">
+                <img class="branch-logo"
+                    src="https://i.postimg.cc/W3nB6L7j/6bf751e011e8ae86963744c079ec2a9b.jpg"
+                    alt="AvalonCare Logo">
+                <a href="https://app.paymento.io/payment-link/aaf970b845624de0b5eea78726134e79" target="_blank">
+                    Pay with Tether USDT
+                </a>
+            </div>
         </div>
 
         <!-- AvalonGrow Glass Card -->
         <div class="glass-card">
-            <a href="https://app.paymento.io/payment-link/829c6748054a418f8226cb20387729f8" target="_blank">
-                <img src="https://i.postimg.cc/W3nB6L7j/6bf751e011e8ae86963744c079ec2a9b.jpg"
-                    alt="AvalonGrow Logo" style="width:80px; height:80px; border-radius:50%; object-fit:cover;">
-            </a>
-            <div style="text-align:center;">
+            <div>
                 <strong>🪽 AvalonGrow — The Expansion Branch</strong><br>
                 <span style="font-size:14px; opacity:0.85;">
                     Supports progress, alignment, and financial growth.
                 </span>
             </div>
+            <div class="branch-pay">
+                <img class="branch-logo"
+                    src="https://i.postimg.cc/W3nB6L7j/6bf751e011e8ae86963744c079ec2a9b.jpg"
+                    alt="AvalonGrow Logo">
+                <a href="https://app.paymento.io/payment-link/829c6748054a418f8226cb20387729f8" target="_blank">
+                    Pay with Tether USDT
+                </a>
+            </div>
         </div>
 
         <!-- AvalonEase Glass Card -->
         <div class="glass-card">
-            <a href="https://app.paymento.io/payment-link/0ddcf9e099234b39ae2acbac693d527f" target="_blank">
-                <img src="https://i.postimg.cc/W3nB6L7j/6bf751e011e8ae86963744c079ec2a9b.jpg"
-                    alt="AvalonEase Logo" style="width:80px; height:80px; border-radius:50%; object-fit:cover;">
-            </a>
-            <div style="text-align:center;">
+            <div>
                 <strong>🪽 AvalonEase — The Mastery Branch</strong><br>
                 <span style="font-size:14px; opacity:0.85;">
                     Enables sustainable systems with minimal friction.
                 </span>
             </div>
-        </div>
-
-        <!-- Member Reflection Glass Card -->
-        <div class="glass-card">
-            <a href="https://linkly.link/2W89A" target="_blank" rel="noopener noreferrer">
-                👉 <strong>View a Member Reflection</strong>
-            </a>
-            <p style="margin-top:10px; font-size:14px; opacity:0.8;">
-                <em>Optional — shared for context, not persuasion.</em>
-            </p>
+            <div class="branch-pay">
+                <img class="branch-logo"
+                    src="https://i.postimg.cc/W3nB6L7j/6bf751e011e8ae86963744c079ec2a9b.jpg"
+                    alt="AvalonEase Logo">
+                <a href="https://app.paymento.io/payment-link/0ddcf9e099234b39ae2acbac693d527f" target="_blank">
+                    Pay with Tether USDT
+                </a>
+            </div>
         </div>
 
     </div>
@@ -309,4 +309,4 @@
 
 </body>
 
-            </html>
+                </html>
