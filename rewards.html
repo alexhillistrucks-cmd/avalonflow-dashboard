@@ -62,9 +62,13 @@
         padding-bottom: 80px;
     }
 
-    /* Push h3 title slightly more from menu button */
-    #content h3 {
-        margin-left: 36px; /* previous spacing + 2-character width */
+    /* Title and menu inline */
+    #titleContainer {
+        display: flex;
+        align-items: center;
+        gap: 12px; /* space between menu button and title */
+        font-size: 24px;
+        margin-bottom: 20px;
     }
 
     .glass-card {
@@ -93,15 +97,13 @@
     }
 
     #menuBtn {
-        position: fixed;
-        top: 20px;
-        left: 20px;
-        z-index: 6;
         background: #6b2cd8;
         border: none;
         color: #fff;
         padding: 12px 14px;
         border-radius: 10px;
+        cursor: pointer;
+        font-size: 20px;
     }
 
     .progress-bar {
@@ -125,7 +127,7 @@
         color: #ffaaaa;
         margin-top: 6px;
         opacity: 0.85;
-        display: block; /* ensures text always below progress bar */
+        display: block; /* always below the progress bar */
     }
 
     #floating-bg {
@@ -187,14 +189,18 @@
         #content{padding:20px;}
         #sidebar{width:220px;padding:20px;}
         .glass-card{padding:20px;}
-        #content h3 { margin-left: 28px; } /* smaller left margin on mobile */
+        #titleContainer { font-size: 20px; gap: 8px; }
     }
 </style>
 </head>
 <body>
 
 <div id="floating-bg"></div>
-<button id="menuBtn" onclick="toggleSidebar()">☰</button>
+
+<div id="titleContainer">
+    <button id="menuBtn" onclick="toggleSidebar()">☰</button>
+    <span>Rewards / Progress</span>
+</div>
 
 <div id="sidebar">
     <h2>AvalonFlow</h2>
@@ -209,7 +215,6 @@
 <div id="rewardNotification" class="notification-bar"></div>
 
 <div id="content">
-    <h3>Rewards / Progress</h3>
     <p>Track your progress on the Logical Wing branches below:</p>
 
     <div class="glass-card">
@@ -261,8 +266,18 @@ const rewardsMapping=[
     {id:'avalonEaseFill', lockedId:'avalonEaseLocked', branch:'ease', maxPercent:34}
 ];
 
-// Animate progress gradually
-function animateProgress(element,percent){ let current=parseFloat(element.style.width)||0; const step=0.5; function stepFill(){ if(current<percent){ current=Math.min(current+step,percent); element.style.width=current+'%'; requestAnimationFrame(stepFill); } } requestAnimationFrame(stepFill); }
+function animateProgress(element,percent){
+    let current=parseFloat(element.style.width)||0;
+    const step=0.5;
+    function stepFill(){ 
+        if(current<percent){ 
+            current=Math.min(current+step,percent); 
+            element.style.width=current+'%'; 
+            requestAnimationFrame(stepFill); 
+        } 
+    }
+    requestAnimationFrame(stepFill);
+}
 
 function updateRewardsProgress(){
     const now=Date.now();
@@ -271,7 +286,7 @@ function updateRewardsProgress(){
     rewardsMapping.forEach(item=>{
         const fill=document.getElementById(item.id);
         const lockedText=document.getElementById(item.lockedId);
-        if(fill&&lockedText){
+        if(fill && lockedText){
             if(unlockedBranches[item.branch]){
                 const elapsed=now - unlockTimes[item.branch];
                 if(elapsed >= branchDurations[item.branch]){
@@ -295,7 +310,6 @@ function updateRewardsProgress(){
     });
 }
 
-// Payment redirect handling
 window.addEventListener("load",()=>{
     const notification=document.getElementById("rewardNotification");
     const params=new URLSearchParams(window.location.search);
@@ -330,8 +344,7 @@ function resetLogoutTimer(){
 ['click','mousemove','keydown','scroll','touchstart'].forEach(evt=>document.addEventListener(evt,resetLogoutTimer));
 resetLogoutTimer();
 
-// Keep updating progress every minute for gradual fill
 setInterval(updateRewardsProgress,60000);
 </script>
 </body>
-    </html>
+        </html>
