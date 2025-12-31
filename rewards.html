@@ -62,9 +62,9 @@
         padding-bottom: 80px;
     }
 
-    /* Push h3 title to the right so it doesn’t overlap menu button */
+    /* Push h3 title slightly more from menu button */
     #content h3 {
-        margin-left: 60px; /* Adjust as needed */
+        margin-left: 36px; /* previous spacing + 2-character width */
     }
 
     .glass-card {
@@ -125,6 +125,7 @@
         color: #ffaaaa;
         margin-top: 6px;
         opacity: 0.85;
+        display: block; /* ensures text always below progress bar */
     }
 
     #floating-bg {
@@ -186,7 +187,7 @@
         #content{padding:20px;}
         #sidebar{width:220px;padding:20px;}
         .glass-card{padding:20px;}
-        #content h3 { margin-left: 40px; } /* smaller left margin on mobile */
+        #content h3 { margin-left: 28px; } /* smaller left margin on mobile */
     }
 </style>
 </head>
