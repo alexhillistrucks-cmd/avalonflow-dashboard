@@ -127,21 +127,22 @@
         .notification-bar {
             position: fixed;
             top: 20px;
-            right: 20px;
-            width: 300px; /* fixed width */
+            right: 20px; /* top-right corner, opposite sidebar */
+            width: 280px; /* fixed width */
             background: rgba(30, 144, 255, 0.25);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
             border: 1px solid rgba(30,144,255,0.4);
             color: #fff;
-            padding: 12px 18px;
+            padding: 10px 14px;
             border-radius: 12px;
-            font-size: 14px;
+            font-size: 12px; /* smaller text */
             box-shadow: 0 6px 18px rgba(0,0,0,0.25);
             transition: opacity 0.5s ease;
             z-index: 9999;
             opacity: 0;
             white-space: normal; /* wrap text vertically */
+            word-wrap: break-word;
         }
         .notification-bar.show {
             opacity: 1;
@@ -336,4 +337,4 @@
         resetLogoutTimer(); // initialize
     </script>
 </body>
-    </html>
+        </html>
