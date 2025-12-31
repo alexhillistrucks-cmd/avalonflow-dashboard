@@ -48,9 +48,11 @@
                 transform: translateY(100vh) scale(0.3);
                 opacity: 0;
             }
+
             50% {
                 opacity: 1;
             }
+
             100% {
                 transform: translateY(-10vh) scale(1);
                 opacity: 0;
@@ -168,7 +170,6 @@
 
         /* ---------- Progress ---------- */
         #progressContainer {
-            display: none;
             margin: 20px 0;
             background: rgba(255, 255, 255, 0.1);
             border-radius: 8px;
@@ -217,18 +218,18 @@
 
     <div id="sidebar">
         <h2>AvalonFlow</h2>
-        <button onclick="window.location.href='dashboard.html'">Dashboard</button>
-        <button onclick="window.location.href='ecosystem.html'">Ecosystem</button>
-        <button onclick="window.location.href='branches.html'">Branches</button>
-        <button onclick="window.location.href='rewards.html'">Rewards</button>
-        <button onclick="window.location.href='support.html'">Support</button>
+        <button onclick="showPanel('dashboard')">Dashboard</button>
+        <button onclick="showPanel('ecosystem')">Ecosystem</button>
+        <button onclick="showPanel('branches')">Branches</button>
+        <button onclick="showPanel('rewards')">Rewards</button>
+        <button onclick="showPanel('support')">Support</button>
         <button onclick="logout()">Logout</button>
     </div>
 
     <div id="overlay" onclick="toggleSidebar()"></div>
 
-    <!-- Dashboard Panel -->
     <div id="content">
+        <!-- Dashboard -->
         <div id="dashboard" class="panel">
             <h3>Welcome</h3>
 
@@ -258,12 +259,11 @@
                 </li>
             </ul>
 
+            <!-- Logical Wing Progress -->
             <div id="progressContainer">
                 <h4>Current Progress — Logical Wing</h4>
                 <div class="progress-bar">
-                    <div class="progress-fill" id="progressFill">
-                        <span id="progressPercent"></span>
-                    </div>
+                    <div class="progress-fill" id="progress-bar"></div>
                 </div>
             </div>
 
@@ -310,57 +310,31 @@
             overlay.classList.toggle('active');
         }
 
-        /* ---------- DASHBOARD LOGICAL WING PROGRESS ---------- */
-        const progressFill = document.getElementById("progressFill");
-        const progressContainer = document.getElementById("progressContainer");
-
-        if (progressFill && progressContainer) {
-            progressContainer.style.display = "block";
-            const fillDuration = 12 * 60 * 60 * 1000;
-            let startTime = localStorage.getItem("logicalWingStart");
-
-            if (!startTime) {
-                startTime = Date.now();
-                localStorage.setItem("logicalWingStart", startTime);
-            } else {
-                startTime = parseInt(startTime);
-            }
-
-            function updateDashboardProgress() {
-                const now = Date.now();
-                let elapsed = now - startTime;
-
-                if (elapsed >= fillDuration) {
-                    startTime = now;
-                    localStorage.setItem("logicalWingStart", startTime);
-                    elapsed = 0;
-                }
-
-                const timeProgress = (elapsed / fillDuration) * 100;
-                const branchProgress = 0;
-                const totalProgress = Math.min(timeProgress + branchProgress, 100);
-
-                animateProgress(progressFill, totalProgress);
-            }
-
-            setInterval(updateDashboardProgress, 1000);
+        function showPanel(id) {
+            document.querySelectorAll('.panel').forEach(p => p.style.display = 'none');
+            document.getElementById(id).style.display = 'block';
+            toggleSidebar();
         }
 
-        function animateProgress(element, targetPercent) {
-            let current = parseFloat(element.style.width) || 0;
-            const step = 0.5;
-
-            function fillStep() {
-                if (current < targetPercent) {
-                    current = Math.min(current + step, targetPercent);
-                    element.style.width = current + "%";
-                    requestAnimationFrame(fillStep);
-                }
-            }
-
-            requestAnimationFrame(fillStep);
+        function logout() {
+            window.location.href = "index.html";
         }
 
+        // ---------- Dashboard Logical Wing Progress ----------
+        const progressBar = document.getElementById('progress-bar');
+        const fillDuration = 12 * 60 * 60 * 1000; // 12 hours
+
+        function updateProgressLoop() {
+            const now = Date.now();
+            const elapsed = now % fillDuration; // resets every 12 hours
+            const percent = (elapsed / fillDuration) * 100;
+            progressBar.style.width = percent + '%';
+            requestAnimationFrame(updateProgressLoop);
+        }
+
+        updateProgressLoop();
+
+        // ---------- Testimonials ----------
         const testimonials = [
             "“My shifts are demanding, and I don’t always have time to explore new options. What stood out for me was how simple and structured this felt.” — Charlotte",
             "“As an educator, I value clarity and systems that make sense. This felt grounded and realistic.” — Emily",
@@ -378,12 +352,7 @@
                 tIndex = (tIndex + 1) % testimonials.length;
             }, 800);
         }, 4000);
-
-        function logout() {
-            window.location.href = "index.html";
-        }
     </script>
 
 </body>
-
-        </html>
+            </html>
