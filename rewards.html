@@ -5,158 +5,159 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AvalonFlow Rewards</title>
 <style>
-    body {
-        font-family: 'Arial', sans-serif;
-        background-color: #1a0d3a;
-        color: #fff;
-        margin: 0;
-        padding: 0;
-        overflow-x: hidden;
-        position: relative;
-    }
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #1a0d3a;
+    color: #fff;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+    position: relative;
+}
 
-    /* ---------- Sidebar ---------- */
-    #sidebar {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 280px;
-        height: 100%;
-        background: rgba(15,15,25,0.95);
-        backdrop-filter: blur(14px);
-        z-index: 5;
-        padding: 25px;
-        transform: translateX(-100%);
-        transition: transform 0.3s ease;
-    }
-    #sidebar.open { transform: translateX(0); }
-    #sidebar h2 { color: #6b2cd8; margin-top: 0; }
-    #sidebar button {
-        width: 100%;
-        margin: 12px 0;
-        padding: 12px;
-        border: none;
-        border-radius: 10px;
-        background: rgba(255,255,255,0.1);
-        color: #fff;
-        font-size: 16px;
-        cursor: pointer;
-    }
+/* ---------- Sidebar ---------- */
+#sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 280px;
+    height: 100%;
+    background: rgba(15,15,25,0.95);
+    backdrop-filter: blur(14px);
+    z-index: 5;
+    padding: 25px;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+}
+#sidebar.open { transform: translateX(0); }
+#sidebar h2 { color: #6b2cd8; margin-top: 0; }
+#sidebar button {
+    width: 100%;
+    margin: 12px 0;
+    padding: 12px;
+    border: none;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.1);
+    color: #fff;
+    font-size: 16px;
+    cursor: pointer;
+}
 
-    #overlay {
-        position: fixed;
-        inset: 0;
-        background: rgba(0,0,0,0.6);
-        backdrop-filter: blur(4px);
-        z-index: 4;
-        display: none;
-    }
-    #overlay.active { display: block; }
+#overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    backdrop-filter: blur(4px);
+    z-index: 4;
+    display: none;
+}
+#overlay.active { display: block; }
 
-    #content {
-        position: relative;
-        z-index: 1;
-        padding: 40px;
-        max-width: 1100px;
-        margin: auto;
-        padding-bottom: 80px;
-    }
+#content {
+    position: relative;
+    z-index: 1;
+    padding: 40px;
+    max-width: 1100px;
+    margin: auto;
+    padding-bottom: 100px;
+}
 
-    .glass-card {
-        background: rgba(255,255,255,0.12);
-        backdrop-filter: blur(12px);
-        border-radius: 18px;
-        padding: 28px;
-        margin-bottom: 28px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.35);
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-    .glass-card:hover {
-        transform: translateY(-8px);
-        box-shadow: 0 12px 35px rgba(0,0,0,0.5);
-    }
+.glass-card {
+    background: rgba(255,255,255,0.12);
+    backdrop-filter: blur(12px);
+    border-radius: 18px;
+    padding: 28px;
+    margin-bottom: 28px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.glass-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 35px rgba(0,0,0,0.5);
+}
 
-    .progress-bar {
-        width: 100%;
-        height: 18px;
-        background: rgba(255,255,255,0.08);
-        border-radius: 10px;
-        overflow: hidden;
-        margin: 10px 0;
-    }
-    .progress-fill {
-        height: 100%;
-        width: 0%;
-        background: linear-gradient(90deg, #6b2cd8, #b393ff);
-        border-radius: 10px;
-        transition: width 0.5s ease;
-    }
+.progress-bar {
+    width: 100%;
+    height: 18px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 10px 0;
+}
+.progress-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #6b2cd8, #b393ff);
+    border-radius: 10px;
+    transition: width 0.5s linear;
+}
 
-    .locked-text {
-        font-size: 14px;
-        color: #ffaaaa;
-        margin-top: 6px;
-        opacity: 0.85;
-    }
+.locked-text {
+    font-size: 14px;
+    color: #ffaaaa;
+    margin-top: 6px;
+    opacity: 0.85;
+}
 
-    #floating-bg {
-        position: fixed;
-        inset: 0;
-        z-index: 0;
-        pointer-events: none;
-        background: radial-gradient(circle at bottom, #1a0d3a, #0d0d0d);
-        overflow: hidden;
-    }
-    .particle {
-        position: absolute;
-        border-radius: 50%;
-        opacity: 0.6;
-        animation: floatParticles linear infinite;
-        box-shadow: 0 0 10px #6b2cd8, 0 0 20px #6b2cd8;
-    }
-    @keyframes floatParticles {
-        0% { transform: translateY(100vh) scale(0.3); opacity: 0; }
-        50% { opacity: 1; }
-        100% { transform: translateY(-10vh) scale(1); opacity: 0; }
-    }
+#floating-bg {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background: radial-gradient(circle at bottom, #1a0d3a, #0d0d0d);
+    overflow: hidden;
+}
+.particle {
+    position: absolute;
+    border-radius: 50%;
+    opacity: 0.6;
+    animation: floatParticles linear infinite;
+    box-shadow: 0 0 10px #6b2cd8, 0 0 20px #6b2cd8;
+}
+@keyframes floatParticles {
+    0% { transform: translateY(100vh) scale(0.3); opacity: 0; }
+    50% { opacity: 1; }
+    100% { transform: translateY(-10vh) scale(1); opacity: 0; }
+}
 
-    #toast {
-        position: fixed;
-        bottom: 80px;
-        right: 20px;
-        background: #6b2cd8;
-        padding: 12px 20px;
-        border-radius: 8px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.5);
-        color: #fff;
-        opacity: 0;
-        transform: translateY(20px);
-        transition: opacity 0.5s ease, transform 0.5s ease;
-        z-index: 999;
-    }
-    #toast.show {
-        opacity: 1;
-        transform: translateY(0);
-    }
+#toast {
+    position: fixed;
+    bottom: 80px;
+    right: 20px;
+    background: #6b2cd8;
+    padding: 12px 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+    color: #fff;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+    z-index: 999;
+}
+#toast.show {
+    opacity: 1;
+    transform: translateY(0);
+}
 
-    footer {
-        text-align: center;
-        padding: 20px;
-        font-size: 14px;
-        color: #ccc;
-        background: rgba(15,15,25,0.95);
-        backdrop-filter: blur(12px);
-        box-shadow: 0 -5px 20px rgba(0,0,0,0.4);
-        position: fixed;
-        width: 100%;
-        bottom: 0;
-    }
+/* ---------- Sticky Footer ---------- */
+footer {
+    text-align: center;
+    padding: 20px;
+    font-size: 14px;
+    color: #ccc;
+    background: rgba(15,15,25,0.95);
+    backdrop-filter: blur(12px);
+    box-shadow: 0 -5px 20px rgba(0,0,0,0.4);
+    position: fixed;
+    width: 100%;
+    bottom: 0;
+}
 
-    @media (max-width:768px){
-        #content{padding:20px;}
-        #sidebar{width:220px;padding:20px;}
-        .glass-card{padding:20px;}
-    }
+@media (max-width:768px){
+    #content{padding:20px;}
+    #sidebar{width:220px;padding:20px;}
+    .glass-card{padding:20px;}
+}
 </style>
 </head>
 <body>
@@ -208,96 +209,108 @@
 <div id="toast" role="alert" aria-live="assertive"></div>
 
 <script>
-    // ------------------- SIDEBAR -------------------
-    const sidebar=document.getElementById('sidebar');
-    const overlay=document.getElementById('overlay');
-    function toggleSidebar(){
-        sidebar.classList.toggle('open');
-        overlay.classList.toggle('active');
+const sidebar=document.getElementById('sidebar');
+const overlay=document.getElementById('overlay');
+function toggleSidebar(){ sidebar.classList.toggle('open'); overlay.classList.toggle('active'); }
+
+// Particles background
+const bg=document.getElementById('floating-bg');
+if(bg){ const colors=['#6b2cd8','#9b59b6','#8e44ad'];
+    function particle(){ const p=document.createElement('div'); p.className='particle';
+        const s=Math.random()*20+10; p.style.width=s+'px'; p.style.height=s+'px';
+        p.style.left=Math.random()*100+'vw';
+        p.style.background=`radial-gradient(circle, ${colors[Math.floor(Math.random()*colors.length)]}, transparent)`;
+        p.style.animationDuration=(Math.random()*20+10)+'s'; bg.appendChild(p);
+        setTimeout(()=>p.remove(),30000);
     }
+    setInterval(particle,800);
+}
 
-    // ------------------- PARTICLES -------------------
-    const bg=document.getElementById('floating-bg');
-    if(bg){
-        const colors=['#6b2cd8','#9b59b6','#8e44ad'];
-        function particle(){
-            const p=document.createElement('div');
-            p.className='particle';
-            const s=Math.random()*20+10;
-            p.style.width=s+'px';
-            p.style.height=s+'px';
-            p.style.left=Math.random()*100+'vw';
-            p.style.background=`radial-gradient(circle, ${colors[Math.floor(Math.random()*colors.length)]}, transparent)`;
-            p.style.animationDuration=(Math.random()*20+10)+'s';
-            bg.appendChild(p);
-            setTimeout(()=>p.remove(),30000);
-        }
-        setInterval(particle,800);
+// ------------------- UNLOCK & PROGRESS -------------------
+const rewardsMapping=[
+    {id:'avalonCareFill', lockedId:'avalonCareLocked', branch:'care', maxPercent:33, duration:7*24*60*60*1000},
+    {id:'avalonGrowFill', lockedId:'avalonGrowLocked', branch:'grow', maxPercent:33, duration:14*24*60*60*1000},
+    {id:'avalonEaseFill', lockedId:'avalonEaseLocked', branch:'ease', maxPercent:34, duration:28*24*60*60*1000}
+];
+
+let unlockedBranches = JSON.parse(localStorage.getItem('unlockedBranches')) || {};
+const now = Date.now();
+
+// Clean expired unlocks
+Object.keys(unlockedBranches).forEach(branch=>{
+    const saved = unlockedBranches[branch];
+    if(saved && saved.start && saved.duration){
+        if(now - saved.start >= saved.duration) delete unlockedBranches[branch];
     }
+});
+localStorage.setItem('unlockedBranches',JSON.stringify(unlockedBranches));
 
-    // ------------------- PROGRESS PERSISTENCE -------------------
-    const unlockedBranches=JSON.parse(localStorage.getItem('unlockedBranches'))||{};
-    const rewardsMapping=[
-        {id:'avalonCareFill', lockedId:'avalonCareLocked', branch:'care', maxPercent:33},
-        {id:'avalonGrowFill', lockedId:'avalonGrowLocked', branch:'grow', maxPercent:33},
-        {id:'avalonEaseFill', lockedId:'avalonEaseLocked', branch:'ease', maxPercent:34}
-    ];
+// Paymento redirect handling
+const urlParams = new URLSearchParams(window.location.search);
+const branchFromUrl = urlParams.get('branch');
+if(branchFromUrl && rewardsMapping.some(r=>r.branch===branchFromUrl)){
+    unlockedBranches[branchFromUrl] = {start: Date.now(), duration: rewardsMapping.find(r=>r.branch===branchFromUrl).duration, lastPercent:0};
+    localStorage.setItem('unlockedBranches',JSON.stringify(unlockedBranches));
+    showToast(`${branchFromUrl.charAt(0).toUpperCase()+branchFromUrl.slice(1)} unlocked!`);
+}
 
-    function animateProgress(element,targetPercent){
-        let current=parseFloat(element.style.width)||0;
-        const step=0.5;
-        function fillStep(){
-            if(current<targetPercent){
-                current=Math.min(current+step,targetPercent);
-                element.style.width=current+'%';
-                requestAnimationFrame(fillStep);
+// Animate progress gradually over 12 hours
+function animateProgress(element,maxPercent,branch){
+    const saved = unlockedBranches[branch];
+    const startTime = saved?.start || Date.now();
+    const duration = 12*60*60*1000; // 12 hours
+    const lastPercent = saved?.lastPercent || 0;
+    function step(){
+        const elapsed = Date.now() - startTime;
+        let percent = Math.min(maxPercent, lastPercent + maxPercent*(elapsed/duration));
+        element.style.width = percent+'%';
+        // Save current percent in storage
+        unlockedBranches[branch].lastPercent = percent;
+        localStorage.setItem('unlockedBranches',JSON.stringify(unlockedBranches));
+        if(percent<maxPercent) requestAnimationFrame(step);
+    }
+    step();
+}
+
+function updateRewardsProgress(){
+    rewardsMapping.forEach(item=>{
+        const fill=document.getElementById(item.id);
+        const lockedText=document.getElementById(item.lockedId);
+        if(fill && lockedText){
+            if(unlockedBranches[item.branch]){
+                lockedText.style.display='none';
+                animateProgress(fill,item.maxPercent,item.branch);
+            } else {
+                fill.style.width='0%';
+                lockedText.style.display='block';
             }
         }
-        requestAnimationFrame(fillStep);
-    }
+    });
+}
+updateRewardsProgress();
 
-    function updateRewardsProgress(){
-        rewardsMapping.forEach(item=>{
-            const fill=document.getElementById(item.id);
-            const lockedText=document.getElementById(item.lockedId);
-            if(fill&&lockedText){
-                if(unlockedBranches[item.branch]){
-                    lockedText.style.display='none';
-                    animateProgress(fill,item.maxPercent);
-                } else {
-                    fill.style.width='0%';
-                    lockedText.style.display='block';
-                }
-            }
-        });
-    }
+// Toast
+function showToast(msg){
+    const toast=document.getElementById('toast');
+    toast.innerText=msg;
+    toast.classList.add('show');
+    setTimeout(()=>toast.classList.remove('show'),2500);
+}
 
-    updateRewardsProgress();
+// Welcome notification
+showToast('Welcome — Rewards / Progress');
 
-    function unlockBranch(branch){
-        const links={
-            care:'https://app.paymento.io/payment-link/aaf970b845624de0b5eea78726134e79',
-            grow:'https://app.paymento.io/payment-link/829c6748054a418f8226cb20387729f8',
-            ease:'https://app.paymento.io/payment-link/0ddcf9e099234b39ae2acbac693d527f'
-        };
-        if(links[branch]){
-            window.open(links[branch],'_blank');
-            unlockedBranches[branch]=true;
-            localStorage.setItem('unlockedBranches',JSON.stringify(unlockedBranches));
-            showToast(`${branch.charAt(0).toUpperCase()+branch.slice(1)} unlocked!`);
-            updateRewardsProgress();
-        }
-    }
+// Auto logout after 8 hours inactivity
+let logoutTimer;
+const logoutTime = 8*60*60*1000;
+function resetLogoutTimer(){
+    clearTimeout(logoutTimer);
+    logoutTimer = setTimeout(()=>{ alert('No activity detected for 8 hours. Logging out.'); window.location.href='index.html'; }, logoutTime);
+}
+['click','mousemove','keydown','scroll','touchstart'].forEach(evt=>document.addEventListener(evt,resetLogoutTimer));
+resetLogoutTimer();
 
-    // ------------------- TOAST -------------------
-    function showToast(msg){
-        const toast=document.getElementById('toast');
-        toast.innerText=msg;
-        toast.classList.add('show');
-        setTimeout(()=>toast.classList.remove('show'),2500);
-    }
-
-    function logout(){ window.location.href='index.html'; }
+function logout(){ window.location.href='index.html'; }
 </script>
 </body>
-  </html>
+                </html>
