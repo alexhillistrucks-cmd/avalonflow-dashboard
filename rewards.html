@@ -62,6 +62,11 @@
         padding-bottom: 80px;
     }
 
+    /* Push h3 title to the right so it doesn’t overlap menu button */
+    #content h3 {
+        margin-left: 60px; /* Adjust as needed */
+    }
+
     .glass-card {
         background: rgba(255,255,255,0.12);
         backdrop-filter: blur(12px);
@@ -76,7 +81,6 @@
         box-shadow: 0 12px 35px rgba(0,0,0,0.5);
     }
 
-    /* ---------- Buttons ---------- */
     .button {
         background: #6b2cd8;
         color: #fff;
@@ -88,7 +92,6 @@
         font-size: 16px;
     }
 
-    /* ---------- Menu Button ---------- */
     #menuBtn {
         position: fixed;
         top: 20px;
@@ -183,6 +186,7 @@
         #content{padding:20px;}
         #sidebar{width:220px;padding:20px;}
         .glass-card{padding:20px;}
+        #content h3 { margin-left: 40px; } /* smaller left margin on mobile */
     }
 </style>
 </head>
@@ -276,14 +280,15 @@ function updateRewardsProgress(){
                     localStorage.setItem('unlockTimes',JSON.stringify(unlockTimes));
                     fill.style.width='0%';
                     lockedText.style.display='block';
+                    lockedText.textContent='🔒 Locked — Complete payment to unlock';
                 } else {
                     lockedText.style.display='none';
-                    // Gradual fill based on elapsed
                     animateProgress(fill,item.maxPercent * Math.min(elapsed/branchDurations[item.branch],1));
                 }
             } else {
                 fill.style.width='0%';
                 lockedText.style.display='block';
+                lockedText.textContent='🔒 Locked — Complete payment to unlock';
             }
         }
     });
@@ -328,4 +333,4 @@ resetLogoutTimer();
 setInterval(updateRewardsProgress,60000);
 </script>
 </body>
-        </html>
+    </html>
