@@ -5,14 +5,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AvalonFlow Rewards</title>
 <style>
-    body {
+    /* ---------- Basic Reset ---------- */
+    body, html {
+        margin: 0;
+        padding: 0;
         font-family: 'Arial', sans-serif;
         background-color: #1a0d3a;
         color: #fff;
-        margin: 0;
-        padding: 0;
         overflow-x: hidden;
         position: relative;
+        min-height: 100vh;
     }
 
     /* ---------- Sidebar ---------- */
@@ -24,13 +26,13 @@
         height: 100%;
         background: rgba(15,15,25,0.95);
         backdrop-filter: blur(14px);
-        z-index: 5;
+        z-index: 20;
         padding: 25px;
         transform: translateX(-100%);
         transition: transform 0.3s ease;
     }
     #sidebar.open { transform: translateX(0); }
-    #sidebar h2, #sidebar h1 { color: #6b2cd8; margin-top: 0; }
+    #sidebar h2 { color: #6b2cd8; margin-top: 0; }
     #sidebar button {
         width: 100%;
         margin: 12px 0;
@@ -48,7 +50,7 @@
         inset: 0;
         background: rgba(0,0,0,0.6);
         backdrop-filter: blur(4px);
-        z-index: 4;
+        z-index: 15;
         display: none;
     }
     #overlay.active { display: block; }
@@ -57,7 +59,7 @@
         position: fixed;
         top: 20px;
         left: 20px;
-        z-index: 6;
+        z-index: 25;
         background: #6b2cd8;
         border: none;
         color: #fff;
@@ -66,15 +68,15 @@
         cursor: pointer;
     }
 
+    /* ---------- Content ---------- */
     #content {
         position: relative;
-        z-index: 1;
-        padding: 40px 40px 80px 70px; /* bottom for footer, left for menu button */
+        z-index: 10;
+        padding: 40px 40px 140px 70px; /* bottom padding > footer height */
         max-width: 1100px;
         margin: auto;
     }
 
-    /* Space title from menu button */
     #titleContainer {
         font-size: 24px;
         margin: 20px 0;
@@ -120,11 +122,10 @@
         width: 0%;
         background: linear-gradient(90deg, #6b2cd8, #b393ff);
         border-radius: 10px;
-        overflow: hidden;
         position: relative;
-        transition: width 1s linear;
+        overflow: hidden;
+        transition: width linear;
     }
-
     .progress-fill::before {
         content: '';
         position: absolute;
@@ -142,31 +143,32 @@
         animation: wave 2s linear infinite, wavePulse 1.5s ease-in-out infinite alternate;
         border-radius: 10px;
     }
-
     @keyframes wave {
         0% { transform: translateX(0); }
         100% { transform: translateX(-50%); }
     }
-
     @keyframes wavePulse {
-        0% { transform: translateX(0) translateY(0); }
-        100% { transform: translateX(-50%) translateY(3px); }
+        0% { transform: translateY(0); }
+        100% { transform: translateY(3px); }
     }
 
+    /* ---------- Notification ---------- */
     .notification-bar {
         position: fixed;
+        top: 20px;
         left: 50%;
         transform: translateX(-50%);
-        top: -60px;
         background: #6b2cd8;
-        padding: 12px 20px;
-        border-radius: 10px;
+        padding: 10px 16px;
+        border-radius: 12px;
+        font-size: 14px;
+        z-index: 9999;
         opacity: 0;
-        transition: top 0.3s ease, opacity 0.3s ease;
-        z-index: 999;
+        transition: opacity 0.3s, top 0.3s;
     }
-    .notification-bar.show { top: 20px; opacity: 1; }
+    .notification-bar.show { top: 40px; opacity: 1; }
 
+    /* ---------- Footer ---------- */
     footer {
         text-align: center;
         padding: 20px;
@@ -178,28 +180,32 @@
         position: fixed;
         width: 100%;
         bottom: 0;
+        z-index: 50;
     }
 
-    @media (max-width:768px){
-        #content {padding:20px 20px 80px 60px;}
-        .glass-card {padding:20px;}
-        #titleContainer { font-size: 20px; }
-    }
-
-    /* Particle styles */
+    /* ---------- Particle Background ---------- */
     #floating-bg {
         position: fixed;
-        top: 0; left: 0;
+        top: 0;
+        left: 0;
         width: 100%;
         height: 100%;
         pointer-events: none;
         z-index: 0;
+        overflow: hidden;
     }
     .particle {
         position: absolute;
         border-radius: 50%;
         opacity: 0.6;
         pointer-events: none;
+        will-change: transform;
+    }
+
+    @media (max-width:768px){
+        #content{padding:20px 20px 140px 60px;}
+        .glass-card{padding:20px;}
+        #titleContainer { font-size: 20px; }
     }
 </style>
 </head>
@@ -224,11 +230,11 @@
     <div id="titleContainer">Rewards / Progress</div>
     <p>Track your progress on the Logical Wing branches below:</p>
 
+    <!-- AvalonCare Card -->
     <div class="glass-card">
         <h4>AvalonCare — The Foundation Branch</h4>
         <div class="progress-bar"><div class="progress-fill" id="careFill"></div></div>
         <p class="locked-text" id="careLock">🔒 Locked — Complete payment to unlock</p>
-
         <details>
             <summary>Rewards Summary ▾</summary>
             <div class="reward-line">Cycles completed: <span id="careCycles">0</span></div>
@@ -239,11 +245,11 @@
         </details>
     </div>
 
+    <!-- AvalonGrow Card -->
     <div class="glass-card">
         <h4>AvalonGrow — The Expansion Branch</h4>
         <div class="progress-bar"><div class="progress-fill" id="growFill"></div></div>
         <p class="locked-text" id="growLock">🔒 Locked — Complete payment to unlock</p>
-
         <details>
             <summary>Rewards Summary ▾</summary>
             <div class="reward-line">Cycles completed: <span id="growCycles">0</span></div>
@@ -254,11 +260,11 @@
         </details>
     </div>
 
+    <!-- AvalonEase Card -->
     <div class="glass-card">
         <h4>AvalonEase — The Mastery Branch</h4>
         <div class="progress-bar"><div class="progress-fill" id="easeFill"></div></div>
         <p class="locked-text" id="easeLock">🔒 Locked — Complete payment to unlock</p>
-
         <details>
             <summary>Rewards Summary ▾</summary>
             <div class="reward-line">Cycles completed: <span id="easeCycles">0</span></div>
@@ -276,42 +282,34 @@
 </footer>
 
 <script>
-// ----------------- Admin detection -----------------
+/* ----------------- Admin detection ----------------- */
 const urlParams = new URLSearchParams(window.location.search);
 const isAdmin = urlParams.get('admin') === 'true';
 
 if (isAdmin) {
-    const adminBadge = document.createElement('div');
-    adminBadge.style.position = 'fixed';
-    adminBadge.style.bottom = '90px';
-    adminBadge.style.right = '20px';
-    adminBadge.style.padding = '8px 12px';
-    adminBadge.style.borderRadius = '8px';
-    adminBadge.style.background = '#6b2cd8';
-    adminBadge.style.color = 'white';
-    adminBadge.style.fontSize = '12px';
-    adminBadge.style.zIndex = 9999;
-    adminBadge.innerText = 'ADMIN MODE';
-    document.body.appendChild(adminBadge);
+    const adminDiv = document.createElement('div');
+    adminDiv.textContent = "ADMIN MODE";
+    adminDiv.style.cssText = `
+        position: fixed; bottom: 90px; right: 20px; 
+        padding: 8px 12px; border-radius: 8px; 
+        background: #6b2cd8; color: white; 
+        font-size: 12px; z-index: 9999;
+    `;
+    document.body.appendChild(adminDiv);
 }
 
-// ----- Sidebar & Overlay -----
+/* ----- Sidebar & Overlay ----- */
 const sidebar = document.getElementById('sidebar');
 const overlay = document.getElementById('overlay');
-
 function toggleSidebar() {
     sidebar.classList.toggle('open');
     overlay.classList.toggle('active');
 }
+function logout() { window.location.href = 'index.html'; }
 
-function logout() {
-    window.location.href = 'index.html';
-}
-
-// ----- Particles -----
+/* ----- Particles ----- */
 const bg = document.getElementById('floating-bg');
 const colors = ['#6b2cd8', '#9b59b6', '#8e44ad'];
-
 function particle() {
     const p = document.createElement('div');
     p.className = 'particle';
@@ -319,14 +317,26 @@ function particle() {
     p.style.width = size + 'px';
     p.style.height = size + 'px';
     p.style.left = Math.random() * 100 + 'vw';
+    p.style.top = Math.random() * 100 + 'vh';
     p.style.background = `radial-gradient(circle, ${colors[Math.floor(Math.random() * colors.length)]}, transparent)`;
     p.style.animationDuration = (Math.random() * 20 + 10) + 's';
+    p.style.animationName = 'particleMove';
+    p.style.animationTimingFunction = 'linear';
+    p.style.animationIterationCount = 'infinite';
     bg.appendChild(p);
     setTimeout(() => p.remove(), 30000);
 }
-setInterval(particle, 800);
+const style = document.createElement('style');
+style.innerHTML = `
+@keyframes particleMove {
+    0% { transform: translateY(0) translateX(0); opacity:0.6; }
+    50% { transform: translateY(-50px) translateX(30px); opacity:0.3; }
+    100% { transform: translateY(0) translateX(0); opacity:0.6; }
+}`;
+document.head.appendChild(style);
+setInterval(particle, 400);
 
-// ----- Branch Data -----
+/* ----- Branch Data ----- */
 const branches = {
     care: { days: 14, totalAC: 400, fill: 'careFill', lock: 'careLock', ac: 'careAC', cycles: 'careCycles', reset: 'careReset', per12h: 14.29 },
     grow: { days: 28, totalAC: 800, fill: 'growFill', lock: 'growLock', ac: 'growAC', cycles: 'growCycles', reset: 'growReset', per12h: 14.28 },
@@ -356,29 +366,28 @@ function updateRewards() {
         }
 
         lock.style.display = 'none';
-        const cycleMs = 12 * 60 * 60 * 1000;
+        const cycleMs = 12*60*60*1000;
         const unlockTime = unlockTimes[key] || now;
         const elapsed = now - unlockTime;
-
         const cycleProgress = (elapsed % cycleMs) / cycleMs;
-        fill.style.transition = `width ${cycleMs - (elapsed % cycleMs)}ms linear`;
-        fill.style.width = `${cycleProgress * 100}%`;
+
+        fill.style.transitionDuration = `${cycleMs - (elapsed % cycleMs)}ms`;
+        fill.style.width = `${cycleProgress*100}%`;
 
         const cycles = Math.floor(elapsed / cycleMs);
         cyclesEl.textContent = cycles;
-
-        const ac = cycles * b.per12h + cycleProgress * b.per12h;
+        const ac = cycles*b.per12h + cycleProgress*b.per12h;
         acEl.textContent = ac.toFixed(2) + ' ACU';
 
         const remainingMs = cycleMs - (elapsed % cycleMs);
-        const h = Math.floor(remainingMs / (1000 * 60 * 60));
-        const m = Math.floor((remainingMs % (1000 * 60 * 60)) / (1000 * 60));
-        const s = Math.floor((remainingMs % (1000 * 60)) / 1000);
+        const h = Math.floor(remainingMs / (1000*60*60));
+        const m = Math.floor((remainingMs % (1000*60*60)) / (1000*60));
+        const s = Math.floor((remainingMs % (1000*60)) / 1000);
         resetEl.textContent = `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
     });
 }
 
-// ----- URL Unlock Handling -----
+/* ----- URL Unlock Handling ----- */
 window.addEventListener("load", () => {
     const notification = document.getElementById("rewardNotification");
     const params = new URLSearchParams(window.location.search);
@@ -406,21 +415,7 @@ window.addEventListener("load", () => {
     updateRewards();
     window.history.replaceState({}, document.title, window.location.pathname);
 });
-
-// ----- Auto Logout -----
-let logoutTimer;
-const logoutTime = 8 * 60 * 60 * 1000; // 8 hours
-function resetLogoutTimer() {
-    clearTimeout(logoutTimer);
-    logoutTimer = setTimeout(() => {
-        alert("No activity detected for 8 hours. Logging out.");
-        logout();
-    }, logoutTime);
-}
-
-window.addEventListener('mousemove', resetLogoutTimer);
-window.addEventListener('keydown', resetLogoutTimer);
-resetLogoutTimer();
 </script>
+
 </body>
 </html>
