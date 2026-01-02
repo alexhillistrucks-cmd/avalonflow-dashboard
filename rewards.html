@@ -286,7 +286,7 @@ function particle() {
     p.style.width = size + 'px';
     p.style.height = size + 'px';
     p.style.left = Math.random() * 100 + 'vw';
-    p.style.top = Math.random() * 100 + 'vh';
+    p.style.top = Math.random() * 100 + 'vh'; // fixed top for proper position
     p.style.background = `radial-gradient(circle, ${colors[Math.floor(Math.random() * colors.length)]}, transparent)`;
     p.style.animationDuration = (Math.random() * 20 + 10) + 's';
     bg.appendChild(p);
@@ -328,13 +328,8 @@ function updateRewards() {
         const unlockTime = unlockTimes[key] || now;    
         const elapsed = now - unlockTime;    
         const cycleProgress = (elapsed % cycleMs) / cycleMs;    
-
-        // ----- Smooth progress bar animation on load -----
-        fill.style.transitionDuration = `${cycleMs - (elapsed % cycleMs)}ms`;
-        requestAnimationFrame(() => {
-            fill.style.width = `${cycleProgress * 100}%`;
-        });
-
+        fill.style.transitionDuration = `${cycleMs - (elapsed % cycleMs)}ms`;    
+        fill.style.width = `${cycleProgress * 100}%`;    
         const cycles = Math.floor(elapsed / cycleMs);    
         cyclesEl.textContent = cycles;    
         const ac = cycles * b.per12h + cycleProgress * b.per12h;    
