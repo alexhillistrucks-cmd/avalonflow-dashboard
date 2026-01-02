@@ -1,329 +1,317 @@
-‎<!DOCTYPE html>
-‎<html lang="en">
-‎<head>
-‎<meta charset="UTF-8">
-‎<meta name="viewport" content="width=device-width, initial-scale=1.0">
-‎<title>AvalonFlow Login</title>
-‎<style>
-‎    body { 
-‎        font-family: 'Arial', sans-serif; 
-‎        background-color: #0d0d0d; 
-‎        color: #fff; 
-‎        margin:0; 
-‎        padding:0; 
-‎        overflow: hidden;
-‎        position: relative;
-‎    }
-‎
-‎    /* ---------- Glass Header ---------- */
-‎    header { 
-‎        background: rgba(107,44,216,0.4);
-‎        backdrop-filter: blur(15px);
-‎        -webkit-backdrop-filter: blur(15px);
-‎        border-radius: 18px;
-‎        color: white; 
-‎        padding: 20px; 
-‎        text-align: center; 
-‎        position: relative;
-‎        z-index: 2;
-‎        margin: 20px;
-‎        box-shadow: 0 8px 30px rgba(0,0,0,0.3);
-‎    }
-‎
-‎    /* ---------- Main ---------- */
-‎main { 
-‎    max-width: 800px; 
-‎    margin: 30px auto; 
-‎    padding: 0 20px; 
-‎    position: relative;
-‎    z-index: 2;
-‎}
-‎
-‎/* ---------- Glass Inputs with Subtle Purple Fire ---------- */
-‎input {
-‎    position: relative;
-‎    padding: 12px; 
-‎    margin: 10px 0; 
-‎    width: 100%; 
-‎    border-radius: 12px; 
-‎    border: none; 
-‎    background: rgba(255,255,255,0.15);
-‎    color: #fff;
-‎    backdrop-filter: blur(12px);
-‎    -webkit-backdrop-filter: blur(12px);
-‎    box-shadow: 0 5px 15px rgba(0,0,0,0.25);
-‎    overflow: hidden;
-‎    z-index: 0;
-‎}
-‎
-‎input::before {
-‎    content: '';
-‎    position: absolute;
-‎    top: -50%;
-‎    left: -50%;
-‎    width: 200%;
-‎    height: 200%;
-‎    background: radial-gradient(circle, rgba(107,44,216,0.2) 0%, rgba(155,89,182,0.05) 60%);
-‎    animation: fireGlow 6s infinite linear;
-‎    z-index: -1;
-‎    border-radius: 12px;
-‎}
-‎
-‎@keyframes fireGlow {
-‎    0% { transform: translate(0,0) scale(1); opacity: 0.6; }
-‎    50% { transform: translate(20px,10px) scale(1.05); opacity: 0.8; }
-‎    100% { transform: translate(0,0) scale(1); opacity: 0.6; }
-‎}
-‎
-‎    button { 
-‎        background-color: #6b2cd8; 
-‎        color: white; 
-‎        padding: 10px; 
-‎        border: none; 
-‎        border-radius: 6px; 
-‎        cursor: pointer; 
-‎        width: 100%; 
-‎        margin-top: 8px;
-‎    }
-‎
-‎    /* ---------- Floating Background ---------- */
-‎    #floating-bg {
-‎        position: fixed;
-‎        top:0; left:0;
-‎        width: 100%;
-‎        height: 100%;
-‎        z-index:1;
-‎        overflow: hidden;
-‎        pointer-events: none;
-‎        background: radial-gradient(circle at bottom, #1a0d3a, #0d0d0d);
-‎    }
-‎
-‎    .particle {
-‎        position: absolute;
-‎        border-radius: 50%;
-‎        opacity: 0.6;
-‎        background: radial-gradient(circle, #6b2cd8, transparent);
-‎        animation: floatParticles linear infinite;
-‎        box-shadow: 0 0 10px #6b2cd8, 0 0 20px #6b2cd8;
-‎    }
-‎
-‎    @keyframes floatParticles {
-‎        0% { transform: translateY(100vh) scale(0.3); opacity: 0; }
-‎        50% { opacity: 1; }
-‎        100% { transform: translateY(-10vh) scale(1); opacity: 0; }
-‎    }
-‎
-‎    /* ---------- Mini TV / Session Ticket with Purple Fire Pulse ---------- */
-‎#ticketRef {
-‎    margin-top: 15px;
-‎    background: rgba(255,255,255,0.15);
-‎    backdrop-filter: blur(15px);
-‎    -webkit-backdrop-filter: blur(15px);
-‎    border-radius: 12px;
-‎    padding: 14px;
-‎    box-shadow: 0 5px 20px rgba(0,0,0,0.25);
-‎    min-height: 70px;
-‎    display: flex;
-‎    flex-direction: column;
-‎    align-items: center;
-‎    justify-content: center;
-‎    text-align: center;
-‎
-‎    /* Glow effect */
-‎    text-shadow: 0 0 8px rgba(107,44,216,0.5), 0 0 15px rgba(107,44,216,0.3);
-‎    animation: pulseGlow 3.5s infinite alternate;
-‎}
-‎
-‎#credentialsDisplay {
-‎    font-weight: bold;
-‎    margin-bottom: 6px;
-‎    color: #fff;
-‎}
-‎
-‎#guidanceMessage {
-‎    font-size: 14px;
-‎    color: #eee;
-‎    opacity: 0;
-‎    transition: opacity 1s ease-in-out;
-‎    height: 20px; /* keeps layout stable */
-‎}
-‎
-‎/* Pulse animation */
-‎@keyframes pulseGlow {
-‎    0% {
-‎        text-shadow: 0 0 6px rgba(107,44,216,0.4), 0 0 12px rgba(107,44,216,0.2);
-‎    }
-‎    50% {
-‎        text-shadow: 0 0 12px rgba(107,44,216,0.6), 0 0 25px rgba(107,44,216,0.4);
-‎    }
-‎    100% {
-‎        text-shadow: 0 0 6px rgba(107,44,216,0.4), 0 0 12px rgba(107,44,216,0.2);
-‎    }
-‎}
-‎
-‎    /* ---------- Sticky Footer ---------- */
-‎    footer {
-‎        position: fixed;
-‎        bottom: 0;
-‎        left: 0;
-‎        width: 100%;
-‎        text-align: center;
-‎        padding: 18px 0;
-‎        font-size: 14px;
-‎        color: #aaa;
-‎        background: rgba(15,15,25,0.95);
-‎        backdrop-filter: blur(12px);
-‎        box-shadow: 0 -5px 20px rgba(0,0,0,0.4);
-‎        z-index: 6;
-‎    }
-‎</style>
-‎</head>
-‎
-‎<body>
-‎
-‎<div id="floating-bg"></div>
-‎
-‎<header>
-‎    <h1>AvalonFlow</h1>
-‎    <p>Secure • Distributed • Rewarding</p>
-‎</header>
-‎
-‎<main>
-‎    <div id="loginForm">
-‎        <h2>Login</h2>
-‎
-‎        <input type="text" id="AvalonFlowID" placeholder="AvalonFlow ID">
-‎        <input type="password" id="password" placeholder="Password">
-‎
-‎        <button onclick="login()">Begin Exploring</button>
-‎        <button onclick="biometricLogin()">Login with Device Security</button>
-‎
-‎        <p id="loginError" style="color:red;"></p>
-‎
-‎        <!-- Mini TV -->
-‎        <div id="ticketRef">
-‎            <div id="credentialsDisplay"></div>
-‎            <div id="guidanceMessage"></div>
-‎        </div>
-‎    </div>
-‎</main>
-‎
-‎<!-- Sticky Footer -->
-‎<footer>
-‎    © 2026 AvalonFlow | Powered by Centrical™
-‎</footer>
-‎
-‎<script>
-‎/* ---------- Floating Particles ---------- */
-‎const container = document.getElementById('floating-bg');
-‎for(let i=0;i<60;i++){
-‎    const p=document.createElement('div');
-‎    p.className='particle';
-‎    const size=Math.random()*20+10;
-‎    p.style.width=size+'px';
-‎    p.style.height=size+'px';
-‎    p.style.left=Math.random()*100+'vw';
-‎    p.style.animationDuration=(Math.random()*20+10)+'s';
-‎    container.appendChild(p);
-‎}
-‎
-‎/* ---------- Identity Generator ---------- */
-‎function generateID(){
-‎    return "AF-" + Math.random().toString(36).substring(2,6).toUpperCase()
-‎           + "-" + Math.random().toString(36).substring(2,6).toUpperCase();
-‎}
-‎
-‎function generatePassword(){
-‎    return Math.random().toString(36).substring(2,10) + "!";
-‎}
-‎
-‎function generateSession(){
-‎    return "AF-SESSION-" + Date.now().toString().slice(-6) + "-" +
-‎           Math.random().toString(36).substring(2,6).toUpperCase();
-‎}
-‎
-‎/* ---------- Load or Create Identity ---------- */
-‎let identity = JSON.parse(localStorage.getItem("avalonflow_identity"));
-‎
-‎if(!identity){
-‎    identity = {
-‎        id: generateID(),
-‎        password: generatePassword(),
-‎        sessionRef: generateSession()
-‎    };
-‎    localStorage.setItem("avalonflow_identity", JSON.stringify(identity));
-‎}
-‎
-‎/* ---------- Mini TV Display ---------- */
-‎document.getElementById("credentialsDisplay").textContent =
-‎    `🆔: ${identity.id} | 🔑: ${identity.password}`;
-‎
-‎const tvMessages = [
-‎    "Keep your access credentials safe.",
-‎    "Your session is unique per login.",
-‎    "Do not share your AvalonFlow ID.",
-‎    "Contact support with your session reference."
-‎];
-‎
-‎let tvIndex = 0;
-‎const guidanceDiv = document.getElementById("guidanceMessage");
-‎let tvIndex = 0;
-‎
-‎function fadeMessage() {
-‎    // Fade out
-‎    guidanceDiv.style.opacity = 0;
-‎
-‎    setTimeout(() => {
-‎        // Change text
-‎        guidanceDiv.textContent = tvMessages[tvIndex];
-‎        // Fade in
-‎        guidanceDiv.style.opacity = 1;
-‎
-‎        // Prepare next index
-‎        tvIndex = (tvIndex + 1) % tvMessages.length;
-‎    }, 1000); // matches the CSS transition duration
-‎}
-‎
-‎// Start immediately and then every 4 seconds
-‎fadeMessage();
-‎setInterval(fadeMessage, 4000);
-‎
-‎/* ---------- Login ---------- */
-‎function login(){
-‎    const idInput = document.getElementById("AvalonFlowID").value;
-‎    const passInput = document.getElementById("password").value;
-‎
-‎    if(idInput === identity.id && passInput === identity.password){
-‎        window.location.href = `dashboard.html?ticket=${identity.sessionRef}`;
-‎    } else {
-‎        document.getElementById("loginError").innerText =
-‎            "Access details not recognized.";
-‎    }
-‎}
-‎
-‎/* ---------- Biometric Login ---------- */
-‎async function biometricLogin(){
-‎    if(!window.PublicKeyCredential){
-‎        alert("Device security not supported.");
-‎        return;
-‎    }
-‎
-‎    try{
-‎        await navigator.credentials.get({
-‎            publicKey:{
-‎                challenge:new Uint8Array(32),
-‎                userVerification:"required",
-‎                timeout:60000
-‎            }
-‎        });
-‎        window.location.href = `dashboard.html?ticket=${identity.sessionRef}`;
-‎    }catch(e){
-‎        alert("Authentication cancelled.");
-‎    }
-‎}
-‎</script>
-‎
-‎</body>
-‎</html>
-‎
-‎
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AvalonFlow Login</title>
+<style>
+    body { 
+        font-family: 'Arial', sans-serif; 
+        background-color: #0d0d0d; 
+        color: #fff; 
+        margin:0; 
+        padding:0; 
+        overflow: hidden;
+        position: relative;
+    }
+
+    /* ---------- Glass Header ---------- */
+    header { 
+        background: rgba(107,44,216,0.4);
+        backdrop-filter: blur(15px);
+        -webkit-backdrop-filter: blur(15px);
+        border-radius: 18px;
+        color: white; 
+        padding: 20px; 
+        text-align: center; 
+        position: relative;
+        z-index: 2;
+        margin: 20px;
+        box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+    }
+
+    /* ---------- Main ---------- */
+    main { 
+        max-width: 800px; 
+        margin: 30px auto; 
+        padding: 0 20px; 
+        position: relative;
+        z-index: 2;
+    }
+
+    /* ---------- Glass Inputs with Subtle Purple Fire ---------- */
+    input {
+        position: relative;
+        padding: 12px; 
+        margin: 10px 0; 
+        width: 100%; 
+        border-radius: 12px; 
+        border: none; 
+        background: rgba(255,255,255,0.15);
+        color: #fff;
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.25);
+        overflow: hidden;
+        z-index: 0;
+    }
+
+    input::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(107,44,216,0.2) 0%, rgba(155,89,182,0.05) 60%);
+        animation: fireGlow 6s infinite linear;
+        z-index: -1;
+        border-radius: 12px;
+    }
+
+    @keyframes fireGlow {
+        0% { transform: translate(0,0) scale(1); opacity: 0.6; }
+        50% { transform: translate(20px,10px) scale(1.05); opacity: 0.8; }
+        100% { transform: translate(0,0) scale(1); opacity: 0.6; }
+    }
+
+    button { 
+        background-color: #6b2cd8; 
+        color: white; 
+        padding: 10px; 
+        border: none; 
+        border-radius: 6px; 
+        cursor: pointer; 
+        width: 100%; 
+        margin-top: 8px;
+    }
+
+    /* ---------- Floating Background ---------- */
+    #floating-bg {
+        position: fixed;
+        top:0; left:0;
+        width: 100%;
+        height: 100%;
+        z-index:1;
+        overflow: hidden;
+        pointer-events: none;
+        background: radial-gradient(circle at bottom, #1a0d3a, #0d0d0d);
+    }
+
+    .particle {
+        position: absolute;
+        border-radius: 50%;
+        opacity: 0.6;
+        background: radial-gradient(circle, #6b2cd8, transparent);
+        animation: floatParticles linear infinite;
+        box-shadow: 0 0 10px #6b2cd8, 0 0 20px #6b2cd8;
+    }
+
+    @keyframes floatParticles {
+        0% { transform: translateY(100vh) scale(0.3); opacity: 0; }
+        50% { opacity: 1; }
+        100% { transform: translateY(-10vh) scale(1); opacity: 0; }
+    }
+
+    /* ---------- Mini TV / Session Ticket with Purple Fire Pulse ---------- */
+    #ticketRef {
+        margin-top: 15px;
+        background: rgba(255,255,255,0.15);
+        backdrop-filter: blur(15px);
+        -webkit-backdrop-filter: blur(15px);
+        border-radius: 12px;
+        padding: 14px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.25);
+        min-height: 70px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+
+        /* Glow effect */
+        text-shadow: 0 0 8px rgba(107,44,216,0.5), 0 0 15px rgba(107,44,216,0.3);
+        animation: pulseGlow 3.5s infinite alternate;
+    }
+
+    #credentialsDisplay {
+        font-weight: bold;
+        margin-bottom: 6px;
+        color: #fff;
+    }
+
+    #guidanceMessage {
+        font-size: 14px;
+        color: #eee;
+        opacity: 0;
+        transition: opacity 1s ease-in-out;
+        height: 20px; /* keeps layout stable */
+    }
+
+    @keyframes pulseGlow {
+        0% {
+            text-shadow: 0 0 6px rgba(107,44,216,0.4), 0 0 12px rgba(107,44,216,0.2);
+        }
+        50% {
+            text-shadow: 0 0 12px rgba(107,44,216,0.6), 0 0 25px rgba(107,44,216,0.4);
+        }
+        100% {
+            text-shadow: 0 0 6px rgba(107,44,216,0.4), 0 0 12px rgba(107,44,216,0.2);
+        }
+    }
+
+    /* ---------- Sticky Footer ---------- */
+    footer {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        text-align: center;
+        padding: 18px 0;
+        font-size: 14px;
+        color: #aaa;
+        background: rgba(15,15,25,0.95);
+        backdrop-filter: blur(12px);
+        box-shadow: 0 -5px 20px rgba(0,0,0,0.4);
+        z-index: 6;
+    }
+</style>
+</head>
+<body>
+
+<div id="floating-bg"></div>
+
+<header>
+    <h1>AvalonFlow</h1>
+    <p>Secure • Distributed • Rewarding</p>
+</header>
+
+<main>
+    <div id="loginForm">
+        <h2>Login</h2>
+
+        <input type="text" id="AvalonFlowID" placeholder="AvalonFlow ID">
+        <input type="password" id="password" placeholder="Password">
+
+        <button onclick="login()">Begin Exploring</button>
+        <button onclick="biometricLogin()">Login with Device Security</button>
+
+        <p id="loginError" style="color:red;"></p>
+
+        <!-- Mini TV -->
+        <div id="ticketRef">
+            <div id="credentialsDisplay"></div>
+            <div id="guidanceMessage"></div>
+        </div>
+    </div>
+</main>
+
+<!-- Sticky Footer -->
+<footer>
+    © 2026 AvalonFlow | Powered by Centrical™
+</footer>
+
+<script>
+/* ---------- Floating Particles ---------- */
+const container = document.getElementById('floating-bg');
+for(let i=0;i<60;i++){
+    const p=document.createElement('div');
+    p.className='particle';
+    const size=Math.random()*20+10;
+    p.style.width=size+'px';
+    p.style.height=size+'px';
+    p.style.left=Math.random()*100+'vw';
+    p.style.animationDuration=(Math.random()*20+10)+'s';
+    container.appendChild(p);
+}
+
+/* ---------- Identity Generator ---------- */
+function generateID(){
+    return "AF-" + Math.random().toString(36).substring(2,6).toUpperCase()
+           + "-" + Math.random().toString(36).substring(2,6).toUpperCase();
+}
+
+function generatePassword(){
+    return Math.random().toString(36).substring(2,10) + "!";
+}
+
+function generateSession(){
+    return "AF-SESSION-" + Date.now().toString().slice(-6) + "-" +
+           Math.random().toString(36).substring(2,6).toUpperCase();
+}
+
+/* ---------- Load or Create Identity ---------- */
+let identity = JSON.parse(localStorage.getItem("avalonflow_identity"));
+
+if(!identity){
+    identity = {
+        id: generateID(),
+        password: generatePassword(),
+        sessionRef: generateSession()
+    };
+    localStorage.setItem("avalonflow_identity", JSON.stringify(identity));
+}
+
+/* ---------- Mini TV Display ---------- */
+document.getElementById("credentialsDisplay").textContent =
+    `🆔: ${identity.id} | 🔑: ${identity.password}`;
+
+const tvMessages = [
+    "Keep your access credentials safe.",
+    "Your session is unique per login.",
+    "Do not share your AvalonFlow ID.",
+    "Contact support with your session reference."
+];
+
+let tvIndex = 0;
+const guidanceDiv = document.getElementById("guidanceMessage");
+
+function fadeMessage() {
+    guidanceDiv.style.opacity = 0;
+    setTimeout(() => {
+        guidanceDiv.textContent = tvMessages[tvIndex];
+        guidanceDiv.style.opacity = 1;
+        tvIndex = (tvIndex + 1) % tvMessages.length;
+    }, 1000);
+}
+
+fadeMessage();
+setInterval(fadeMessage, 4000);
+
+/* ---------- Login ---------- */
+function login(){
+    const idInput = document.getElementById("AvalonFlowID").value;
+    const passInput = document.getElementById("password").value;
+
+    if(idInput === identity.id && passInput === identity.password){
+        window.location.href = `dashboard.html?ticket=${identity.sessionRef}`;
+    } else {
+        document.getElementById("loginError").innerText =
+            "Access details not recognized.";
+    }
+}
+
+/* ---------- Biometric Login ---------- */
+async function biometricLogin(){
+    if(!window.PublicKeyCredential){
+        alert("Device security not supported.");
+        return;
+    }
+
+    try{
+        await navigator.credentials.get({
+            publicKey:{
+                challenge:new Uint8Array(32),
+                userVerification:"required",
+                timeout:60000
+            }
+        });
+        window.location.href = `dashboard.html?ticket=${identity.sessionRef}`;
+    }catch(e){
+        alert("Authentication cancelled.");
+    }
+}
+</script>
+
+</body>
+</html>
