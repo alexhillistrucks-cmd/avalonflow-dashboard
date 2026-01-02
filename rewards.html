@@ -323,6 +323,15 @@ const urlParams = new URLSearchParams(window.location.search);
 const isAdmin = urlParams.get('admin') === 'true';
 
 if (isAdmin) {
+    let unlockedBranches = {};
+    let unlockTimes = {};
+    const now = Date.now();
+    Object.keys(branches).forEach(key => {
+        unlockedBranches[key] = true;  // unlock all
+        unlockTimes[key] = now;        // start timer now
+    });
+    localStorage.setItem('unlockedBranches', JSON.stringify(unlockedBranches));
+    localStorage.setItem('unlockTimes', JSON.stringify(unlockTimes));
     document.body.insertAdjacentHTML(
         'afterbegin',
         `<div style="position:fixed;bottom:90px;right:20px;padding:8px 12px;border-radius:8px;
