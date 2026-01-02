@@ -24,13 +24,13 @@
         height: 100%;
         background: rgba(15,15,25,0.95);
         backdrop-filter: blur(14px);
-        z-index: 1000;
+        z-index: 5;
         padding: 25px;
         transform: translateX(-100%);
         transition: transform 0.3s ease;
     }
     #sidebar.open { transform: translateX(0); }
-    #sidebar h1 { color: #6b2cd8; margin-top: 0; }
+    #sidebar h2 { color: #6b2cd8; margin-top: 0; }
     #sidebar button {
         width: 100%;
         margin: 12px 0;
@@ -48,37 +48,38 @@
         inset: 0;
         background: rgba(0,0,0,0.6);
         backdrop-filter: blur(4px);
-        z-index: 900;
+        z-index: 4;
         display: none;
     }
     #overlay.active { display: block; }
 
     #menuBtn {
         position: fixed;
-        top: 20px;
-        left: 20px;
-        z-index: 1100;
-        background: #6b2cd8;
-        border: none;
-        color: #fff;
-        padding: 12px 14px;
-        border-radius: 10px;
-        cursor: pointer;
+            top: 20px;
+            left: 20px;
+            z-index: 6;
+            background: #6b2cd8;
+            border: none;
+            color: #fff;
+            padding: 12px 14px;
+            border-radius: 10px;
     }
 
     #content {
         position: relative;
         z-index: 1;
-        padding: 40px 40px 100px 100px; /* bottom and left spacing for menu & footer */
+        padding: 40px;
         max-width: 1100px;
         margin: auto;
+        padding-bottom: 80px;
+        padding-left: 70px; /* space for menu button */
     }
 
     /* Space title from menu button */
     #titleContainer {
         font-size: 24px;
-        margin: 20px 0;
-        padding-left: 20px;
+        margin: 20px 0 20px 0; /* top & bottom spacing */
+        padding-left: 20px; /* safe spacing from menu button */
     }
 
     .glass-card {
@@ -115,60 +116,43 @@
         margin: 10px 0;
     }
     .progress-fill {
-        height: 100%;
-        width: 0%;
-        background: linear-gradient(90deg, #6b2cd8, #b393ff);
-        border-radius: 10px;
-        overflow: hidden;
-        position: relative;
-        transition: width linear;
-    }
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #6b2cd8, #b393ff);
+    border-radius: 10px;
+    overflow: hidden;
+    position: relative;
+    transition: width linear; /* linear transition for smooth fill */
+}
 
-    .progress-fill::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -50%;
-        width: 200%;
-        height: 100%;
-        background: repeating-linear-gradient(
-            -45deg,
-            rgba(255,255,255,0.15),
-            rgba(255,255,255,0.15) 10px,
-            transparent 10px,
-            transparent 20px
-        );
-        animation: wave 2s linear infinite, wavePulse 1.5s ease-in-out infinite alternate;
-        border-radius: 10px;
-    }
+.progress-fill::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -50%;
+    width: 200%;
+    height: 100%;
+    background: repeating-linear-gradient(
+        -45deg,
+        rgba(255,255,255,0.15),
+        rgba(255,255,255,0.15) 10px,
+        transparent 10px,
+        transparent 20px
+    );
+    animation: wave 2s linear infinite, wavePulse 1.5s ease-in-out infinite alternate;
+    border-radius: 10px;
+}
 
-    @keyframes wave {
-        0% { transform: translateX(0); }
-        100% { transform: translateX(-50%); }
-    }
+@keyframes wave {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+}
 
-    @keyframes wavePulse {
-        0% { transform: translateX(0) translateY(0); }
-        100% { transform: translateX(-50%) translateY(3px); }
-    }
-
-    .notification-bar {
-        position: fixed;
-        top: -50px;
-        left: 50%;
-        transform: translateX(-50%);
-        background: #6b2cd8;
-        color: #fff;
-        padding: 10px 20px;
-        border-radius: 8px;
-        z-index: 1200;
-        opacity: 0;
-        transition: top 0.3s ease, opacity 0.3s ease;
-    }
-    .notification-bar.show {
-        top: 20px;
-        opacity: 1;
-    }
+@keyframes wavePulse {
+    0% { transform: translateX(0) translateY(0); }
+    100% { transform: translateX(-50%) translateY(3px); }
+}
+    .notification-bar.show { top: 20px; opacity: 1; }
 
     footer {
         text-align: center;
@@ -181,26 +165,10 @@
         position: fixed;
         width: 100%;
         bottom: 0;
-        left: 0;
-        z-index: 100;
-    }
-
-    #floating-bg {
-        position: fixed;
-        inset: 0;
-        z-index: 0;
-        overflow: hidden;
-        pointer-events: none;
-    }
-    .particle {
-        position: absolute;
-        border-radius: 50%;
-        pointer-events: none;
-        opacity: 0.8;
     }
 
     @media (max-width:768px){
-        #content{padding:20px 20px 100px 80px;}
+        #content{padding:20px;padding-left:60px;}
         .glass-card{padding:20px;}
         #titleContainer { font-size: 20px; }
     }
@@ -230,163 +198,212 @@
     <div class="glass-card">
         <h4>AvalonCare — The Foundation Branch</h4>
         <div class="progress-bar"><div class="progress-fill" id="careFill"></div></div>
-        <p class="locked-text" id="careLock">🔒 Locked — Complete payment to unlock</p>
-        <details>
-            <summary>Rewards Summary ▾</summary>
-            <div class="reward-line">Cycles completed: <span id="careCycles">0</span></div>
-            <div class="reward-line">Credits per 12h: ≈ 14.29 ACU</div>
-            <div class="reward-line">Credits activated: <span class="ac-value" id="careAC">0.00</span></div>
-            <div class="reward-line ref">Reference value: ≈ 1€ = 10 ACU</div>
-            <div class="reward-line">Reset in: <span id="careReset">--:--:--</span></div>
-        </details>
-    </div>
+<p class="locked-text" id="careLock">🔒 Locked — Complete payment to unlock</p>
+
+<details>
+<summary>Rewards Summary ▾</summary>
+<div class="reward-line">Cycles completed: <span id="careCycles">0</span></div>
+<div class="reward-line">Credits per 12h: ≈ 14.29 ACU</div>
+<div class="reward-line">Credits activated: <span class="ac-value" id="careAC">0.00</span></div>
+<div class="reward-line ref">Reference value: ≈ 1€ = 10 ACU</div>
+<div class="reward-line">Reset in: <span id="careReset">--:--:--</span></div>
+</details>
+</div>
 
     <div class="glass-card">
         <h4>AvalonGrow — The Expansion Branch</h4>
         <div class="progress-bar"><div class="progress-fill" id="growFill"></div></div>
-        <p class="locked-text" id="growLock">🔒 Locked — Complete payment to unlock</p>
-        <details>
-            <summary>Rewards Summary ▾</summary>
-            <div class="reward-line">Cycles completed: <span id="growCycles">0</span></div>
-            <div class="reward-line">Credits per 12h: ≈ 14.28 ACU</div>
-            <div class="reward-line">Credits activated: <span class="ac-value" id="growAC">0.00</span></div>
-            <div class="reward-line ref">Reference value: ≈ 1€ = 10 ACU</div>
-            <div class="reward-line">Reset in: <span id="growReset">--:--:--</span></div>
-        </details>
-    </div>
+<p class="locked-text" id="growLock">🔒 Locked — Complete payment to unlock</p>
+
+<details>
+<summary>Rewards Summary ▾</summary>
+<div class="reward-line">Cycles completed: <span id="growCycles">0</span></div>
+<div class="reward-line">Credits per 12h: ≈ 14.28 ACU</div>
+<div class="reward-line">Credits activated: <span class="ac-value" id="growAC">0.00</span></div>
+<div class="reward-line ref">Reference value: ≈ 1€ = 10 ACU</div>
+<div class="reward-line">Reset in: <span id="growReset">--:--:--</span></div>
+</details>
+</div>
 
     <div class="glass-card">
         <h4>AvalonEase — The Mastery Branch</h4>
         <div class="progress-bar"><div class="progress-fill" id="easeFill"></div></div>
-        <p class="locked-text" id="easeLock">🔒 Locked — Complete payment to unlock</p>
-        <details>
-            <summary>Rewards Summary ▾</summary>
-            <div class="reward-line">Cycles completed: <span id="easeCycles">0</span></div>
-            <div class="reward-line">Credits per 12h: ≈ 14.28 ACU</div>
-            <div class="reward-line">Credits activated: <span class="ac-value" id="easeAC">0.00</span></div>
-            <div class="reward-line ref">Reference value: ≈ 1€ = 10 ACU</div>
-            <div class="reward-line">Reset in: <span id="easeReset">--:--:--</span></div>
-        </details>
-    </div>
+<p class="locked-text" id="easeLock">🔒 Locked — Complete payment to unlock</p>
+
+<details>
+<summary>Rewards Summary ▾</summary>
+<div class="reward-line">Cycles completed: <span id="easeCycles">0</span></div>
+<div class="reward-line">Credits per 12h: ≈ 14.28 ACU</div>
+<div class="reward-line">Credits activated: <span class="ac-value" id="easeAC">0.00</span></div>
+<div class="reward-line ref">Reference value: ≈ 1€ = 10 ACU</div>
+<div class="reward-line">Reset in: <span id="easeReset">--:--:--</span></div>
+</details>
 </div>
 
-<footer>
-    © 2026 AvalonFlow | Powered by Centrical™
-</footer>
+</div>
+
+    <!-- Sticky Footer -->
+    <footer>
+        © 2026 AvalonFlow | Powered by Centrical™
+    </footer>
 
 <script>
-// ----- Admin Mode -----
+// ----------------- Admin detection -----------------
 const urlParams = new URLSearchParams(window.location.search);
 const isAdmin = urlParams.get('admin') === 'true';
-if(isAdmin){
-    document.body.insertAdjacentHTML('afterbegin', 
-    `<div style="position:fixed;bottom:90px;right:20px;padding:8px 12px;border-radius:8px;background:#6b2cd8;color:white;font-size:12px;z-index:9999">ADMIN MODE</div>`);
+
+if (isAdmin) {
+    document.body.insertAdjacentHTML(
+        'afterbegin',
+        `<div style="position:fixed;bottom:90px;right:20px;padding:8px 12px;border-radius:8px;
+        background:#6b2cd8;color:white;font-size:12px;z-index:9999">
+        ADMIN MODE
+        </div>`
+    );
 }
 
-// ----- Sidebar -----
+// ----- Sidebar & Overlay -----
 const sidebar = document.getElementById('sidebar');
 const overlay = document.getElementById('overlay');
-function toggleSidebar(){ sidebar.classList.toggle('open'); overlay.classList.toggle('active'); }
-function logout(){ window.location.href='index.html'; }
 
-// ----- Floating Particles -----
+function toggleSidebar() {
+    sidebar.classList.toggle('open');
+    overlay.classList.toggle('active');
+}
+
+function logout() {
+    window.location.href = 'index.html';
+}
+
+// ----- Particles -----
 const bg = document.getElementById('floating-bg');
-const colors = ['#6b2cd8','#9b59b6','#8e44ad'];
-function particle(){
+const colors = ['#6b2cd8', '#9b59b6', '#8e44ad'];
+
+function particle() {
     const p = document.createElement('div');
-    p.className='particle';
-    const size = Math.random()*20+10;
-    p.style.width=size+'px';
-    p.style.height=size+'px';
-    p.style.left=Math.random()*100+'vw';
-    p.style.top=Math.random()*100+'vh';
-    p.style.background=`radial-gradient(circle, ${colors[Math.floor(Math.random()*colors.length)]}, transparent)`;
-    p.style.animationDuration=(Math.random()*20+10)+'s';
+    p.className = 'particle';
+    const size = Math.random() * 20 + 10;
+    p.style.width = size + 'px';
+    p.style.height = size + 'px';
+    p.style.left = Math.random() * 100 + 'vw';
+    p.style.background = `radial-gradient(circle, ${colors[Math.floor(Math.random() * colors.length)]}, transparent)`;
+    p.style.animationDuration = (Math.random() * 20 + 10) + 's';
     bg.appendChild(p);
-    setTimeout(()=>p.remove(),30000);
+    setTimeout(() => p.remove(), 30000);
 }
-setInterval(particle,800);
+setInterval(particle, 800);
 
-// ----- Rewards -----
+// ----- Branch Data -----
 const branches = {
-    care:{days:14,totalAC:400,fill:'careFill',lock:'careLock',ac:'careAC',cycles:'careCycles',reset:'careReset',per12h:14.29},
-    grow:{days:28,totalAC:800,fill:'growFill',lock:'growLock',ac:'growAC',cycles:'growCycles',reset:'growReset',per12h:14.28},
-    ease:{days:42,totalAC:1200,fill:'easeFill',lock:'easeLock',ac:'easeAC',cycles:'easeCycles',reset:'easeReset',per12h:14.28}
+    care: { days: 14, totalAC: 400, fill: 'careFill', lock: 'careLock', ac: 'careAC', cycles: 'careCycles', reset: 'careReset', per12h: 14.29 },
+    grow: { days: 28, totalAC: 800, fill: 'growFill', lock: 'growLock', ac: 'growAC', cycles: 'growCycles', reset: 'growReset', per12h: 14.28 },
+    ease: { days: 42, totalAC: 1200, fill: 'easeFill', lock: 'easeLock', ac: 'easeAC', cycles: 'easeCycles', reset: 'easeReset', per12h: 14.28 }
 };
-function updateRewards(){
-    const now = Date.now();
-    const unlockTimes=JSON.parse(localStorage.getItem('unlockTimes'))||{};
-    const unlocked=JSON.parse(localStorage.getItem('unlockedBranches'))||{};
-    Object.keys(branches).forEach(key=>{
-        const b=branches[key];
-        const fill=document.getElementById(b.fill);
-        const lock=document.getElementById(b.lock);
-        const cyclesEl=document.getElementById(b.cycles);
-        const acEl=document.getElementById(b.ac);
-        const resetEl=document.getElementById(b.reset);
 
-        if(!unlocked[key]&&!isAdmin){
-            fill.style.width='0%';
-            lock.style.display='block';
-            cyclesEl.textContent=0;
-            acEl.textContent='0.00';
-            resetEl.textContent='--:--:--';
-            return;
-        }
-        lock.style.display='none';
-        const cycleMs=12*60*60*1000;
-        const unlockTime=unlockTimes[key]||now;
-        const elapsed=now-unlockTime;
-        const cycleProgress=(elapsed%cycleMs)/cycleMs;
-        fill.style.transitionDuration=`${cycleMs-(elapsed%cycleMs)}ms`;
-        fill.style.width=`${cycleProgress*100}%`;
-        const cycles=Math.floor(elapsed/cycleMs);
-        cyclesEl.textContent=cycles;
-        const ac=cycles*b.per12h+cycleProgress*b.per12h;
-        acEl.textContent=ac.toFixed(2)+' ACU';
-        const remainingMs=cycleMs-(elapsed%cycleMs);
-        const h=Math.floor(remainingMs/(1000*60*60));
-        const m=Math.floor((remainingMs%(1000*60*60))/(1000*60));
-        const s=Math.floor((remainingMs%(1000*60))/1000);
-        resetEl.textContent=`${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
-    });
+function updateRewards() {
+const now = Date.now();
+const unlockTimes = JSON.parse(localStorage.getItem('unlockTimes')) || {};
+const unlocked = JSON.parse(localStorage.getItem('unlockedBranches')) || {};
+
+Object.keys(branches).forEach(key => {
+const b = branches[key];
+const fill = document.getElementById(b.fill);
+const lock = document.getElementById(b.lock);
+const cyclesEl = document.getElementById(b.cycles);
+const acEl = document.getElementById(b.ac);
+const resetEl = document.getElementById(b.reset);
+
+if (!unlocked[key] && !isAdmin) {
+    // Normal user: branch locked
+    fill.style.width = '0%';
+    lock.style.display = 'block';
+    cyclesEl.textContent = 0;
+    acEl.textContent = '0.00';
+    resetEl.textContent = '--:--:--';
+    return;
 }
 
-// ----- Unlock URL -----
-window.addEventListener("load",()=>{
-    const notification=document.getElementById("rewardNotification");
-    const params=new URLSearchParams(window.location.search);
-    const branch=params.get("branch");
-    const status=params.get("status");
-    let unlockedBranches=JSON.parse(localStorage.getItem('unlockedBranches'))||{};
-    let unlockTimes=JSON.parse(localStorage.getItem('unlockTimes'))||{};
-    if(branch&&status==='success'&&branches[branch]){
-        unlockedBranches[branch]=true;
-        unlockTimes[branch]=Date.now();
-        localStorage.setItem('unlockedBranches',JSON.stringify(unlockedBranches));
-        localStorage.setItem('unlockTimes',JSON.stringify(unlockTimes));
-        notification.textContent=`${branch.charAt(0).toUpperCase()+branch.slice(1)} unlocked!`;
+// Admin override: branch visually unlocked
+if (isAdmin && !unlocked[key]) {
+    lock.style.display = 'none'; // hide the lock
+}
+
+lock.style.display = 'none';    
+
+const cycleMs = 12 * 60 * 60 * 1000; // 12 hours    
+const unlockTime = unlockTimes[key] || now;    
+const elapsed = now - unlockTime;    
+
+// ----- Cycle progress (0-100%) -----    
+const cycleProgress = (elapsed % cycleMs) / cycleMs;    
+
+// ----- Set width with CSS transition for smooth fill over 12h -----    
+fill.style.transitionDuration = `${cycleMs - (elapsed % cycleMs)}ms`; // remaining time in current cycle    
+fill.style.width = `${cycleProgress * 100}%`;    
+
+// ----- Total cycles completed -----    
+const cycles = Math.floor(elapsed / cycleMs);    
+cyclesEl.textContent = cycles;    
+
+// ----- Smooth ACU increment -----    
+const ac = cycles * b.per12h + cycleProgress * b.per12h;    
+acEl.textContent = ac.toFixed(2) + ' ACU';    
+
+// ----- Reset timer countdown -----    
+const remainingMs = cycleMs - (elapsed % cycleMs);    
+const h = Math.floor(remainingMs / (1000 * 60 * 60));    
+const m = Math.floor((remainingMs % (1000 * 60 * 60)) / (1000 * 60));    
+const s = Math.floor((remainingMs % (1000 * 60)) / 1000);    
+resetEl.textContent = `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+
+});
+
+}
+
+// ----- URL Unlock Handling -----
+window.addEventListener("load", () => {
+    const notification = document.getElementById("rewardNotification");
+    const params = new URLSearchParams(window.location.search);
+    const branch = params.get("branch");
+    const status = params.get("status");
+
+    let unlockedBranches = JSON.parse(localStorage.getItem('unlockedBranches')) || {};
+    let unlockTimes = JSON.parse(localStorage.getItem('unlockTimes')) || {};
+
+    if (branch && status === 'success' && branches[branch]) {
+        unlockedBranches[branch] = true;
+        unlockTimes[branch] = Date.now();
+        localStorage.setItem('unlockedBranches', JSON.stringify(unlockedBranches));
+        localStorage.setItem('unlockTimes', JSON.stringify(unlockTimes));
+
+        notification.textContent = `${branch.charAt(0).toUpperCase() + branch.slice(1)} unlocked!`;
         notification.classList.add("show");
-        setTimeout(()=>notification.classList.remove("show"),3000);
-    }else{
-        notification.textContent="Welcome — Rewards / Progress";
+        setTimeout(() => notification.classList.remove("show"), 3000);
+    } else {
+        notification.textContent = "Welcome — Rewards / Progress";
         notification.classList.add("show");
-        setTimeout(()=>notification.classList.remove("show"),3000);
+        setTimeout(() => notification.classList.remove("show"), 3000);
     }
+
     updateRewards();
-    window.history.replaceState({},document.title,window.location.pathname);
+    window.history.replaceState({}, document.title, window.location.pathname);
 });
 
 // ----- Auto Logout -----
 let logoutTimer;
-const logoutTime=8*60*60*1000;
-function resetLogoutTimer(){
+const logoutTime = 8 * 60 * 60 * 1000; // 8 hours
+
+function resetLogoutTimer() {
     clearTimeout(logoutTimer);
-    logoutTimer=setTimeout(()=>{ alert("No activity detected for 8 hours. You will be logged out."); logout(); },logoutTime);
+    logoutTimer = setTimeout(() => { 
+        alert("No activity detected for 8 hours. You will be logged out.");
+        logout();
+    }, logoutTime);
 }
+
 resetLogoutTimer();
-document.addEventListener('mousemove',resetLogoutTimer);
-document.addEventListener('keydown',resetLogoutTimer);
+document.addEventListener('mousemove', resetLogoutTimer);
+document.addEventListener('keydown', resetLogoutTimer);
 </script>
 
 </body>
