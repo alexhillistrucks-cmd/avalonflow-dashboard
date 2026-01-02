@@ -75,11 +75,10 @@
         padding-left: 70px; /* space for menu button */
     }
 
-    /* Space title from menu button */
     #titleContainer {
         font-size: 24px;
-        margin: 20px 0 20px 0; /* top & bottom spacing */
-        padding-left: 20px; /* safe spacing from menu button */
+        margin: 20px 0 20px 0;
+        padding-left: 20px;
     }
 
     .glass-card {
@@ -94,17 +93,6 @@
     .glass-card:hover {
         transform: translateY(-8px);
         box-shadow: 0 12px 35px rgba(0,0,0,0.5);
-    }
-
-    .button {
-        background: #6b2cd8;
-        color: #fff;
-        border: none;
-        border-radius: 10px;
-        padding: 12px 18px;
-        margin: 10px 0;
-        width: 100%;
-        font-size: 16px;
     }
 
     .progress-bar {
@@ -122,7 +110,7 @@
         border-radius: 10px;
         overflow: hidden;
         position: relative;
-        transition: width linear; /* linear transition for smooth fill */
+        transition: width linear;
     }
 
     .progress-fill::before {
@@ -242,10 +230,10 @@
     </div>
 </div>
 
-        <!-- Sticky Footer -->
-    <footer>
-        © 2026 AvalonFlow | Powered by Centrical™
-    </footer>
+<!-- Sticky Footer -->
+<footer>
+    © 2026 AvalonFlow | Powered by Centrical™
+</footer>
 
 <script>
 // ----------------- Admin detection -----------------
@@ -286,7 +274,7 @@ function particle() {
     p.style.width = size + 'px';
     p.style.height = size + 'px';
     p.style.left = Math.random() * 100 + 'vw';
-    p.style.top = Math.random() * 100 + 'vh'; // fix missing top
+    p.style.top = Math.random() * 100 + 'vh';
     p.style.background = `radial-gradient(circle, ${colors[Math.floor(Math.random() * colors.length)]}, transparent)`;
     p.style.animationDuration = (Math.random() * 20 + 10) + 's';
     bg.appendChild(p);
@@ -328,8 +316,13 @@ function updateRewards() {
         const unlockTime = unlockTimes[key] || now;    
         const elapsed = now - unlockTime;    
         const cycleProgress = (elapsed % cycleMs) / cycleMs;    
-        fill.style.transitionDuration = `${cycleMs - (elapsed % cycleMs)}ms`;    
-        fill.style.width = `${cycleProgress * 100}%`;    
+
+        // ----- Smooth animation even after refresh -----
+        fill.style.transitionDuration = `${cycleMs - (elapsed % cycleMs)}ms`;
+        setTimeout(() => {
+            fill.style.width = `${cycleProgress * 100}%`;
+        }, 50); // small delay ensures transition triggers
+
         const cycles = Math.floor(elapsed / cycleMs);    
         cyclesEl.textContent = cycles;    
         const ac = cycles * b.per12h + cycleProgress * b.per12h;    
