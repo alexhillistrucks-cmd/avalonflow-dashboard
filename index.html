@@ -39,41 +39,50 @@
         z-index: 2;
     }
 
-    /* ---------- Glass Inputs with Subtle Purple Fire ---------- */
-    input {
-        position: relative;
-        padding: 12px; 
-        margin: 10px 0; 
-        width: 100%; 
-        border-radius: 12px; 
-        border: none; 
-        background: rgba(255,255,255,0.15);
-        color: #fff;
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
-        box-shadow: 0 5px 15px rgba(0,0,0,0.25);
-        overflow: hidden;
-        z-index: 0;
-    }
+    /* ---------- Glass Inputs with Purple Fire Glow ---------- */
+input {
+    position: relative;
+    padding: 12px;
+    margin: 10px 0;
+    width: 100%;
+    border-radius: 12px;
+    border: none;
+    background: rgba(255,255,255,0.15);
+    color: #fff;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.25);
+    overflow: hidden;
+    z-index: 0;
+    transition: box-shadow 0.5s ease-in-out;
+}
 
-    input::before {
-        content: '';
-        position: absolute;
-        top: -50%;
-        left: -50%;
-        width: 200%;
-        height: 200%;
-        background: radial-gradient(circle, rgba(107,44,216,0.2) 0%, rgba(155,89,182,0.05) 60%);
-        animation: fireGlow 6s infinite linear;
-        z-index: -1;
-        border-radius: 12px;
-    }
+/* Purple fire glow animation behind the input */
+input::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(107,44,216,0.2) 0%, rgba(155,89,182,0.05) 60%);
+    animation: fireGlow 6s infinite linear;
+    z-index: -1;
+    border-radius: 12px;
+}
 
-    @keyframes fireGlow {
-        0% { transform: translate(0,0) scale(1); opacity: 0.6; }
-        50% { transform: translate(20px,10px) scale(1.05); opacity: 0.8; }
-        100% { transform: translate(0,0) scale(1); opacity: 0.6; }
-    }
+/* Subtle fire pulse animation */
+@keyframes fireGlow {
+    0% { transform: translate(0,0) scale(1); opacity: 0.6; }
+    50% { transform: translate(20px,10px) scale(1.05); opacity: 0.8; }
+    100% { transform: translate(0,0) scale(1); opacity: 0.6; }
+}
+
+/* Input focus highlight */
+input:focus {
+    box-shadow: 0 0 12px rgba(107,44,216,0.6), 0 0 25px rgba(155,89,182,0.4);
+    outline: none;
+}
 
     button { 
         background-color: #6b2cd8; 
@@ -291,25 +300,35 @@ function login(){
     }
 }
 
-/* ---------- Biometric Login ---------- */
+/* ---------- Biometric Registration & Login ---------- */
 async function biometricLogin(){
-    if(!window.PublicKeyCredential){
-        alert("Device security not supported.");
-        return;
-    }
+    if(!window.PublicKeyCredential){ alert("Device security not supported."); return; }
 
     try{
-        await navigator.credentials.get({
-            publicKey:{
-                challenge:new Uint8Array(32),
-                userVerification:"required",
-                timeout:60000
-            }
+        let storedCredential = localStorage.getItem("avalonflow_biometric");
+        if(!storedCredential){
+            // Register new credential
+            const credential = await navigator.credentials.create({
+                publicKey: {
+                    challenge: new Uint8Array(32),
+                    rp: { name: "AvalonFlow" },
+                    user: { id: new TextEncoder().encode(identity.id), name: identity.id, displayName: identity.id },
+                    pubKeyCredParams: [{ type:"public-key", alg:-7 }],
+                    timeout:60000,
+                    attestation:"direct"
+                }
+            });
+            localStorage.setItem("avalonflow_biometric", JSON.stringify(credential));
+            alert("Device security registered. You can now use biometrics for login.");
+        }
+
+        // Authenticate
+        const assertion = await navigator.credentials.get({
+            publicKey: { challenge:new Uint8Array(32), userVerification:"required", timeout:60000 }
         });
-        window.location.href = `dashboard.html?ticket=${identity.sessionRef}`;
-    }catch(e){
-        alert("Authentication cancelled.");
-    }
+
+        window.location.href=`dashboard.html?ticket=${identity.sessionRef}`;
+    }catch(e){ alert("Authentication cancelled or failed."); }
 }
 </script>
 
