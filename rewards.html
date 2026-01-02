@@ -379,6 +379,7 @@ function updateRewards() {
 
         lock.style.display = 'none';
 
+        // admin or unlocked user: use unlockTime
         const cycleMs = 12 * 60 * 60 * 1000;
         const unlockTime = unlockTimes[key] || now;
         const elapsed = now - unlockTime;
