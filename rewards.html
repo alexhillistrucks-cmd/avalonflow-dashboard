@@ -390,16 +390,21 @@
 ‎});
 ‎
 ‎// ----- Auto Logout -----
-‎let logoutTimer;
-‎const logoutTime = 8 * 60 * 60 * 1000;
-‎function resetLogoutTimer() {
-‎    clearTimeout(logoutTimer);
-‎    logoutTimer = setTimeout(() => { 
-‎        alert("No activity detected for 8 hours.
+let logoutTimer;
+const logoutTime = 8 * 60 * 60 * 1000; // 8 hours
+
+function resetLogoutTimer() {
+    clearTimeout(logoutTimer);
+    logoutTimer = setTimeout(() => { 
+        alert("No activity detected for 8 hours. You will be logged out.");
+        logout();
+    }, logoutTime);
+}
+
+resetLogoutTimer();
+document.addEventListener('mousemove', resetLogoutTimer);
+document.addEventListener('keydown', resetLogoutTimer);
 </script>
 
 </body>
-
-    </html>
-
-
+</html>
