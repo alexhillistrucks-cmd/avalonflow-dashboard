@@ -1,395 +1,377 @@
-‎<!DOCTYPE html>
-‎<html lang="en">
-‎<head>
-‎<meta charset="UTF-8">
-‎<meta name="viewport" content="width=device-width, initial-scale=1.0">
-‎<title>AvalonFlow Rewards</title>
-‎<style>
-‎    body {
-‎        font-family: 'Arial', sans-serif;
-‎        background-color: #1a0d3a;
-‎        color: #fff;
-‎        margin: 0;
-‎        padding: 0;
-‎        overflow-x: hidden;
-‎        position: relative;
-‎    }
-‎
-‎    /* ---------- Sidebar ---------- */
-‎    #sidebar {
-‎        position: fixed;
-‎        top: 0;
-‎        left: 0;
-‎        width: 280px;
-‎        height: 100%;
-‎        background: rgba(15,15,25,0.95);
-‎        backdrop-filter: blur(14px);
-‎        z-index: 5;
-‎        padding: 25px;
-‎        transform: translateX(-100%);
-‎        transition: transform 0.3s ease;
-‎    }
-‎    #sidebar.open { transform: translateX(0); }
-‎    #sidebar h2 { color: #6b2cd8; margin-top: 0; }
-‎    #sidebar button {
-‎        width: 100%;
-‎        margin: 12px 0;
-‎        padding: 12px;
-‎        border: none;
-‎        border-radius: 10px;
-‎        background: rgba(255,255,255,0.1);
-‎        color: #fff;
-‎        font-size: 16px;
-‎        cursor: pointer;
-‎    }
-‎
-‎    #overlay {
-‎        position: fixed;
-‎        inset: 0;
-‎        background: rgba(0,0,0,0.6);
-‎        backdrop-filter: blur(4px);
-‎        z-index: 4;
-‎        display: none;
-‎    }
-‎    #overlay.active { display: block; }
-‎
-‎    #menuBtn {
-‎        position: fixed;
-‎            top: 20px;
-‎            left: 20px;
-‎            z-index: 6;
-‎            background: #6b2cd8;
-‎            border: none;
-‎            color: #fff;
-‎            padding: 12px 14px;
-‎            border-radius: 10px;
-‎    }
-‎
-‎    #content {
-‎        position: relative;
-‎        z-index: 1;
-‎        padding: 40px;
-‎        max-width: 1100px;
-‎        margin: auto;
-‎        padding-bottom: 80px;
-‎        padding-left: 70px; /* space for menu button */
-‎    }
-‎
-‎    /* Space title from menu button */
-‎    #titleContainer {
-‎        font-size: 24px;
-‎        margin: 20px 0 20px 0; /* top & bottom spacing */
-‎        padding-left: 20px; /* safe spacing from menu button */
-‎    }
-‎
-‎    .glass-card {
-‎        background: rgba(255,255,255,0.12);
-‎        backdrop-filter: blur(12px);
-‎        border-radius: 18px;
-‎        padding: 28px;
-‎        margin-bottom: 28px;
-‎        box-shadow: 0 10px 30px rgba(0,0,0,0.35);
-‎        transition: transform 0.3s ease, box-shadow 0.3s ease;
-‎    }
-‎    .glass-card:hover {
-‎        transform: translateY(-8px);
-‎        box-shadow: 0 12px 35px rgba(0,0,0,0.5);
-‎    }
-‎
-‎    .button {
-‎        background: #6b2cd8;
-‎        color: #fff;
-‎        border: none;
-‎        border-radius: 10px;
-‎        padding: 12px 18px;
-‎        margin: 10px 0;
-‎        width: 100%;
-‎        font-size: 16px;
-‎    }
-‎
-‎    .progress-bar {
-‎        width: 100%;
-‎        height: 18px;
-‎        background: rgba(255,255,255,0.08);
-‎        border-radius: 10px;
-‎        overflow: hidden;
-‎        margin: 10px 0;
-‎    }
-‎    .progress-fill {
-‎    height: 100%;
-‎    width: 0%;
-‎    background: linear-gradient(90deg, #6b2cd8, #b393ff);
-‎    border-radius: 10px;
-‎    overflow: hidden;
-‎    position: relative;
-‎    transition: width linear; /* linear transition for smooth fill */
-‎}
-‎
-‎.progress-fill::before {
-‎    content: '';
-‎    position: absolute;
-‎    top: 0;
-‎    left: -50%;
-‎    width: 200%;
-‎    height: 100%;
-‎    background: repeating-linear-gradient(
-‎        -45deg,
-‎        rgba(255,255,255,0.15),
-‎        rgba(255,255,255,0.15) 10px,
-‎        transparent 10px,
-‎        transparent 20px
-‎    );
-‎    animation: wave 2s linear infinite, wavePulse 1.5s ease-in-out infinite alternate;
-‎    border-radius: 10px;
-‎}
-‎
-‎@keyframes wave {
-‎    0% { transform: translateX(0); }
-‎    100% { transform: translateX(-50%); }
-‎}
-‎
-‎@keyframes wavePulse {
-‎    0% { transform: translateX(0) translateY(0); }
-‎    100% { transform: translateX(-50%) translateY(3px); }
-‎}
-‎    .notification-bar.show { top: 20px; opacity: 1; }
-‎
-‎    footer {
-‎        text-align: center;
-‎        padding: 20px;
-‎        font-size: 14px;
-‎        color: #ccc;
-‎        background: rgba(15,15,25,0.95);
-‎        backdrop-filter: blur(12px);
-‎        box-shadow: 0 -5px 20px rgba(0,0,0,0.4);
-‎        position: fixed;
-‎        width: 100%;
-‎        bottom: 0;
-‎    }
-‎
-‎    @media (max-width:768px){
-‎        #content{padding:20px;padding-left:60px;}
-‎        .glass-card{padding:20px;}
-‎        #titleContainer { font-size: 20px; }
-‎    }
-‎</style>
-‎</head>
-‎<body>
-‎
-‎<div id="floating-bg"></div>
-‎<button id="menuBtn" onclick="toggleSidebar()">☰</button>
-‎
-‎<div id="sidebar">
-‎    <h1>AvalonFlow</h1>
-‎    <button onclick="window.location.href='dashboard.html'">Dashboard</button>
-‎    <button onclick="window.location.href='ecosystem.html'">Ecosystem</button>
-‎    <button onclick="window.location.href='branches.html'">Branches</button>
-‎    <button onclick="window.location.href='rewards.html'">Rewards</button>
-‎    <button onclick="window.location.href='support.html'">Support</button>
-‎    <button onclick="logout()">Logout</button>
-‎</div>
-‎<div id="overlay" onclick="toggleSidebar()"></div>
-‎<div id="rewardNotification" class="notification-bar"></div>
-‎
-‎<div id="content">
-‎    <div id="titleContainer">Rewards / Progress</div>
-‎    <p>Track your progress on the Logical Wing branches below:</p>
-‎
-‎    <div class="glass-card">
-‎        <h4>AvalonCare — The Foundation Branch</h4>
-‎        <div class="progress-bar"><div class="progress-fill" id="careFill"></div></div>
-‎<p class="locked-text" id="careLock">🔒 Locked — Complete payment to unlock</p>
-‎
-‎<details>
-‎<summary>Rewards Summary ▾</summary>
-‎<div class="reward-line">Cycles completed: <span id="careCycles">0</span></div>
-‎<div class="reward-line">Credits per 12h: ≈ 14.29 ACU</div>
-‎<div class="reward-line">Credits activated: <span class="ac-value" id="careAC">0.00</span></div>
-‎<div class="reward-line ref">Reference value: ≈ 1€ = 10 ACU</div>
-‎<div class="reward-line">Reset in: <span id="careReset">--:--:--</span></div>
-‎</details>
-‎</div>
-‎
-‎    <div class="glass-card">
-‎        <h4>AvalonGrow — The Expansion Branch</h4>
-‎        <div class="progress-bar"><div class="progress-fill" id="growFill"></div></div>
-‎<p class="locked-text" id="growLock">🔒 Locked — Complete payment to unlock</p>
-‎
-‎<details>
-‎<summary>Rewards Summary ▾</summary>
-‎<div class="reward-line">Cycles completed: <span id="growCycles">0</span></div>
-‎<div class="reward-line">Credits per 12h: ≈ 14.28 ACU</div>
-‎<div class="reward-line">Credits activated: <span class="ac-value" id="growAC">0.00</span></div>
-‎<div class="reward-line ref">Reference value: ≈ 1€ = 10 ACU</div>
-‎<div class="reward-line">Reset in: <span id="growReset">--:--:--</span></div>
-‎</details>
-‎</div>
-‎
-‎    <div class="glass-card">
-‎        <h4>AvalonEase — The Mastery Branch</h4>
-‎        <div class="progress-bar"><div class="progress-fill" id="easeFill"></div></div>
-‎<p class="locked-text" id="easeLock">🔒 Locked — Complete payment to unlock</p>
-‎
-‎<details>
-‎<summary>Rewards Summary ▾</summary>
-‎<div class="reward-line">Cycles completed: <span id="easeCycles">0</span></div>
-‎<div class="reward-line">Credits per 12h: ≈ 14.28 ACU</div>
-‎<div class="reward-line">Credits activated: <span class="ac-value" id="easeAC">0.00</span></div>
-‎<div class="reward-line ref">Reference value: ≈ 1€ = 10 ACU</div>
-‎<div class="reward-line">Reset in: <span id="easeReset">--:--:--</span></div>
-‎</details>
-‎</div>
-‎
-‎</div>
-‎
-‎    <!-- Sticky Footer -->
-‎    <footer>
-‎        © 2026 AvalonFlow | Powered by Centrical™
-‎    </footer>
-‎
-‎<script>
-‎// ----------------- Admin detection -----------------
-‎const urlParams = new URLSearchParams(window.location.search);
-‎const isAdmin = urlParams.get('admin') === 'true';
-‎
-‎if (isAdmin) {
-‎    document.body.insertAdjacentHTML(
-‎        'afterbegin',
-‎        `<div style="position:fixed;bottom:90px;right:20px;padding:8px 12px;border-radius:8px;
-‎        background:#6b2cd8;color:white;font-size:12px;z-index:9999">
-‎        ADMIN MODE
-‎        </div>`
-‎    );
-‎}
-‎
-‎// ----- Sidebar & Overlay -----
-‎const sidebar = document.getElementById('sidebar');
-‎const overlay = document.getElementById('overlay');
-‎
-‎function toggleSidebar() {
-‎    sidebar.classList.toggle('open');
-‎    overlay.classList.toggle('active');
-‎}
-‎
-‎function logout() {
-‎    window.location.href = 'index.html';
-‎}
-‎
-‎// ----- Particles -----
-‎const bg = document.getElementById('floating-bg');
-‎const colors = ['#6b2cd8', '#9b59b6', '#8e44ad'];
-‎
-‎function particle() {
-‎    const p = document.createElement('div');
-‎    p.className = 'particle';
-‎    const size = Math.random() * 20 + 10;
-‎    p.style.width = size + 'px';
-‎    p.style.height = size + 'px';
-‎    p.style.left = Math.random() * 100 + 'vw';
-‎    p.style.background = `radial-gradient(circle, ${colors[Math.floor(Math.random() * colors.length)]}, transparent)`;
-‎    p.style.animationDuration = (Math.random() * 20 + 10) + 's';
-‎    bg.appendChild(p);
-‎    setTimeout(() => p.remove(), 30000);
-‎}
-‎setInterval(particle, 800);
-‎
-‎// ----- Branch Data -----
-‎const branches = {
-‎    care: { days: 14, totalAC: 400, fill: 'careFill', lock: 'careLock', ac: 'careAC', cycles: 'careCycles', reset: 'careReset', per12h: 14.29 },
-‎    grow: { days: 28, totalAC: 800, fill: 'growFill', lock: 'growLock', ac: 'growAC', cycles: 'growCycles', reset: 'growReset', per12h: 14.28 },
-‎    ease: { days: 42, totalAC: 1200, fill: 'easeFill', lock: 'easeLock', ac: 'easeAC', cycles: 'easeCycles', reset: 'easeReset', per12h: 14.28 }
-‎};
-‎
-‎function updateRewards() {
-‎const now = Date.now();
-‎const unlockTimes = JSON.parse(localStorage.getItem('unlockTimes')) || {};
-‎const unlocked = JSON.parse(localStorage.getItem('unlockedBranches')) || {};
-‎
-‎Object.keys(branches).forEach(key => {
-‎const b = branches[key];
-‎const fill = document.getElementById(b.fill);
-‎const lock = document.getElementById(b.lock);
-‎const cyclesEl = document.getElementById(b.cycles);
-‎const acEl = document.getElementById(b.ac);
-‎const resetEl = document.getElementById(b.reset);
-‎
-‎if (!unlocked[key] && !isAdmin) {
-‎    // Normal user: branch locked
-‎    fill.style.width = '0%';
-‎    lock.style.display = 'block';
-‎    cyclesEl.textContent = 0;
-‎    acEl.textContent = '0.00';
-‎    resetEl.textContent = '--:--:--';
-‎    return;
-‎}
-‎
-‎// Admin override: branch visually unlocked
-‎if (isAdmin && !unlocked[key]) {
-‎    lock.style.display = 'none'; // hide the lock
-‎}
-‎
-‎lock.style.display = 'none';    
-‎
-‎const cycleMs = 12 * 60 * 60 * 1000; // 12 hours    
-‎const unlockTime = unlockTimes[key] || now;    
-‎const elapsed = now - unlockTime;    
-‎
-‎// ----- Cycle progress (0-100%) -----    
-‎const cycleProgress = (elapsed % cycleMs) / cycleMs;    
-‎
-‎// ----- Set width with CSS transition for smooth fill over 12h -----    
-‎fill.style.transitionDuration = `${cycleMs - (elapsed % cycleMs)}ms`; // remaining time in current cycle    
-‎fill.style.width = `${cycleProgress * 100}%`;    
-‎
-‎// ----- Total cycles completed -----    
-‎const cycles = Math.floor(elapsed / cycleMs);    
-‎cyclesEl.textContent = cycles;    
-‎
-‎// ----- Smooth ACU increment -----    
-‎const ac = cycles * b.per12h + cycleProgress * b.per12h;    
-‎acEl.textContent = ac.toFixed(2) + ' ACU';    
-‎
-‎// ----- Reset timer countdown -----    
-‎const remainingMs = cycleMs - (elapsed % cycleMs);    
-‎const h = Math.floor(remainingMs / (1000 * 60 * 60));    
-‎const m = Math.floor((remainingMs % (1000 * 60 * 60)) / (1000 * 60));    
-‎const s = Math.floor((remainingMs % (1000 * 60)) / 1000);    
-‎resetEl.textContent = `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
-‎
-‎});
-‎
-‎}
-‎
-‎// ----- URL Unlock Handling -----
-‎window.addEventListener("load", () => {
-‎    const notification = document.getElementById("rewardNotification");
-‎    const params = new URLSearchParams(window.location.search);
-‎    const branch = params.get("branch");
-‎    const status = params.get("status");
-‎
-‎    let unlockedBranches = JSON.parse(localStorage.getItem('unlockedBranches')) || {};
-‎    let unlockTimes = JSON.parse(localStorage.getItem('unlockTimes')) || {};
-‎
-‎    if (branch && status === 'success' && branches[branch]) {
-‎        unlockedBranches[branch] = true;
-‎        unlockTimes[branch] = Date.now();
-‎        localStorage.setItem('unlockedBranches', JSON.stringify(unlockedBranches));
-‎        localStorage.setItem('unlockTimes', JSON.stringify(unlockTimes));
-‎
-‎        notification.textContent = `${branch.charAt(0).toUpperCase() + branch.slice(1)} unlocked!`;
-‎        notification.classList.add("show");
-‎        setTimeout(() => notification.classList.remove("show"), 3000);
-‎    } else {
-‎        notification.textContent = "Welcome — Rewards / Progress";
-‎        notification.classList.add("show");
-‎        setTimeout(() => notification.classList.remove("show"), 3000);
-‎    }
-‎
-‎    updateRewards();
-‎    window.history.replaceState({}, document.title, window.location.pathname);
-‎});
-‎
-‎// ----- Auto Logout -----
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AvalonFlow Rewards</title>
+<style>
+    body {
+        font-family: 'Arial', sans-serif;
+        background-color: #1a0d3a;
+        color: #fff;
+        margin: 0;
+        padding: 0;
+        overflow-x: hidden;
+        position: relative;
+    }
+
+    /* ---------- Sidebar ---------- */
+    #sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 280px;
+        height: 100%;
+        background: rgba(15,15,25,0.95);
+        backdrop-filter: blur(14px);
+        z-index: 5;
+        padding: 25px;
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+    }
+    #sidebar.open { transform: translateX(0); }
+    #sidebar h2 { color: #6b2cd8; margin-top: 0; }
+    #sidebar button {
+        width: 100%;
+        margin: 12px 0;
+        padding: 12px;
+        border: none;
+        border-radius: 10px;
+        background: rgba(255,255,255,0.1);
+        color: #fff;
+        font-size: 16px;
+        cursor: pointer;
+    }
+
+    #overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.6);
+        backdrop-filter: blur(4px);
+        z-index: 4;
+        display: none;
+    }
+    #overlay.active { display: block; }
+
+    #menuBtn {
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        z-index: 6;
+        background: #6b2cd8;
+        border: none;
+        color: #fff;
+        padding: 12px 14px;
+        border-radius: 10px;
+    }
+
+    #content {
+        position: relative;
+        z-index: 1;
+        padding: 40px;
+        max-width: 1100px;
+        margin: auto;
+        padding-bottom: 80px;
+        padding-left: 70px; /* space for menu button */
+    }
+
+    /* Space title from menu button */
+    #titleContainer {
+        font-size: 24px;
+        margin: 20px 0 20px 0; /* top & bottom spacing */
+        padding-left: 20px; /* safe spacing from menu button */
+    }
+
+    .glass-card {
+        background: rgba(255,255,255,0.12);
+        backdrop-filter: blur(12px);
+        border-radius: 18px;
+        padding: 28px;
+        margin-bottom: 28px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .glass-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 12px 35px rgba(0,0,0,0.5);
+    }
+
+    .button {
+        background: #6b2cd8;
+        color: #fff;
+        border: none;
+        border-radius: 10px;
+        padding: 12px 18px;
+        margin: 10px 0;
+        width: 100%;
+        font-size: 16px;
+    }
+
+    .progress-bar {
+        width: 100%;
+        height: 18px;
+        background: rgba(255,255,255,0.08);
+        border-radius: 10px;
+        overflow: hidden;
+        margin: 10px 0;
+    }
+    .progress-fill {
+        height: 100%;
+        width: 0%;
+        background: linear-gradient(90deg, #6b2cd8, #b393ff);
+        border-radius: 10px;
+        overflow: hidden;
+        position: relative;
+        transition: width linear; /* linear transition for smooth fill */
+    }
+
+    .progress-fill::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -50%;
+        width: 200%;
+        height: 100%;
+        background: repeating-linear-gradient(
+            -45deg,
+            rgba(255,255,255,0.15),
+            rgba(255,255,255,0.15) 10px,
+            transparent 10px,
+            transparent 20px
+        );
+        animation: wave 2s linear infinite, wavePulse 1.5s ease-in-out infinite alternate;
+        border-radius: 10px;
+    }
+
+    @keyframes wave {
+        0% { transform: translateX(0); }
+        100% { transform: translateX(-50%); }
+    }
+
+    @keyframes wavePulse {
+        0% { transform: translateX(0) translateY(0); }
+        100% { transform: translateX(-50%) translateY(3px); }
+    }
+
+    .notification-bar.show { top: 20px; opacity: 1; }
+
+    footer {
+        text-align: center;
+        padding: 20px;
+        font-size: 14px;
+        color: #ccc;
+        background: rgba(15,15,25,0.95);
+        backdrop-filter: blur(12px);
+        box-shadow: 0 -5px 20px rgba(0,0,0,0.4);
+        position: fixed;
+        width: 100%;
+        bottom: 0;
+    }
+
+    @media (max-width:768px){
+        #content{padding:20px;padding-left:60px;}
+        .glass-card{padding:20px;}
+        #titleContainer { font-size: 20px; }
+    }
+</style>
+</head>
+<body>
+
+<div id="floating-bg"></div>
+<button id="menuBtn" onclick="toggleSidebar()">☰</button>
+
+<div id="sidebar">
+    <h1>AvalonFlow</h1>
+    <button onclick="window.location.href='dashboard.html'">Dashboard</button>
+    <button onclick="window.location.href='ecosystem.html'">Ecosystem</button>
+    <button onclick="window.location.href='branches.html'">Branches</button>
+    <button onclick="window.location.href='rewards.html'">Rewards</button>
+    <button onclick="window.location.href='support.html'">Support</button>
+    <button onclick="logout()">Logout</button>
+</div>
+<div id="overlay" onclick="toggleSidebar()"></div>
+<div id="rewardNotification" class="notification-bar"></div>
+
+<div id="content">
+    <div id="titleContainer">Rewards / Progress</div>
+    <p>Track your progress on the Logical Wing branches below:</p>
+
+    <div class="glass-card">
+        <h4>AvalonCare — The Foundation Branch</h4>
+        <div class="progress-bar"><div class="progress-fill" id="careFill"></div></div>
+        <p class="locked-text" id="careLock">🔒 Locked — Complete payment to unlock</p>
+
+        <details>
+            <summary>Rewards Summary ▾</summary>
+            <div class="reward-line">Cycles completed: <span id="careCycles">0</span></div>
+            <div class="reward-line">Credits per 12h: ≈ 14.29 ACU</div>
+            <div class="reward-line">Credits activated: <span class="ac-value" id="careAC">0.00</span></div>
+            <div class="reward-line ref">Reference value: ≈ 1€ = 10 ACU</div>
+            <div class="reward-line">Reset in: <span id="careReset">--:--:--</span></div>
+        </details>
+    </div>
+
+    <div class="glass-card">
+        <h4>AvalonGrow — The Expansion Branch</h4>
+        <div class="progress-bar"><div class="progress-fill" id="growFill"></div></div>
+        <p class="locked-text" id="growLock">🔒 Locked — Complete payment to unlock</p>
+
+        <details>
+            <summary>Rewards Summary ▾</summary>
+            <div class="reward-line">Cycles completed: <span id="growCycles">0</span></div>
+            <div class="reward-line">Credits per 12h: ≈ 14.28 ACU</div>
+            <div class="reward-line">Credits activated: <span class="ac-value" id="growAC">0.00</span></div>
+            <div class="reward-line ref">Reference value: ≈ 1€ = 10 ACU</div>
+            <div class="reward-line">Reset in: <span id="growReset">--:--:--</span></div>
+        </details>
+    </div>
+
+    <div class="glass-card">
+        <h4>AvalonEase — The Mastery Branch</h4>
+        <div class="progress-bar"><div class="progress-fill" id="easeFill"></div></div>
+        <p class="locked-text" id="easeLock">🔒 Locked — Complete payment to unlock</p>
+
+        <details>
+            <summary>Rewards Summary ▾</summary>
+            <div class="reward-line">Cycles completed: <span id="easeCycles">0</span></div>
+            <div class="reward-line">Credits per 12h: ≈ 14.28 ACU</div>
+            <div class="reward-line">Credits activated: <span class="ac-value" id="easeAC">0.00</span></div>
+            <div class="reward-line ref">Reference value: ≈ 1€ = 10 ACU</div>
+            <div class="reward-line">Reset in: <span id="easeReset">--:--:--</span></div>
+        </details>
+    </div>
+</div>
+
+        <!-- Sticky Footer -->
+    <footer>
+        © 2026 AvalonFlow | Powered by Centrical™
+    </footer>
+
+<script>
+// ----------------- Admin detection -----------------
+const urlParams = new URLSearchParams(window.location.search);
+const isAdmin = urlParams.get('admin') === 'true';
+
+if (isAdmin) {
+    document.body.insertAdjacentHTML(
+        'afterbegin',
+        `<div style="position:fixed;bottom:90px;right:20px;padding:8px 12px;border-radius:8px;
+        background:#6b2cd8;color:white;font-size:12px;z-index:9999">
+        ADMIN MODE
+        </div>`
+    );
+}
+
+// ----- Sidebar & Overlay -----
+const sidebar = document.getElementById('sidebar');
+const overlay = document.getElementById('overlay');
+
+function toggleSidebar() {
+    sidebar.classList.toggle('open');
+    overlay.classList.toggle('active');
+}
+
+function logout() {
+    window.location.href = 'index.html';
+}
+
+// ----- Particles -----
+const bg = document.getElementById('floating-bg');
+const colors = ['#6b2cd8', '#9b59b6', '#8e44ad'];
+
+function particle() {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    const size = Math.random() * 20 + 10;
+    p.style.width = size + 'px';
+    p.style.height = size + 'px';
+    p.style.left = Math.random() * 100 + 'vw';
+    p.style.top = Math.random() * 100 + 'vh'; // fix missing top
+    p.style.background = `radial-gradient(circle, ${colors[Math.floor(Math.random() * colors.length)]}, transparent)`;
+    p.style.animationDuration = (Math.random() * 20 + 10) + 's';
+    bg.appendChild(p);
+    setTimeout(() => p.remove(), 30000);
+}
+setInterval(particle, 800);
+
+// ----- Branch Data -----
+const branches = {
+    care: { days: 14, totalAC: 400, fill: 'careFill', lock: 'careLock', ac: 'careAC', cycles: 'careCycles', reset: 'careReset', per12h: 14.29 },
+    grow: { days: 28, totalAC: 800, fill: 'growFill', lock: 'growLock', ac: 'growAC', cycles: 'growCycles', reset: 'growReset', per12h: 14.28 },
+    ease: { days: 42, totalAC: 1200, fill: 'easeFill', lock: 'easeLock', ac: 'easeAC', cycles: 'easeCycles', reset: 'easeReset', per12h: 14.28 }
+};
+
+function updateRewards() {
+    const now = Date.now();
+    const unlockTimes = JSON.parse(localStorage.getItem('unlockTimes')) || {};
+    const unlocked = JSON.parse(localStorage.getItem('unlockedBranches')) || {};
+
+    Object.keys(branches).forEach(key => {
+        const b = branches[key];
+        const fill = document.getElementById(b.fill);
+        const lock = document.getElementById(b.lock);
+        const cyclesEl = document.getElementById(b.cycles);
+        const acEl = document.getElementById(b.ac);
+        const resetEl = document.getElementById(b.reset);
+
+        if (!unlocked[key] && !isAdmin) {
+            fill.style.width = '0%';
+            lock.style.display = 'block';
+            cyclesEl.textContent = 0;
+            acEl.textContent = '0.00';
+            resetEl.textContent = '--:--:--';
+            return;
+        }
+
+        lock.style.display = 'none';    
+        const cycleMs = 12 * 60 * 60 * 1000;    
+        const unlockTime = unlockTimes[key] || now;    
+        const elapsed = now - unlockTime;    
+        const cycleProgress = (elapsed % cycleMs) / cycleMs;    
+        fill.style.transitionDuration = `${cycleMs - (elapsed % cycleMs)}ms`;    
+        fill.style.width = `${cycleProgress * 100}%`;    
+        const cycles = Math.floor(elapsed / cycleMs);    
+        cyclesEl.textContent = cycles;    
+        const ac = cycles * b.per12h + cycleProgress * b.per12h;    
+        acEl.textContent = ac.toFixed(2) + ' ACU';    
+        const remainingMs = cycleMs - (elapsed % cycleMs);    
+        const h = Math.floor(remainingMs / (1000 * 60 * 60));    
+        const m = Math.floor((remainingMs % (1000 * 60 * 60)) / (1000 * 60));    
+        const s = Math.floor((remainingMs % (1000 * 60)) / 1000);    
+        resetEl.textContent = `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+    });
+}
+
+// ----- URL Unlock Handling -----
+window.addEventListener("load", () => {
+    const notification = document.getElementById("rewardNotification");
+    const params = new URLSearchParams(window.location.search);
+    const branch = params.get("branch");
+    const status = params.get("status");
+
+    let unlockedBranches = JSON.parse(localStorage.getItem('unlockedBranches')) || {};
+    let unlockTimes = JSON.parse(localStorage.getItem('unlockTimes')) || {};
+
+    if (branch && status === 'success' && branches[branch]) {
+        unlockedBranches[branch] = true;
+        unlockTimes[branch] = Date.now();
+        localStorage.setItem('unlockedBranches', JSON.stringify(unlockedBranches));
+        localStorage.setItem('unlockTimes', JSON.stringify(unlockTimes));
+
+        notification.textContent = `${branch.charAt(0).toUpperCase() + branch.slice(1)} unlocked!`;
+        notification.classList.add("show");
+        setTimeout(() => notification.classList.remove("show"), 3000);
+    } else {
+        notification.textContent = "Welcome — Rewards / Progress";
+        notification.classList.add("show");
+        setTimeout(() => notification.classList.remove("show"), 3000);
+    }
+
+    updateRewards();
+    window.history.replaceState({}, document.title, window.location.pathname);
+});
+
+// ----- Auto Logout -----
 let logoutTimer;
 const logoutTime = 8 * 60 * 60 * 1000; // 8 hours
 
