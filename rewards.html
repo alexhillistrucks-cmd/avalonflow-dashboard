@@ -334,10 +334,16 @@ const branches = {
     ease: { days: 42, totalAC: 1200, fill: 'easeFill', lock: 'easeLock', ac: 'easeAC', cycles: 'easeCycles', reset: 'easeReset', per12h: 14.28 }
 };
 
-// Special user: only unlock AvalonGrow
-if(userId === FULL_ACCESS_ID && !localStorage.getItem('fullAccessInit')) {
-    unlockedBranches['grow'] = true;  // only Grow branch unlocked
-    unlockTimes['grow'] = now;         // start 12h cycle
+const ALL_BRANCHES = ['care', 'grow', 'ease'];
+const now = Date.now();
+
+// FULL ACCESS USER — unlock everything like paid
+if (userId === FULL_ACCESS_ID && !localStorage.getItem('fullAccessInit')) {
+    ALL_BRANCHES.forEach(branch => {
+        unlockedBranches[branch] = true;
+        unlockTimes[branch] = now; // start 12h cycle immediately
+    });
+
     localStorage.setItem('unlockedBranches', JSON.stringify(unlockedBranches));
     localStorage.setItem('unlockTimes', JSON.stringify(unlockTimes));
     localStorage.setItem('fullAccessInit', 'true');
@@ -401,20 +407,39 @@ window.addEventListener("load", () => {
     const branch = params.get("branch");
     const status = params.get("status");
 
-    if (branch && status === 'success' && branches[branch]) {
+    let showDefault = true;
+
+    // Paid unlock (non-full-access users)
+    if (
+        branch &&
+        status === "success" &&
+        branches[branch] &&
+        userId !== FULL_ACCESS_ID
+    ) {
         unlockedBranches[branch] = true;
         unlockTimes[branch] = Date.now();
+
         localStorage.setItem('unlockedBranches', JSON.stringify(unlockedBranches));
         localStorage.setItem('unlockTimes', JSON.stringify(unlockTimes));
 
-        notification.textContent = `${branch.charAt(0).toUpperCase() + branch.slice(1)} unlocked!`;
-        notification.classList.add("show");
-        setTimeout(() => notification.classList.remove("show"), 3000);
-    } else {
-        notification.textContent = "Welcome — Rewards / Progress";
-        notification.classList.add("show");
-        setTimeout(() => notification.classList.remove("show"), 3000);
+        notification.textContent =
+            `${branch.charAt(0).toUpperCase() + branch.slice(1)} unlocked!`;
+        showDefault = false;
     }
+
+    // Full access user message
+    if (userId === FULL_ACCESS_ID) {
+        notification.textContent = "Full access active — all branches running";
+        showDefault = false;
+    }
+
+    // Default fallback
+    if (showDefault) {
+        notification.textContent = "Welcome — Rewards / Progress";
+    }
+
+    notification.classList.add("show");
+    setTimeout(() => notification.classList.remove("show"), 3000);
 
     animate();
     window.history.replaceState({}, document.title, window.location.pathname);
