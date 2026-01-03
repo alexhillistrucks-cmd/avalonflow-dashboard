@@ -288,6 +288,14 @@ function updateStatus(){
 updateStatus();
 setInterval(updateStatus,60000);
 
+/* ---------- Welcome ---------- */
+
+window.onload = () => {
+
+notify('Get assistance or clarification here.');
+
+};
+
 const botMessagesContainer = document.getElementById('botMessagesContainer'); // Kairos container
 const botInput = document.getElementById('botInput');
 const botSendBtn = document.getElementById('botSendBtn');
