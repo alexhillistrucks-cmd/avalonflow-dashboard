@@ -26,6 +26,57 @@ a { color: inherit; text-decoration: none; }
     background: radial-gradient(circle at bottom, #1a0d3a, #0d0d0d);
 }
 
+/* ---------- Assistant Bot Styles ---------- */
+#assistantBot {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 300px;
+    max-height: 400px;
+    background: rgba(30,30,45,0.95);
+    backdrop-filter: blur(12px);
+    border-radius: 18px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    z-index: 9999;
+    font-family: 'Arial', sans-serif;
+}
+#botHeader {
+    background: #6b2cd8;
+    color: #fff;
+    text-align: center;
+    padding: 10px;
+    font-weight: bold;
+}
+#botMessages {
+    flex: 1;
+    padding: 10px;
+    overflow-y: auto;
+    font-size: 14px;
+    color: #eee;
+}
+#botMessages .user { text-align: right; color: #9b59b6; margin-bottom: 6px; }
+#botMessages .bot { text-align: left; color: #b3b3ff; margin-bottom: 6px; }
+#botInput {
+    border: none;
+    border-top: 1px solid rgba(255,255,255,0.2);
+    padding: 8px;
+    width: calc(100% - 80px);
+    background: rgba(255,255,255,0.05);
+    color: #fff;
+    outline: none;
+}
+#botSendBtn {
+    width: 60px;
+    border: none;
+    background: #6b2cd8;
+    color: #fff;
+    cursor: pointer;
+}
+#assistantBot input:focus { outline: none; }
+
 /* ---------- Sidebar ---------- */
 #sidebar {
     position: fixed;
@@ -230,6 +281,14 @@ footer {
    Email Support
 </a>
 
+<!-- Assistant Bot Container -->
+<div id="assistantBot">
+    <div id="botHeader">💬 Assistant</div>
+    <div id="botMessages"></div>
+    <input type="text" id="botInput" placeholder="Ask me something..." />
+    <button id="botSendBtn">Send</button>
+</div>
+
 </div>
 </div>
 
@@ -302,6 +361,62 @@ setInterval(updateStatus,60000);
 window.onload = () => {
     notify('Get assistance or clarification here.');
 };
+
+// ---------- Assistant Bot Script ----------
+const botMessages = document.getElementById('botMessages');
+const botInput = document.getElementById('botInput');
+const botSendBtn = document.getElementById('botSendBtn');
+
+const quotes = [
+    "Believe in yourself and all that you are.",
+    "Small steps each day lead to big results.",
+    "Life is about moments, not things.",
+    "Consistency is the key to success.",
+    "Every day is a fresh start."
+];
+
+function addBotMessage(msg){
+    const div = document.createElement('div');
+    div.className = 'bot';
+    div.textContent = msg;
+    botMessages.appendChild(div);
+    botMessages.scrollTop = botMessages.scrollHeight;
+}
+
+function addUserMessage(msg){
+    const div = document.createElement('div');
+    div.className = 'user';
+    div.textContent = msg;
+    botMessages.appendChild(div);
+    botMessages.scrollTop = botMessages.scrollHeight;
+}
+
+// Simple bot response engine
+function botReply(msg){
+    msg = msg.toLowerCase();
+    if(msg.includes('reward')) addBotMessage("Your rewards progress updates every 12 hours. Check the progress bars above!");
+    else if(msg.includes('quote')) addBotMessage(quotes[Math.floor(Math.random()*quotes.length)]);
+    else addBotMessage("I can give tips, motivational quotes, or info about AvalonFlow.");
+}
+
+// Send button
+botSendBtn.addEventListener('click', ()=>{
+    const msg = botInput.value.trim();
+    if(!msg) return;
+    addUserMessage(msg);
+    botInput.value = '';
+    setTimeout(()=>botReply(msg), 500);
+});
+
+// Enter key support
+botInput.addEventListener('keypress', e=>{
+    if(e.key==='Enter') botSendBtn.click();
+});
+
+// Optional: random motivational quote every 12 hours
+setInterval(()=>{
+    addBotMessage(quotes[Math.floor(Math.random()*quotes.length)]);
+}, 12*60*60*1000);
 </script>
 </body>
     </html>
