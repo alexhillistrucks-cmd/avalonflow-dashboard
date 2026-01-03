@@ -382,7 +382,7 @@ function updateRewards() {
 
         const unlockedBranch = isAdmin || unlocked[key]; // ADMIN always unlocked
 
-        lock.style.display = 'none':'block';
+        lock.style.display = unlockedBranch ? 'none' : 'block';
        
         const cycleMs = 12 * 60 * 60 * 1000;
         const unlockTime = unlockTimes[key] || now;
