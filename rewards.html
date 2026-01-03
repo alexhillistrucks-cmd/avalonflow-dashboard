@@ -346,6 +346,10 @@ if (urlParams.get('admin') === 'false') {
 // 3. Final admin state (single source of truth)
 const isAdmin = localStorage.getItem('ADMIN_MODE') === 'true';
 
+if (isAdmin) {
+    console.log('ADMIN MODE ACTIVE');
+}
+
 if (isAdmin && !localStorage.getItem('adminInit')) {
     const unlockedBranches = {};
     const unlockTimes = {};
