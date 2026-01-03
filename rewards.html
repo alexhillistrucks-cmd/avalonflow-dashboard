@@ -332,7 +332,19 @@ function logout() {
 }             
 
 const urlParams = new URLSearchParams(window.location.search);
-const isAdmin = urlParams.get('admin') === 'true';
+
+// 1. Turn admin ON via URL
+if (urlParams.get('admin') === 'true') {
+    localStorage.setItem('ADMIN_MODE', 'true');
+}
+
+// 2. Turn admin OFF via URL
+if (urlParams.get('admin') === 'false') {
+    localStorage.removeItem('ADMIN_MODE');
+}
+
+// 3. Final admin state (single source of truth)
+const isAdmin = localStorage.getItem('ADMIN_MODE') === 'true';
 
 if (isAdmin && !localStorage.getItem('adminInit')) {
     const unlockedBranches = {};
@@ -343,7 +355,6 @@ if (isAdmin && !localStorage.getItem('adminInit')) {
         unlockedBranches[key] = true;
         unlockTimes[key] = now - 1000 * 60 * 60; // already running
     });
-
     localStorage.setItem('unlockedBranches', JSON.stringify(unlockedBranches));
     localStorage.setItem('unlockTimes', JSON.stringify(unlockTimes));
     localStorage.setItem('adminInit', 'true');
