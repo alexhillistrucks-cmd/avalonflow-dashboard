@@ -186,18 +186,16 @@ footer {
 
 /* ---------- Chat with Kairos Bot ---------- */
 #assistantBot {
-    position: fixed;
-    bottom: 70px; /* above footer */
-    right: 20px;
-    width: 320px;
-    max-height: 420px;
+    position: relative; /* was fixed */
+    margin-top: 28px; /* space below support card */
+    width: 100%;       /* full width under support card */
+    max-width: 320px;  /* optional for mobile look */
     display: flex;
     flex-direction: column;
     background: rgba(30,30,45,0.8);
     backdrop-filter: blur(12px);
     border-radius: 18px;
     box-shadow: 0 8px 30px rgba(0,0,0,0.4);
-    z-index: 9999;
     overflow: hidden;
 }
 #botHeader {
@@ -220,9 +218,7 @@ footer {
 }
 #botMessages .bot { text-align: left; color: #b3b3ff; margin-bottom: 6px; }
 #botMessages .user { text-align: right; color: #9b59b6; margin-bottom: 6px; }
-#botMessages .ambient {
-    animation: fadePulse 10s ease-in-out forwards;
-}
+#botMessages .ambient { animation: fadePulse 10s ease-in-out forwards; }
 #botInputContainer {
     display: flex;
     border-top: 1px solid rgba(255,255,255,0.15);
