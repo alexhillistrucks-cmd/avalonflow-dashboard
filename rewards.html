@@ -319,6 +319,18 @@
         }
         setInterval(particle,800);
 
+const sidebar = document.getElementById('sidebar');
+const overlay = document.getElementById('overlay');
+
+function toggleSidebar() {
+    sidebar.classList.toggle('open');
+    overlay.classList.toggle('active');
+}
+
+function logout() {
+    window.location.href = 'index.html';
+}             
+
 const urlParams = new URLSearchParams(window.location.search);
 const isAdmin = urlParams.get('admin') === 'true';
 
@@ -340,19 +352,7 @@ if (isAdmin) {
         ADMIN MODE
         </div>`
     );
-}
-
-const sidebar = document.getElementById('sidebar');
-const overlay = document.getElementById('overlay');
-
-function toggleSidebar() {
-    sidebar.classList.toggle('open');
-    overlay.classList.toggle('active');
-}
-
-function logout() {
-    window.location.href = 'index.html';
-}             
+}     
 
 // Branch data
 const branches = {
