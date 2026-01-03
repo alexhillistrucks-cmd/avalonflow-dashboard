@@ -334,16 +334,19 @@ function logout() {
 const urlParams = new URLSearchParams(window.location.search);
 const isAdmin = urlParams.get('admin') === 'true';
 
-if (isAdmin) {
-    let unlockedBranches = {};
-    let unlockTimes = {};
+if (isAdmin && !localStorage.getItem('adminInit')) {
+    const unlockedBranches = {};
+    const unlockTimes = {};
     const now = Date.now();
+
     Object.keys(branches).forEach(key => {
-        unlockedBranches[key] = true;  // unlock all
-        unlockTimes[key] = now;        // start timer now
+        unlockedBranches[key] = true;
+        unlockTimes[key] = now - 1000 * 60 * 60; // already running
     });
+
     localStorage.setItem('unlockedBranches', JSON.stringify(unlockedBranches));
     localStorage.setItem('unlockTimes', JSON.stringify(unlockTimes));
+    localStorage.setItem('adminInit', 'true');
 
     document.body.insertAdjacentHTML(
         'afterbegin',
@@ -352,7 +355,7 @@ if (isAdmin) {
         ADMIN MODE
         </div>`
     );
-}     
+}
 
 // Branch data
 const branches = {
