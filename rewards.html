@@ -338,84 +338,78 @@ let unlockedBranches = JSON.parse(localStorage.getItem('unlockedBranches')) || {
 let unlockTimes = JSON.parse(localStorage.getItem('unlockTimes')) || {};
 const now = Date.now();
 
-// Full-access: unlock all + start cycles
-if(isFullAccess && !localStorage.getItem('fullAccessInit')) {
-    Object.keys(branches).forEach(key => {
-        unlockedBranches[key] = true;
-        unlockTimes[key] = now; // start cycle now
-    });
-    localStorage.setItem('unlockedBranches', JSON.stringify(unlockedBranches));
-    localStorage.setItem('unlockTimes', JSON.stringify(unlockTimes));
-    localStorage.setItem('fullAccessInit', 'true');
-}
-
-// Gradual incrementing
-let displayedAC = { care:0, grow:0, ease:0 };
-
-function updateRewards() {
-    const now = Date.now();
-    Object.keys(branches).forEach(key => {
-        const b = branches[key];
-        const fill = document.getElementById(b.fill);
-        const lock = document.getElementById(b.lock);
-        const cyclesEl = document.getElementById(b.cycles);
-        const acEl = document.getElementById(b.ac);
-        const resetEl = document.getElementById(b.reset);
-
-        const unlocked = unlockedBranches[key] || false;
-
-        // Show/hide locked text
-        lock.style.display = unlocked ? 'none' : 'block';
-
-        if(!unlocked) {
-            fill.style.width = '0%';
-            cyclesEl.textContent = 0;
-            acEl.textContent = '0.00 ACU';
-            resetEl.textContent = '--:--:--';
-            return; // skip calculations
-        }
-
-        const cycleMs = 12 * 60 * 60 * 1000;
-        const elapsed = now - (unlockTimes[key] || now);
-
-        const cycleProgress = (elapsed % cycleMs) / cycleMs;
-        fill.style.width = `${cycleProgress*100}%`;
-
-        const cycles = Math.floor(elapsed / cycleMs);
-        cyclesEl.textContent = cycles;
-
-        const targetAC = cycles * b.per12h + cycleProgress * b.per12h;
-        displayedAC[key] += (targetAC - displayedAC[key]) * 0.05;
-        acEl.textContent = displayedAC[key].toFixed(2) + ' ACU';
-
-        const remainingMs = cycleMs - (elapsed % cycleMs);
-        const h = Math.floor(remainingMs / (1000 * 60 * 60));
-        const m = Math.floor((remainingMs % (1000 * 60 * 60)) / (1000 * 60));
-        const s = Math.floor((remainingMs % (1000 * 60)) / 1000);
-        resetEl.textContent = `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
-    });
-}
-
-// Animate everything in real-time
-function animate() {
-    updateRewards();
-    requestAnimationFrame(animate);
-}
-
-window.addEventListener("load", () => {
-    const notification = document.getElementById("rewardNotification");
-    const params = new URLSearchParams(window.location.search);
-    const branch = params.get("branch");
-    const status = params.get("status");
-
-    let unlockedBranches = JSON.parse(localStorage.getItem('unlockedBranches')) || {};
-    let unlockTimes = JSON.parse(localStorage.getItem('unlockTimes')) || {};
-
-    if (branch && status === 'success' && branches[branch]) {
-        unlockedBranches[branch] = true;
-        unlockTimes[branch] = Date.now();
+// Full-access: unlock all
+    if(isFullAccess && !localStorage.getItem('fullAccessInit')) {
+        Object.keys(branches).forEach(key => {
+            unlockedBranches[key] = true;
+            unlockTimes[key] = now; // cycle starts now
+        });
         localStorage.setItem('unlockedBranches', JSON.stringify(unlockedBranches));
         localStorage.setItem('unlockTimes', JSON.stringify(unlockTimes));
+        localStorage.setItem('fullAccessInit', 'true');
+    }
+
+    let displayedAC = { care:0, grow:0, ease:0 };
+
+    function updateRewards() {
+        const now = Date.now();
+        Object.keys(branches).forEach(key => {
+            const b = branches[key];
+            const fill = document.getElementById(b.fill);
+            const lock = document.getElementById(b.lock);
+            const cyclesEl = document.getElementById(b.cycles);
+            const acEl = document.getElementById(b.ac);
+            const resetEl = document.getElementById(b.reset);
+
+            const unlocked = isFullAccess || unlockedBranches[key];
+
+            lock.style.display = unlocked ? 'none' : 'block';
+
+            if(!unlocked) {
+                fill.style.width = '0%';
+                cyclesEl.textContent = 0;
+                acEl.textContent = '0.00 ACU';
+                resetEl.textContent = '--:--:--';
+                return;
+            }
+
+            const cycleMs = 12 * 60 * 60 * 1000;
+            const elapsed = now - (unlockTimes[key] || now);
+            const cycleProgress = (elapsed % cycleMs) / cycleMs;
+
+            fill.style.width = `${cycleProgress*100}%`;
+
+            const cycles = Math.floor(elapsed / cycleMs);
+            cyclesEl.textContent = cycles;
+
+            const targetAC = cycles * b.per12h + cycleProgress * b.per12h;
+            displayedAC[key] += (targetAC - displayedAC[key]) * 0.05;
+            acEl.textContent = displayedAC[key].toFixed(2) + ' ACU';
+
+            const remainingMs = cycleMs - (elapsed % cycleMs);
+            const h = Math.floor(remainingMs / (1000 * 60 * 60));
+            const m = Math.floor((remainingMs % (1000 * 60 * 60)) / (1000 * 60));
+            const s = Math.floor((remainingMs % (1000 * 60)) / 1000);
+            resetEl.textContent = `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+        });
+    }
+
+    function animate() {
+        updateRewards();
+        requestAnimationFrame(animate);
+    }
+
+    window.addEventListener("load", () => {
+        const notification = document.getElementById("rewardNotification");
+        const params = new URLSearchParams(window.location.search);
+        const branch = params.get("branch");
+        const status = params.get("status");
+
+        if (branch && status === 'success' && branches[branch]) {
+            unlockedBranches[branch] = true;
+            unlockTimes[branch] = Date.now();
+            localStorage.setItem('unlockedBranches', JSON.stringify(unlockedBranches));
+            localStorage.setItem('unlockTimes', JSON.stringify(unlockTimes));
 
         notification.textContent = `${branch.charAt(0).toUpperCase() + branch.slice(1)} unlocked!`;
         notification.classList.add("show");
