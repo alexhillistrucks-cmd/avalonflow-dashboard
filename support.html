@@ -53,16 +53,51 @@ footer { position: fixed; bottom: 0; width: 100%; text-align: center; padding: 1
 .status-dot { width: 10px; height: 10px; border-radius: 50%; background: #00ff6a; box-shadow: 0 0 10px #00ff6a; }
 .status-offline { background: #ccc; box-shadow: 0 0 5px #ccc; }
 
-/* ---------- Assistant Bot Styles ---------- */
-#assistantBot { position: fixed; bottom: 20px; right: 20px; width: 300px; max-height: 400px; background: rgba(30,30,45,0.95); backdrop-filter: blur(12px); border-radius: 18px; box-shadow: 0 8px 30px rgba(0,0,0,0.4); display: flex; flex-direction: column; overflow: hidden; z-index: 9999; font-family: 'Arial', sans-serif; }
-#botHeader { background: #6b2cd8; color: #fff; text-align: center; padding: 10px; font-weight: bold; cursor: pointer; }
-#botMessages { flex: 1; padding: 10px; overflow-y: auto; font-size: 14px; }
-#botMessages .user { text-align: right; color: #9b59b6; margin-bottom: 6px; }
-#botMessages .bot { text-align: left; color: #b3b3ff; margin-bottom: 6px; }
-#botMessages .ambient { text-align: center; color: #aaa; font-size: 12px; opacity: 0.8; margin-bottom: 6px; }
-#botInputContainer { display: flex; }
-#botInput { flex: 1; border: none; border-top: 1px solid rgba(255,255,255,0.2); padding: 8px; background: rgba(255,255,255,0.05); color: #fff; }
-#botSendBtn { width: 60px; border: none; background: #6b2cd8; color: #fff; cursor: pointer; border-radius: 6px; }
+/* ---------- Kairos Bot Card (Content Flow) ---------- */
+#assistantBotCard {
+    width: 100%;
+    max-width: 400px;
+    margin-top: 20px;
+    padding: 18px;
+    z-index: 1;
+}
+#botHeader {
+    background: rgba(107,44,216,0.8);
+    color: #fff;
+    text-align: center;
+    padding: 10px;
+    font-weight: bold;
+    border-radius: 12px 12px 0 0;
+}
+#botMessagesContainer {
+    height: 180px;
+    overflow-y: auto;
+    background: rgba(255,255,255,0.05);
+    backdrop-filter: blur(10px);
+    padding: 10px;
+    border-radius: 0 0 12px 12px;
+}
+#botMessagesContainer .bot { text-align: left; color: #b3b3ff; margin-bottom: 4px; font-size: 13px; }
+#botMessagesContainer .user { text-align: right; color: #9b59b6; margin-bottom: 4px; font-size: 13px; }
+#botMessagesContainer .ambient { text-align: center; color: #aaa; font-size: 12px; opacity: 0.8; }
+
+#botInput {
+    flex: 1;
+    padding: 8px;
+    border: none;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.1);
+    color: #fff;
+    margin-right: 4px;
+}
+#botSendBtn {
+    background: rgba(107,44,216,0.8);
+    border:none;
+    color:#fff;
+    border-radius:10px;
+    padding:8px 12px;
+    cursor:pointer;
+}
 </style>
 </head>
 <body>
@@ -98,10 +133,10 @@ footer { position: fixed; bottom: 0; width: 100%; text-align: center; padding: 1
     </div>
 
     <!-- Assistant Bot -->
-    <div id="assistantBot">
-        <div id="botHeader">💬 Kairos Assistant</div>
-        <div id="botMessages"></div>
-        <div id="botInputContainer">
+    <div class="glass-card" id="assistantBotCard">
+        <div id="botHeader">💬 Chat with Kairos</div>
+        <div id="botMessagesContainer"></div>
+        <div style="display:flex; margin-top:6px;">
             <input type="text" id="botInput" placeholder="Ask me something..." />
             <button id="botSendBtn">Send</button>
         </div>
@@ -164,8 +199,7 @@ function updateStatus(){
 updateStatus();
 setInterval(updateStatus,60000);
 
-/* ---------- Kairos Bot ---------- */
-const botMessages = document.getElementById('botMessages');
+const botMessagesContainer = document.getElementById('botMessagesContainer');
 const botInput = document.getElementById('botInput');
 const botSendBtn = document.getElementById('botSendBtn');
 
@@ -177,82 +211,85 @@ const quotes = [
   "Every day is a fresh start."
 ];
 
-function addBotMessage(msg,type='bot'){
+// Add messages
+function addBotMessage(msg, type='bot'){
     const div = document.createElement('div');
     div.className = type;
     div.textContent = msg;
-    botMessages.appendChild(div);
-    botMessages.scrollTop = botMessages.scrollHeight;
-    if(botMessages.children.length>10) botMessages.removeChild(botMessages.children[0]);
+    botMessagesContainer.appendChild(div);
+    botMessagesContainer.scrollTop = botMessagesContainer.scrollHeight;
+    if(botMessagesContainer.children.length > 10) botMessagesContainer.removeChild(botMessagesContainer.children[0]);
 }
-
 function addUserMessage(msg){ addBotMessage(msg,'user'); }
 
-// Branch progress data
-function getBranchProgress(){
-    const unlocked = JSON.parse(localStorage.getItem('unlockedBranches')) || {};
-    const unlockTimes = JSON.parse(localStorage.getItem('unlockTimes')) || {};
-    const now = Date.now();
-    let response = "Branch progress:\n";
-    ['care','grow','ease'].forEach(branch=>{
-        if(unlocked[branch]){
-            const elapsed = now - unlockTimes[branch];
-            const total = branch==='care'?14*24*60*60*1000:branch==='grow'?28*24*60*60*1000:42*24*60*60*1000;
-            const percent = Math.min(100,Math.round((elapsed/total)*100));
-            response += `${branch.charAt(0).toUpperCase()+branch.slice(1)}: ${percent}% completed\n`;
-        } else response += `${branch.charAt(0).toUpperCase()+branch.slice(1)}: Locked\n`;
-    });
-    return response;
-}
-
-// Bot reply logic
+// Bot logic
 function botReply(msg){
     msg = msg.toLowerCase();
+    const unlocked=JSON.parse(localStorage.getItem('unlockedBranches'))||{};
+    const unlockTimes=JSON.parse(localStorage.getItem('unlockTimes'))||{};
     if(/hi|hello|hey|yo/.test(msg)){
-        addBotMessage("Hi! I'm Kairos, your assistant. How can I help today?");
-    } else if(msg.includes('who are you')||msg.includes('yourself')){
+        addBotMessage("Hi! I'm Kairos. I can guide you, provide info on rewards, or share motivational quotes.");
+    }
+    else if(msg.includes('who are you') || msg.includes('yourself')){
         addBotMessage("I’m Kairos, your guide through AvalonFlow. I provide tips, motivational quotes, and info about your rewards.");
-    } else if(msg.includes('quote')){
+    }
+    else if(msg.includes('quote')){
         addBotMessage(quotes[Math.floor(Math.random()*quotes.length)]);
-    } else if(msg.includes('reward')||msg.includes('progress')||msg.includes('branch')){
-        addBotMessage(getBranchProgress());
-    } else if(msg.includes('ticket')){
-        addBotMessage("To generate a support ticket, type your issue and click 'Generate Ticket Reference'.");
-    } else if(msg.includes('support')||msg.includes('help')){
-        addBotMessage("You can email support at avalonflow@usa.com. Include your ticket reference.");
-    } else {
+    }
+    else if(msg.includes('reward') || msg.includes('progress') || msg.includes('branch')){
+        let response="Branch progress:\n";
+        ['care','grow','ease'].forEach(branch=>{
+            if(unlocked[branch]){
+                const now=Date.now();
+                const elapsed=now-unlockTimes[branch];
+                const total=branch==='care'?14*24*60*60*1000:branch==='grow'?28*24*60*60*1000:42*24*60*60*1000;
+                const percent=Math.min(100,Math.round((elapsed/total)*100));
+                response+=`${branch.charAt(0).toUpperCase()+branch.slice(1)}: ${percent}% completed\n`;
+            } else response+=`${branch.charAt(0).toUpperCase()+branch.slice(1)}: Locked\n`;
+        });
+        addBotMessage(response);
+    }
+    else if(msg.includes('faq')){
+        addBotMessage("Here's a list of common FAQs...");
+    }
+    else if(msg.includes('support') || msg.includes('help')){
+        addBotMessage("You can email support at avalonflow@usa.com. Make sure to include your ticket reference.");
+    }
+    else {
         addBotMessage("I can provide tips, motivational quotes, info about AvalonFlow, or guide you to support.");
     }
 }
 
-// Send & enter key
+// Send button
 botSendBtn.addEventListener('click', ()=>{
     const msg = botInput.value.trim();
     if(!msg) return;
     addUserMessage(msg);
     botInput.value='';
-    setTimeout(()=>botReply(msg),500);
+    setTimeout(()=>botReply(msg), 500);
 });
+
+// Enter key
 botInput.addEventListener('keypress', e=>{
     if(e.key==='Enter') botSendBtn.click();
 });
 
-// Ambient motivational messages (10s) only if user inactive
+// Ambient messages every 10s if no user messages
 setInterval(()=>{
-    if(!botMessages.querySelector('.user')){
-        const ambientMsg = quotes[Math.floor(Math.random()*quotes.length)];
-        const div = document.createElement('div');
-        div.className='ambient';
-        div.textContent = ambientMsg;
-        div.style.opacity=0;
-        botMessages.appendChild(div);
-        botMessages.scrollTop=botMessages.scrollHeight;
+    if(botMessagesContainer.querySelector('.user')===null){
+        const msg = quotes[Math.floor(Math.random()*quotes.length)];
+        const ambientDiv = document.createElement('div');
+        ambientDiv.className='ambient';
+        ambientDiv.textContent=msg;
+        ambientDiv.style.opacity=0;
+        botMessagesContainer.appendChild(ambientDiv);
+        botMessagesContainer.scrollTop=botMessagesContainer.scrollHeight;
 
         // fade-in
         let opacity=0;
         let fadeIn=setInterval(()=>{
             opacity+=0.05;
-            div.style.opacity=opacity;
+            ambientDiv.style.opacity=opacity;
             if(opacity>=0.8) clearInterval(fadeIn);
         },50);
 
@@ -260,8 +297,8 @@ setInterval(()=>{
         setTimeout(()=>{
             let fadeOut=setInterval(()=>{
                 opacity-=0.05;
-                div.style.opacity=opacity;
-                if(opacity<=0){ clearInterval(fadeOut); div.remove(); }
+                ambientDiv.style.opacity=opacity;
+                if(opacity<=0){ clearInterval(fadeOut); ambientDiv.remove(); }
             },50);
         },10000);
     }
