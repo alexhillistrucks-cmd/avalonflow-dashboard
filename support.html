@@ -202,7 +202,7 @@ function updateStatus(){
 updateStatus();
 setInterval(updateStatus,60000);
 
-const botMessagesContainer = document.getElementById('botMessagesContainer');
+const botMessagesContainer = document.getElementById('botMessagesContainer'); // Kairos container
 const botInput = document.getElementById('botInput');
 const botSendBtn = document.getElementById('botSendBtn');
 
@@ -214,16 +214,33 @@ const quotes = [
   "Every day is a fresh start."
 ];
 
-// Add messages
 function addBotMessage(msg, type='bot'){
     const div = document.createElement('div');
     div.className = type;
     div.textContent = msg;
+    div.style.opacity = 0;
     botMessagesContainer.appendChild(div);
+
+    // Fade-in
+    let opacity = 0;
+    const fadeIn = setInterval(()=>{
+        opacity += 0.05;
+        div.style.opacity = opacity;
+        if(opacity >= 1) clearInterval(fadeIn);
+    }, 30);
+
+    // Keep scroll at bottom
     botMessagesContainer.scrollTop = botMessagesContainer.scrollHeight;
-    if(botMessagesContainer.children.length > 10) botMessagesContainer.removeChild(botMessagesContainer.children[0]);
+
+    // Remove oldest messages if more than 10
+    while(botMessagesContainer.children.length > 10){
+        botMessagesContainer.removeChild(botMessagesContainer.children[0]);
+    }
 }
-function addUserMessage(msg){ addBotMessage(msg,'user'); }
+
+function addUserMessage(msg){
+    addBotMessage(msg, 'user');
+}
 
 // Bot logic
 function botReply(msg){
