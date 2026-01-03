@@ -319,35 +319,25 @@
         }
         setInterval(particle,800);
 
-const sidebar = document.getElementById('sidebar');
-const overlay = document.getElementById('overlay');
+// Admin ID (hard-coded)
+const ADMIN_ID = 'AF-GYTC-569L';
 
-function toggleSidebar() {
-    sidebar.classList.toggle('open');
-    overlay.classList.toggle('active');
-}
+// Get the logged-in user ID from localStorage
+const userId = localStorage.getItem('USER_ID'); // <-- make sure this is exactly the key your login page sets
 
-function logout() {
-    window.location.href = 'index.html';
-}             
+// Check if current user is admin
+const isAdmin = userId === ADMIN_ID;
 
-const urlParams = new URLSearchParams(window.location.search);
-
-// 1. Turn admin ON via URL
-if (urlParams.get('admin') === 'true') {
-    localStorage.setItem('ADMIN_MODE', 'true');
-}
-
-// 2. Turn admin OFF via URL
-if (urlParams.get('admin') === 'false') {
-    localStorage.removeItem('ADMIN_MODE');
-}
-
-// 3. Final admin state (single source of truth)
-const isAdmin = localStorage.getItem('ADMIN_MODE') === 'true';
-
-if (isAdmin) {
-    console.log('ADMIN MODE ACTIVE');
+    // Optional: show admin badge
+    document.body.insertAdjacentHTML(
+        'afterbegin',
+        `<div style="position:fixed;bottom:90px;right:20px;
+        padding:8px 12px;border-radius:8px;
+        background:#6b2cd8;color:white;
+        font-size:12px;z-index:9999">
+        ADMIN MODE
+        </div>`
+    );
 }
 
 if (isAdmin && !localStorage.getItem('adminInit')) {
