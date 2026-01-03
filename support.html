@@ -4,254 +4,70 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>AvalonFlow Support</title>
-
 <style>
 /* ---------- Base ---------- */
-body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    background: #0d0d0d;
-    color: #fff;
-    overflow-x: hidden;
-}
-button { cursor: pointer; }
+body { font-family: Arial, sans-serif; margin: 0; background: #0d0d0d; color: #fff; overflow-x: hidden; }
+button { cursor: pointer; } 
 a { color: inherit; text-decoration: none; }
 
-/* ---------- Floating Background (animated particles) ---------- */
-#floating-bg {
-    position: fixed;
-    inset: 0;
-    z-index: -1;
-    pointer-events: none;
-    background: radial-gradient(circle at bottom, #1a0d3a, #0d0d0d);
-}
+/* ---------- Floating Background ---------- */
+#floating-bg { position: fixed; inset: 0; z-index: 0; pointer-events: none; background: radial-gradient(circle at bottom, #1a0d3a, #0d0d0d); }
 
 /* ---------- Sidebar ---------- */
-#sidebar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 280px;
-    height: 100%;
-    background: rgba(15,15,25,0.95);
-    backdrop-filter: blur(14px);
-    z-index: 5;
-    padding: 25px;
-    transform: translateX(-100%);
-    transition: transform 0.3s ease;
-}
+#sidebar { position: fixed; top: 0; left: 0; width: 280px; height: 100%; background: rgba(15,15,25,0.95); backdrop-filter: blur(14px); z-index: 5; padding: 25px; transform: translateX(-100%); transition: transform 0.3s ease; }
 #sidebar.open { transform: translateX(0); }
 #sidebar h2 { color: #6b2cd8; margin-top: 0; }
-#sidebar button {
-    width: 100%;
-    margin: 12px 0;
-    padding: 12px;
-    border: none;
-    border-radius: 10px;
-    background: rgba(255,255,255,0.1);
-    color: #fff;
-    font-size: 16px;
-}
+#sidebar button { width: 100%; margin: 12px 0; padding: 12px; border: none; border-radius: 10px; background: rgba(255,255,255,0.1); color: #fff; font-size: 16px; }
 
 /* ---------- Overlay ---------- */
-#overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.6);
-    backdrop-filter: blur(4px);
-    z-index: 4;
-    display: none;
-}
+#overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); z-index: 4; display: none; }
 #overlay.active { display: block; }
 
 /* ---------- Content ---------- */
-#content {
-    position: relative;
-    z-index: 1;
-    padding: 40px;
-    max-width: 1100px;
-    margin: auto;
-    padding-bottom: 120px;
-}
+#content { position: relative; z-index: 1; padding: 40px; max-width: 1100px; margin: auto; padding-bottom: 120px; }
 
 /* ---------- Glass Card ---------- */
-.glass-card {
-    background: rgba(255,255,255,0.12);
-    backdrop-filter: blur(12px);
-    border-radius: 18px;
-    padding: 28px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.35);
-    margin-bottom: 28px;
-}
+.glass-card { background: rgba(255,255,255,0.12); backdrop-filter: blur(12px); border-radius: 18px; padding: 28px; box-shadow: 0 10px 30px rgba(0,0,0,0.35); }
 
 /* ---------- Mini TV ---------- */
-.mini-tv {
-    background: rgba(0,0,0,0.45);
-    border-radius: 14px;
-    padding: 18px;
-    margin: 18px 0;
-    border: 1px solid rgba(107,44,216,0.35);
-    font-size: 15px;
-    min-height: 60px;
-    display: flex;
-    align-items: center;
-}
+.mini-tv { background: rgba(0,0,0,0.45); border-radius: 14px; padding: 18px; margin: 18px 0; border: 1px solid rgba(107,44,216,0.35); font-size: 15px; min-height: 60px; display: flex; align-items: center; }
 
 /* ---------- Buttons ---------- */
-.button {
-    background: #6b2cd8;
-    color: #fff;
-    border: none;
-    border-radius: 10px;
-    padding: 12px 18px;
-    margin-top: 12px;
-    width: 100%;
-    font-size: 16px;
-}
+.button { background: #6b2cd8; color: #fff; border: none; border-radius: 10px; padding: 12px 18px; margin-top: 12px; width: 100%; font-size: 16px; }
 
 /* ---------- Input ---------- */
-.input {
-    width: 100%;
-    padding: 12px;
-    border-radius: 10px;
-    border: none;
-    margin-top: 12px;
-    background: rgba(255,255,255,0.15);
-    color: #fff;
-}
+.input { width: 100%; padding: 12px; border-radius: 10px; border: none; margin-top: 12px; background: rgba(255,255,255,0.15); color: #fff; }
 
 /* ---------- Menu Button ---------- */
-#menuBtn {
-    position: fixed;
-    top: 20px;
-    left: 20px;
-    z-index: 6;
-    background: #6b2cd8;
-    border: none;
-    color: #fff;
-    padding: 12px 14px;
-    border-radius: 10px;
-}
+#menuBtn { position: fixed; top: 20px; left: 20px; z-index: 6; background: #6b2cd8; border: none; color: #fff; padding: 12px 14px; border-radius: 10px; }
 
 /* ---------- Footer ---------- */
-footer {
-    position: fixed;
-    bottom: 0;
-    width: 100%;
-    text-align: center;
-    padding: 18px 0;
-    font-size: 14px;
-    color: #aaa;
-    background: rgba(15,15,25,0.95);
-    backdrop-filter: blur(12px);
-    box-shadow: 0 -5px 20px rgba(0,0,0,0.4);
-    z-index: 6;
-}
+footer { position: fixed; bottom: 0; width: 100%; text-align: center; padding: 18px 0; font-size: 14px; color: #aaa; background: rgba(15,15,25,0.95); backdrop-filter: blur(12px); box-shadow: 0 -5px 20px rgba(0,0,0,0.4); z-index: 6; }
 
 /* ---------- Notification ---------- */
-.notification-bar {
-    position: fixed;
-    top: -80px;
-    right: 20px;
-    background: rgba(30,144,255,0.25);
-    backdrop-filter: blur(12px);
-    border: 1px solid rgba(30,144,255,0.4);
-    color: #fff;
-    padding: 12px 18px;
-    border-radius: 12px;
-    font-size: 14px;
-    transition: top 0.5s ease;
-    z-index: 9999;
-}
+.notification-bar { position: fixed; top: -80px; right: 20px; background: rgba(30,144,255,0.25); backdrop-filter: blur(12px); border: 1px solid rgba(30,144,255,0.4); color: #fff; padding: 12px 18px; border-radius: 12px; font-size: 14px; transition: top 0.5s ease; z-index: 9999; }
 .notification-bar.show { top: 20px; }
 
 /* ---------- Live Status Badge ---------- */
-.status-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 8px 14px;
-    border-radius: 20px;
-    font-size: 14px;
-    margin-bottom: 15px;
-}
-.status-dot {
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    background: #00ff6a;
-    box-shadow: 0 0 10px #00ff6a;
-}
+.status-badge { display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px; border-radius: 20px; font-size: 14px; margin-bottom: 15px; }
+.status-dot { width: 10px; height: 10px; border-radius: 50%; background: #00ff6a; box-shadow: 0 0 10px #00ff6a; }
 .status-offline { background: #ccc; box-shadow: 0 0 5px #ccc; }
 
-/* ---------- Bot Card Styles ---------- */
-#assistantBotCard {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    width: 320px;
-    max-height: 400px;
-    display: flex;
-    flex-direction: column;
-    z-index: 1000;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.35);
-    transition: all 0.3s ease;
-}
-
-#assistantBotCard.collapsed {
-    max-height: 50px;
-    overflow: hidden;
-}
-
-#botHeader {
-    background: rgba(107,44,216,0.8);
-    color: #fff;
-    padding: 10px;
-    border-radius: 12px 12px 0 0;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-#botMessagesContainer {
-    background: rgba(255,255,255,0.05);
-    backdrop-filter: blur(10px);
-    flex: 1;
-    overflow-y: auto;
-    padding: 10px;
-    border-radius: 0 0 12px 12px;
-}
-
-#botMessagesContainer .bot { text-align: left; color: #b3b3ff; margin-bottom: 4px; font-size: 13px; }
-#botMessagesContainer .user { text-align: right; color: #9b59b6; margin-bottom: 4px; font-size: 13px; }
-#botMessagesContainer .ambient { text-align: center; color: #aaa; font-size: 12px; opacity: 0.8; }
-
-#botInputContainer {
-    display: flex;
-    margin-top: 6px;
-}
-#botInput {
-    flex: 1;
-    padding: 8px;
-    border: none;
-    border-radius: 10px;
-    background: rgba(255,255,255,0.1);
-    color: #fff;
-    margin-right: 4px;
-}
-#botSendBtn {
-    background: rgba(107,44,216,0.8);
-    border: none;
-    color: #fff;
-    border-radius: 10px;
-    padding: 8px 12px;
-    cursor: pointer;
-}
+/* ---------- Assistant Bot Styles ---------- */
+#assistantBot { position: fixed; bottom: 20px; right: 20px; width: 300px; max-height: 400px; background: rgba(30,30,45,0.95); backdrop-filter: blur(12px); border-radius: 18px; box-shadow: 0 8px 30px rgba(0,0,0,0.4); display: flex; flex-direction: column; overflow: hidden; z-index: 9999; font-family: 'Arial', sans-serif; }
+#botHeader { background: #6b2cd8; color: #fff; text-align: center; padding: 10px; font-weight: bold; cursor: pointer; }
+#botMessages { flex: 1; padding: 10px; overflow-y: auto; font-size: 14px; }
+#botMessages .user { text-align: right; color: #9b59b6; margin-bottom: 6px; }
+#botMessages .bot { text-align: left; color: #b3b3ff; margin-bottom: 6px; }
+#botMessages .ambient { text-align: center; color: #aaa; font-size: 12px; opacity: 0.8; margin-bottom: 6px; }
+#botInputContainer { display: flex; }
+#botInput { flex: 1; border: none; border-top: 1px solid rgba(255,255,255,0.2); padding: 8px; background: rgba(255,255,255,0.05); color: #fff; }
+#botSendBtn { width: 60px; border: none; background: #6b2cd8; color: #fff; cursor: pointer; border-radius: 6px; }
 </style>
 </head>
-
 <body>
-<div id="floating-bg"></div>
 
+<div id="floating-bg"></div>
 <button id="menuBtn" onclick="toggleSidebar()">☰</button>
 <div id="supportNotification" class="notification-bar"></div>
 
@@ -267,82 +83,37 @@ footer {
 <div id="overlay" onclick="toggleSidebar()"></div>
 
 <div id="content">
-<div class="glass-card">
-
-<div class="status-badge">
-    <span id="statusDot" class="status-dot"></span>
-    <span id="statusText">Checking status...</span>
-</div>
-
-<p><strong>Behind every smooth interaction is a dedicated team member. 👩‍💼💻</strong></p>
-
-<div class="mini-tv" id="miniTV"></div>
-
-<p>Generate a ticket reference before contacting support for faster resolution.</p>
-
-<input id="issueInput" class="input" placeholder="Brief issue description (optional)" />
-<button class="button" onclick="generateTicket()">Generate Ticket Reference</button>
-<p id="ticketResult" style="margin-top:15px;font-weight:bold;"></p>
-
-<a href="mailto:avalonflow@usa.com" class="button" onclick="notify('Include your ticket reference in the email.')">Email Support</a>
-
-</div>
-</div>
-
-<!-- Bot Card -->
-<div id="assistantBotCard" class="glass-card collapsed">
-    <div id="botHeader" onclick="toggleBotCard()">💜 Chat with Kairos
-        <span id="botToggleBtn" style="float:right; cursor:pointer;">▲</span>
+    <div class="glass-card">
+        <div class="status-badge">
+            <span id="statusDot" class="status-dot"></span>
+            <span id="statusText">Checking status...</span>
+        </div>
+        <p><strong>Behind every smooth interaction is a dedicated team member. 👩‍💼💻</strong></p>
+        <div class="mini-tv" id="miniTV"></div>
+        <p>Generate a ticket reference before contacting support for faster resolution.</p>
+        <input id="issueInput" class="input" placeholder="Brief issue description (optional)" />
+        <button class="button" onclick="generateTicket()">Generate Ticket Reference</button>
+        <p id="ticketResult" style="margin-top:15px;font-weight:bold;"></p>
+        <a href="mailto:avalonflow@usa.com" class="button" onclick="notify('Include your ticket reference in the email.')">Email Support</a>
     </div>
-    <div id="botMessagesContainer"></div>
-    <div id="botInputContainer">
-        <input type="text" id="botInput" placeholder="Ask me something..." />
-        <button id="botSendBtn">Send</button>
+
+    <!-- Assistant Bot -->
+    <div id="assistantBot">
+        <div id="botHeader">💬 Kairos Assistant</div>
+        <div id="botMessages"></div>
+        <div id="botInputContainer">
+            <input type="text" id="botInput" placeholder="Ask me something..." />
+            <button id="botSendBtn">Send</button>
+        </div>
     </div>
 </div>
 
-<!-- Sticky Footer -->
-<footer>
-    © 2026 AvalonFlow | Powered by Centrical™
-</footer>
+<footer>© 2026 AvalonFlow | Powered by Centrical™</footer>
 
 <script>
-/* ---------- Floating particles ---------- */
-const bg = document.getElementById('floating-bg');
-const colors = ['#6b2cd8','#9b59b6','#8e44ad'];
-function particle() {
-    const p = document.createElement('div');
-    p.className = 'particle';
-    const s = Math.random()*20+10;
-    p.style.width = s+'px';
-    p.style.height = s+'px';
-    p.style.position = 'absolute';
-    p.style.left = Math.random()*100+'vw';
-    p.style.top = '100vh';
-    p.style.background = `radial-gradient(circle, ${colors[Math.floor(Math.random()*3)]}, transparent)`;
-    p.style.borderRadius = '50%';
-    p.style.opacity = 0.4;
-    p.style.pointerEvents = 'none';
-    p.style.animation = `rise ${(Math.random()*20+10)}s linear forwards`;
-    bg.appendChild(p);
-    setTimeout(()=>p.remove(), 30000);
-}
-
-// particle rise animation
-const style = document.createElement('style');
-style.innerHTML = `
-@keyframes rise {
-    0% { transform: translateY(0); opacity:0.3; }
-    50% { opacity:0.5; }
-    100% { transform: translateY(-120vh); opacity:0; }
-}`;
-document.head.appendChild(style);
-
-setInterval(particle, 800);
-
 /* ---------- Sidebar ---------- */
-const sidebar=document.getElementById('sidebar');
-const overlay=document.getElementById('overlay');
+const sidebar = document.getElementById('sidebar');
+const overlay = document.getElementById('overlay');
 function toggleSidebar(){ sidebar.classList.toggle('open'); overlay.classList.toggle('active'); }
 function nav(p){ location.href=p; }
 function logout(){ location.href='index.html'; }
@@ -355,7 +126,7 @@ function notify(msg){
     setTimeout(()=>n.classList.remove('show'),3000);
 }
 
-/* ---------- Ticket ---------- */
+/* ---------- Ticket Generator ---------- */
 function generateTicket(){
     const stamp=Date.now().toString().slice(-6);
     const rand=Math.random().toString(36).substring(2,6).toUpperCase();
@@ -382,10 +153,8 @@ setInterval(rotateTV, 4000);
 /* ---------- Live Status ---------- */
 function updateStatus(){
     const now = new Date();
-    const utcHour = now.getUTCHours();
-    const utcDay = now.getUTCDay();
-    const estHour = (utcHour -5 +24)%24;
-    const estDay = utcDay;
+    const estHour = (now.getUTCHours()-5+24)%24;
+    const estDay = now.getUTCDay();
     const isOffice = (estDay>=1 && estDay<=5) && (estHour>=9 && estHour<18);
     const dot=document.getElementById('statusDot');
     const text=document.getElementById('statusText');
@@ -395,25 +164,8 @@ function updateStatus(){
 updateStatus();
 setInterval(updateStatus,60000);
 
-/* ---------- Place Bot After First Glass Card ---------- */
-window.addEventListener('DOMContentLoaded', ()=>{
-    const firstGlass = document.querySelector('.glass-card');
-    const botCard = document.getElementById('assistantBotCard');
-    if(firstGlass && botCard){
-        firstGlass.parentNode.insertBefore(botCard, firstGlass.nextSibling);
-    }
-});
-
-/* ---------- Toggle Bot Card ---------- */
-function toggleBotCard() {
-    const card = document.getElementById('assistantBotCard');
-    const btn = document.getElementById('botToggleBtn');
-    card.classList.toggle('collapsed');
-    btn.textContent = card.classList.contains('collapsed') ? '▲' : '▼';
-}
-
-/* ---------- Bot Messaging ---------- */
-const botMessagesContainer = document.getElementById('botMessagesContainer');
+/* ---------- Kairos Bot ---------- */
+const botMessages = document.getElementById('botMessages');
 const botInput = document.getElementById('botInput');
 const botSendBtn = document.getElementById('botSendBtn');
 
@@ -425,47 +177,93 @@ const quotes = [
   "Every day is a fresh start."
 ];
 
-function addBotMessage(msg, type='bot'){
+function addBotMessage(msg,type='bot'){
     const div = document.createElement('div');
     div.className = type;
     div.textContent = msg;
-    botMessagesContainer.appendChild(div);
-    botMessagesContainer.scrollTop = botMessagesContainer.scrollHeight;
-    if(botMessagesContainer.children.length > 20) botMessagesContainer.removeChild(botMessagesContainer.children[0]);
+    botMessages.appendChild(div);
+    botMessages.scrollTop = botMessages.scrollHeight;
+    if(botMessages.children.length>10) botMessages.removeChild(botMessages.children[0]);
 }
 
+function addUserMessage(msg){ addBotMessage(msg,'user'); }
+
+// Branch progress data
+function getBranchProgress(){
+    const unlocked = JSON.parse(localStorage.getItem('unlockedBranches')) || {};
+    const unlockTimes = JSON.parse(localStorage.getItem('unlockTimes')) || {};
+    const now = Date.now();
+    let response = "Branch progress:\n";
+    ['care','grow','ease'].forEach(branch=>{
+        if(unlocked[branch]){
+            const elapsed = now - unlockTimes[branch];
+            const total = branch==='care'?14*24*60*60*1000:branch==='grow'?28*24*60*60*1000:42*24*60*60*1000;
+            const percent = Math.min(100,Math.round((elapsed/total)*100));
+            response += `${branch.charAt(0).toUpperCase()+branch.slice(1)}: ${percent}% completed\n`;
+        } else response += `${branch.charAt(0).toUpperCase()+branch.slice(1)}: Locked\n`;
+    });
+    return response;
+}
+
+// Bot reply logic
 function botReply(msg){
     msg = msg.toLowerCase();
-    if(/hi|hello|hey|yo/.test(msg)) addBotMessage("Hi! I’m Kairos, your assistant. How can I help today?");
-    else if(msg.includes('who are you') || msg.includes('yourself')) addBotMessage("I provide tips, motivational quotes, and info about your rewards.");
-    else if(msg.includes('quote')) addBotMessage(quotes[Math.floor(Math.random()*quotes.length)]);
-    else addBotMessage("I can provide info about AvalonFlow, give motivational quotes, or answer common questions.");
+    if(/hi|hello|hey|yo/.test(msg)){
+        addBotMessage("Hi! I'm Kairos, your assistant. How can I help today?");
+    } else if(msg.includes('who are you')||msg.includes('yourself')){
+        addBotMessage("I’m Kairos, your guide through AvalonFlow. I provide tips, motivational quotes, and info about your rewards.");
+    } else if(msg.includes('quote')){
+        addBotMessage(quotes[Math.floor(Math.random()*quotes.length)]);
+    } else if(msg.includes('reward')||msg.includes('progress')||msg.includes('branch')){
+        addBotMessage(getBranchProgress());
+    } else if(msg.includes('ticket')){
+        addBotMessage("To generate a support ticket, type your issue and click 'Generate Ticket Reference'.");
+    } else if(msg.includes('support')||msg.includes('help')){
+        addBotMessage("You can email support at avalonflow@usa.com. Include your ticket reference.");
+    } else {
+        addBotMessage("I can provide tips, motivational quotes, info about AvalonFlow, or guide you to support.");
+    }
 }
 
-// Send button
+// Send & enter key
 botSendBtn.addEventListener('click', ()=>{
     const msg = botInput.value.trim();
     if(!msg) return;
-    addBotMessage(msg,'user');
+    addUserMessage(msg);
     botInput.value='';
-    setTimeout(()=>botReply(msg), 500);
+    setTimeout(()=>botReply(msg),500);
 });
-
-// Enter key
 botInput.addEventListener('keypress', e=>{
     if(e.key==='Enter') botSendBtn.click();
 });
 
-// Ambient messages if no user chat
+// Ambient motivational messages (10s) only if user inactive
 setInterval(()=>{
-    if(botMessagesContainer.querySelector('.user')===null){
-        const msg = quotes[Math.floor(Math.random()*quotes.length)];
-        const ambientDiv = document.createElement('div');
-        ambientDiv.className='ambient';
-        ambientDiv.textContent = msg;
-        botMessagesContainer.appendChild(ambientDiv);
-        botMessagesContainer.scrollTop = botMessagesContainer.scrollHeight;
-        setTimeout(()=> ambientDiv.remove(), 10000);
+    if(!botMessages.querySelector('.user')){
+        const ambientMsg = quotes[Math.floor(Math.random()*quotes.length)];
+        const div = document.createElement('div');
+        div.className='ambient';
+        div.textContent = ambientMsg;
+        div.style.opacity=0;
+        botMessages.appendChild(div);
+        botMessages.scrollTop=botMessages.scrollHeight;
+
+        // fade-in
+        let opacity=0;
+        let fadeIn=setInterval(()=>{
+            opacity+=0.05;
+            div.style.opacity=opacity;
+            if(opacity>=0.8) clearInterval(fadeIn);
+        },50);
+
+        // fade-out after 10s
+        setTimeout(()=>{
+            let fadeOut=setInterval(()=>{
+                opacity-=0.05;
+                div.style.opacity=opacity;
+                if(opacity<=0){ clearInterval(fadeOut); div.remove(); }
+            },50);
+        },10000);
     }
 },10000);
 
