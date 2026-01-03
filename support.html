@@ -81,6 +81,7 @@ a { color: inherit; text-decoration: none; }
     border-radius: 18px;
     padding: 28px;
     box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+    margin-bottom: 28px;
 }
 
 /* ---------- Mini TV ---------- */
@@ -183,34 +184,29 @@ footer {
 }
 .status-offline { background: #ccc; box-shadow: 0 0 5px #ccc; }
 
-/* ---------- Kairos Bot ---------- */
+/* ---------- Chat with Kairos Bot ---------- */
 #assistantBot {
     position: fixed;
-    bottom: 20px;
+    bottom: 70px; /* above footer */
     right: 20px;
-    width: 300px;
-    max-height: 400px;
-    background: rgba(30,30,45,0.85);
-    backdrop-filter: blur(14px);
-    border-radius: 18px;
-    box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+    width: 320px;
+    max-height: 420px;
     display: flex;
     flex-direction: column;
-    overflow: hidden;
+    background: rgba(30,30,45,0.8);
+    backdrop-filter: blur(12px);
+    border-radius: 18px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.4);
     z-index: 9999;
-    font-family: 'Arial', sans-serif;
+    overflow: hidden;
 }
 #botHeader {
-    background: rgba(107,44,216,0.75);
+    background: rgba(107,44,216,0.8);
     color: #fff;
     text-align: center;
-    padding: 10px;
+    padding: 12px;
     font-weight: bold;
-    font-size: 16px;
-    border-bottom: 1px solid rgba(255,255,255,0.2);
-    backdrop-filter: blur(8px);
-    border-top-left-radius: 18px;
-    border-top-right-radius: 18px;
+    border-bottom: 1px solid rgba(255,255,255,0.15);
 }
 #botMessages {
     flex: 1;
@@ -221,38 +217,41 @@ footer {
     background: rgba(255,255,255,0.05);
     backdrop-filter: blur(6px);
     border-radius: 12px;
-    margin: 8px;
-    box-shadow: inset 0 0 10px rgba(107,44,216,0.2);
 }
-#botMessages .user { text-align: right; color: #9b59b6; margin-bottom: 6px; }
 #botMessages .bot { text-align: left; color: #b3b3ff; margin-bottom: 6px; }
+#botMessages .user { text-align: right; color: #9b59b6; margin-bottom: 6px; }
+#botMessages .ambient {
+    animation: fadePulse 10s ease-in-out forwards;
+}
+#botInputContainer {
+    display: flex;
+    border-top: 1px solid rgba(255,255,255,0.15);
+}
 #botInput {
+    flex: 1;
     border: none;
-    border-radius: 12px;
-    padding: 8px;
-    width: calc(100% - 70px);
-    background: rgba(255,255,255,0.1);
+    padding: 10px;
+    background: rgba(255,255,255,0.05);
     color: #fff;
+    border-radius: 0 0 0 12px;
     outline: none;
-    margin: 5px;
-    backdrop-filter: blur(6px);
 }
 #botSendBtn {
-    width: 60px;
     border: none;
-    background: rgba(107,44,216,0.75);
+    padding: 10px 16px;
+    background: rgba(107,44,216,0.8);
     color: #fff;
     cursor: pointer;
-    border-radius: 12px;
-    margin: 5px;
-}
-.bot.pulse { animation: pulseGlow 2.5s ease-in-out infinite; }
-@keyframes pulseGlow {
-    0% { opacity: 0; text-shadow: 0 0 2px #b3b3ff; }
-    50% { opacity: 1; text-shadow: 0 0 15px #b3b3ff; }
-    100% { opacity: 0; text-shadow: 0 0 2px #b3b3ff; }
+    border-radius: 0 0 12px 0;
 }
 
+@keyframes fadePulse {
+    0% { opacity: 0; transform: scale(0.95); }
+    20% { opacity: 1; transform: scale(1.02); }
+    50% { opacity: 1; transform: scale(1); }
+    80% { opacity: 1; transform: scale(1.02); }
+    100% { opacity: 0; transform: scale(0.95); }
+}
 </style>
 </head>
 
@@ -270,46 +269,56 @@ footer {
     <button onclick="nav('support.html')">Support</button>
     <button onclick="logout()">Logout</button>
 </div>
-
 <div id="overlay" onclick="toggleSidebar()"></div>
 
 <div id="content">
 <div class="glass-card">
+
 <div class="status-badge">
     <span id="statusDot" class="status-dot"></span>
     <span id="statusText">Checking status...</span>
 </div>
+
 <p><strong>Behind every smooth interaction is a dedicated team member. 👩‍💼💻</strong></p>
 
 <div class="mini-tv" id="miniTV"></div>
 
 <p>Generate a ticket reference before contacting support for faster resolution.</p>
+
 <input id="issueInput" class="input" placeholder="Brief issue description (optional)" />
 <button class="button" onclick="generateTicket()">Generate Ticket Reference</button>
 <p id="ticketResult" style="margin-top:15px;font-weight:bold;"></p>
-<a href="mailto:avalonflow@usa.com" class="button" onclick="notify('Include your ticket reference in the email.')">Email Support</a>
+
+<a href="mailto:avalonflow@usa.com"
+   class="button"
+   onclick="notify('Include your ticket reference in the email.')">
+   Email Support
+</a>
+
 </div>
 </div>
 
-<!-- Kairos Bot -->
+<!-- Chat with Kairos Bot -->
 <div id="assistantBot">
-    <div id="botHeader">💬 Chat with Kairos</div>
+    <div id="botHeader">💜 Chat with Kairos</div>
     <div id="botMessages"></div>
-    <input type="text" id="botInput" placeholder="Ask me something..." />
-    <button id="botSendBtn">Send</button>
+    <div id="botInputContainer">
+        <input type="text" id="botInput" placeholder="Ask me something..." />
+        <button id="botSendBtn">Send</button>
+    </div>
 </div>
 
 <footer>© 2026 AvalonFlow | Powered by Centrical™</footer>
 
 <script>
-/* ---------- Sidebar ---------- */
-const sidebar = document.getElementById('sidebar');
-const overlay = document.getElementById('overlay');
+// ---------- Sidebar ----------
+const sidebar=document.getElementById('sidebar');
+const overlay=document.getElementById('overlay');
 function toggleSidebar(){ sidebar.classList.toggle('open'); overlay.classList.toggle('active'); }
 function nav(p){ location.href=p; }
 function logout(){ location.href='index.html'; }
 
-/* ---------- Notification ---------- */
+// ---------- Notification ----------
 function notify(msg){
     const n=document.getElementById('supportNotification');
     n.textContent=msg;
@@ -317,7 +326,7 @@ function notify(msg){
     setTimeout(()=>n.classList.remove('show'),3000);
 }
 
-/* ---------- Ticket Generator ---------- */
+// ---------- Ticket ----------
 function generateTicket(){
     const stamp=Date.now().toString().slice(-6);
     const rand=Math.random().toString(36).substring(2,6).toUpperCase();
@@ -326,7 +335,7 @@ function generateTicket(){
     notify('Ticket reference generated.');
 }
 
-/* ---------- Mini TV ---------- */
+// ---------- Mini TV ----------
 const tvMessages = [
     "Support desk is available to guide you through every step.",
     "Having issues? Generate a ticket reference before emailing.",
@@ -334,11 +343,14 @@ const tvMessages = [
     "Our support team is standing by."
 ];
 let tvIndex = 0;
-function rotateTV(){ document.getElementById('miniTV').textContent = tvMessages[tvIndex]; tvIndex = (tvIndex + 1) % tvMessages.length; }
+function rotateTV(){
+    document.getElementById('miniTV').textContent = tvMessages[tvIndex];
+    tvIndex = (tvIndex + 1) % tvMessages.length;
+}
 rotateTV();
-setInterval(rotateTV,4000);
+setInterval(rotateTV, 4000);
 
-/* ---------- Live Status ---------- */
+// ---------- Live Status ----------
 function updateStatus(){
     const now = new Date();
     const utcHour = now.getUTCHours();
@@ -349,35 +361,27 @@ function updateStatus(){
     const dot=document.getElementById('statusDot');
     const text=document.getElementById('statusText');
     if(isOffice){ dot.className='status-dot'; text.textContent='Support Desk Online'; }
-    else{ dot.className='status-dot status-offline'; text.textContent='Support Desk Offline'; }
+    else { dot.className='status-dot status-offline'; text.textContent='Support Desk Offline'; }
 }
 updateStatus();
 setInterval(updateStatus,60000);
 
-/* ---------- Welcome ---------- */
+// ---------- Welcome ----------
 window.onload = () => { notify('Get assistance or clarification here.'); };
 
-/* ---------- Kairos Bot ---------- */
+// ---------- Chat with Kairos Bot ----------
 const botMessages = document.getElementById('botMessages');
 const botInput = document.getElementById('botInput');
 const botSendBtn = document.getElementById('botSendBtn');
-
-const quotes = [
+const ambientMessages = [
     "Believe in yourself and all that you are.",
     "Small steps each day lead to big results.",
     "Life is about moments, not things.",
     "Consistency is the key to success.",
     "Every day is a fresh start."
 ];
-
-function addBotMessage(msg, pulse=false){
-    const div = document.createElement('div');
-    div.className = 'bot';
-    if(pulse) div.classList.add('pulse');
-    div.textContent = msg;
-    botMessages.appendChild(div);
-    botMessages.scrollTop = botMessages.scrollHeight;
-}
+let ambientInterval;
+let userActive = false;
 
 function addUserMessage(msg){
     const div = document.createElement('div');
@@ -387,49 +391,41 @@ function addUserMessage(msg){
     botMessages.scrollTop = botMessages.scrollHeight;
 }
 
-// Simple bot response engine
+function addBotMessage(msg, isAmbient=false){
+    const div = document.createElement('div');
+    div.className = isAmbient ? 'bot ambient' : 'bot';
+    div.textContent = msg;
+    botMessages.appendChild(div);
+    botMessages.scrollTop = botMessages.scrollHeight;
+    if(isAmbient){ setTimeout(()=>div.remove(),10000); }
+}
+
 function botReply(msg){
     msg = msg.toLowerCase();
-    if(msg.includes('reward')) addBotMessage("Your rewards progress updates every 12 hours. Check the progress bars above!");
-    else if(msg.includes('quote')) addBotMessage(quotes[Math.floor(Math.random()*quotes.length)]);
+    if(msg.includes('reward')) addBotMessage("Your rewards progress updates every 12 hours.");
+    else if(msg.includes('quote')) addBotMessage(ambientMessages[Math.floor(Math.random()*ambientMessages.length)]);
     else addBotMessage("I can give tips, motivational quotes, or info about AvalonFlow.");
 }
 
-// ---------- Standby Ambient Feed ----------
-let standbyInterval;
-let userActive = false;
-
-function startStandby(){
-    if(standbyInterval) clearInterval(standbyInterval);
-    standbyInterval = setInterval(()=>{
-        if(!userActive){
-            const msg = quotes[Math.floor(Math.random()*quotes.length)];
-            addBotMessage(msg,true);
-            setTimeout(()=>{ if(botMessages.lastChild) botMessages.lastChild.classList.remove('pulse'); }, 2500);
-        }
-    }, 5000);
-}
-
-startStandby();
-
-// ---------- User Interaction ----------
 botSendBtn.addEventListener('click', ()=>{
     const msg = botInput.value.trim();
     if(!msg) return;
-    userActive = true; 
-    clearInterval(standbyInterval);
     addUserMessage(msg);
     botInput.value = '';
-    setTimeout(()=>{
-        botReply(msg);
-        userActive = false;
-        startStandby();
-    }, 500);
+    userActive = true;
+    botReply(msg);
 });
+botInput.addEventListener('keypress', e=>{ if(e.key==='Enter') botSendBtn.click(); });
 
-botInput.addEventListener('keypress', e=>{
-    if(e.key==='Enter') botSendBtn.click();
-});
+function startAmbient(){
+    ambientInterval = setInterval(()=>{
+        if(!userActive){
+            const msg = ambientMessages[Math.floor(Math.random()*ambientMessages.length)];
+            addBotMessage(msg, true);
+        }
+    },10000);
+}
+startAmbient();
 </script>
 </body>
 </html>
