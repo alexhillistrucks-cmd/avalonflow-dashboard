@@ -377,17 +377,9 @@ function updateRewards() {
         const acEl = document.getElementById(b.ac);
         const resetEl = document.getElementById(b.reset);
 
-        if (!unlocked[key] && !isAdmin) {
-            fill.style.width = '0%';
-            lock.style.display = 'block';
-            cyclesEl.textContent = 0;
-            displayedAC[key] = 0;
-            acEl.textContent = '0.00';
-            resetEl.textContent = '--:--:--';
-            return;
-        }
+        const unlockedBranch = isAdmin || unlocked[key]; // ADMIN always unlocked
 
-        lock.style.display = 'none';
+        lock.style.display = 'none':'block';
        
         const cycleMs = 12 * 60 * 60 * 1000;
         const unlockTime = unlockTimes[key] || now;
