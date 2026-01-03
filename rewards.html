@@ -339,50 +339,59 @@ const now = Date.now();
 
 /* ---------- Identity & State Init ---------- */
 
-// Current user ID (NO FALLBACK)
-const userId = localStorage.getItem("userId");
-
-// Full access ID (ONLY THIS ONE)
+// ---------- Identity & State Init ----------
+const userId = localStorage.getItem("userId"); // NO fallback
 const FULL_ACCESS_ID = "AF-F0QD-O5MO";
 
 // Persistent reward state
 let unlockedBranches = JSON.parse(localStorage.getItem('unlockedBranches')) || {};
 let unlockTimes = JSON.parse(localStorage.getItem('unlockTimes')) || {};
 
-/* ---------- Minimal Anti-Tamper Protection ---------- */
-// If NOT full-access ID, strip illegal unlocks
+// ---------- Trial Setup ----------
+const TRIAL_KEY = 'trialStart_' + userId;
+let trialStart = parseInt(localStorage.getItem(TRIAL_KEY)) || 0;
+const TRIAL_MS = 7 * 24 * 60 * 60 * 1000; // 7 days
+
+// Start trial only if no previous record and not full-access ID
+if (!trialStart && userId !== FULL_ACCESS_ID) {
+    trialStart = now;
+    localStorage.setItem(TRIAL_KEY, trialStart);
+    ALL_BRANCHES.forEach(branch => {
+        unlockedBranches[branch] = true;
+        unlockTimes[branch] = now;
+    });
+    localStorage.setItem('unlockedBranches', JSON.stringify(unlockedBranches));
+    localStorage.setItem('unlockTimes', JSON.stringify(unlockTimes));
+}
+
+// ---------- Minimal Anti-Tamper Protection ----------
 if (userId !== FULL_ACCESS_ID) {
     const cleanUnlocks = {};
     const cleanTimes = {};
-
     ALL_BRANCHES.forEach(branch => {
         if (unlockedBranches[branch] === true && unlockTimes[branch]) {
             cleanUnlocks[branch] = true;
             cleanTimes[branch] = unlockTimes[branch];
         }
     });
-
     unlockedBranches = cleanUnlocks;
     unlockTimes = cleanTimes;
-
     localStorage.setItem('unlockedBranches', JSON.stringify(unlockedBranches));
     localStorage.setItem('unlockTimes', JSON.stringify(unlockTimes));
 }
 
-/* ---------- FULL ACCESS INITIALIZATION ---------- */
+// ---------- Full Access Initialization ----------
 if (userId === FULL_ACCESS_ID && !localStorage.getItem('fullAccessInit')) {
     ALL_BRANCHES.forEach(branch => {
         unlockedBranches[branch] = true;
         unlockTimes[branch] = now;
     });
-
     localStorage.setItem('unlockedBranches', JSON.stringify(unlockedBranches));
     localStorage.setItem('unlockTimes', JSON.stringify(unlockTimes));
     localStorage.setItem('fullAccessInit', 'true');
 }
 
-/* ---------- Rewards Animation ---------- */
-
+// ---------- Rewards Animation ----------
 let displayedAC = { care: 0, grow: 0, ease: 0 };
 
 function updateRewards() {
@@ -396,20 +405,25 @@ function updateRewards() {
         const acEl = document.getElementById(b.ac);
         const resetEl = document.getElementById(b.reset);
 
-        const unlocked = unlockedBranches[key] || false;
+        let unlocked = unlockedBranches[key] || false;
+
+        // Lock trial after 7 days
+        if (trialStart && now - trialStart >= TRIAL_MS && userId !== FULL_ACCESS_ID) {
+            unlocked = false;
+        }
 
         lock.style.display = unlocked ? 'none' : 'block';
 
         if (!unlocked) {
             fill.style.width = '0%';
             cyclesEl.textContent = 0;
-            acEl.textContent = '0.00 ACU';
+            acEl.textContent = displayedAC[key].toFixed(2) + ' ACU'; // keep accumulated
             resetEl.textContent = '--:--:--';
             return;
         }
 
         const cycleMs = 12 * 60 * 60 * 1000;
-        const elapsed = now - unlockTimes[key];
+        const elapsed = now - (unlockTimes[key] || now);
         const cycleProgress = (elapsed % cycleMs) / cycleMs;
 
         fill.style.width = `${cycleProgress * 100}%`;
@@ -421,12 +435,28 @@ function updateRewards() {
         displayedAC[key] += (targetAC - displayedAC[key]) * 0.05;
         acEl.textContent = displayedAC[key].toFixed(2) + ' ACU';
 
+        // Remaining time for current 12h cycle
         const remainingMs = cycleMs - (elapsed % cycleMs);
         const h = Math.floor(remainingMs / 3600000);
         const m = Math.floor((remainingMs % 3600000) / 60000);
         const s = Math.floor((remainingMs % 60000) / 1000);
         resetEl.textContent =
             `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+
+        // Live trial countdown display (optional, per branch)
+        const trialCountdownEl = document.getElementById(b.trialCountdown);
+        if (trialCountdownEl && trialStart && userId !== FULL_ACCESS_ID) {
+            const remainingTrialMs = TRIAL_MS - (now - trialStart);
+            if (remainingTrialMs > 0) {
+                const d = Math.floor(remainingTrialMs / (1000 * 60 * 60 * 24));
+                const h = Math.floor((remainingTrialMs % (1000 * 60 * 60 * 24)) / 3600000);
+                const m = Math.floor((remainingTrialMs % 3600000) / 60000);
+                const s = Math.floor((remainingTrialMs % 60000) / 1000);
+                trialCountdownEl.textContent = `Trial ends in ${d}d ${h}h ${m}m ${s}s`;
+            } else {
+                trialCountdownEl.textContent = "Trial ended";
+            }
+        }
     });
 }
 
@@ -435,63 +465,39 @@ function animate() {
     requestAnimationFrame(animate);
 }
 
-/* ---------- Page Load Logic ---------- */
-
+// ---------- Page Load Logic ----------
 window.addEventListener("load", () => {
     const notification = document.getElementById("rewardNotification");
-    const params = new URLSearchParams(window.location.search);
-    const branch = params.get("branch");
-    const status = params.get("status");
+    const now = Date.now();
 
-    let showDefault = true;
-
-    // Paid unlock (NON full-access users)
-    if (
-        branch &&
-        status === "success" &&
-        branches[branch] &&
-        userId !== FULL_ACCESS_ID
-    ) {
-        unlockedBranches[branch] = true;
-        unlockTimes[branch] = Date.now();
-
-        localStorage.setItem('unlockedBranches', JSON.stringify(unlockedBranches));
-        localStorage.setItem('unlockTimes', JSON.stringify(unlockTimes));
-
-        notification.textContent =
-            `${branch.charAt(0).toUpperCase() + branch.slice(1)} unlocked!`;
-        showDefault = false;
-    }
-
-    // Full access banner
-    if (userId === FULL_ACCESS_ID) {
-        notification.textContent = "Full access active — all branches running";
-        showDefault = false;
-    }
-
-    if (showDefault) {
-        notification.textContent = "Welcome — Rewards / Progress";
-    }
-
+    // Welcome message first
+    notification.textContent = "Welcome — Rewards / Progress";
     notification.classList.add("show");
-    setTimeout(() => notification.classList.remove("show"), 3000);
+
+    setTimeout(() => {
+        // Trial message if applicable
+        if (userId !== FULL_ACCESS_ID && trialStart && now - trialStart < TRIAL_MS) {
+            notification.textContent = "7-day trial is active!";
+        } else if (userId === FULL_ACCESS_ID) {
+            notification.textContent = "Full access active — all branches running";
+        } else if (trialStart && now - trialStart >= TRIAL_MS) {
+            notification.textContent = "Trial ended — branches locked";
+        }
+    }, 2500);
+
+    setTimeout(() => notification.classList.remove("show"), 5500);
 
     animate();
     window.history.replaceState({}, document.title, window.location.pathname);
 });
 
-/* ---------- Auto Logout ---------- */
-
+// ---------- Auto Logout ----------
 let logoutTimer;
 const logoutTime = 8 * 60 * 60 * 1000;
-
 function resetLogoutTimer() {
     clearTimeout(logoutTimer);
-    logoutTimer = setTimeout(() => {
-        alert("No activity detected for 8 hours.");
-    }, logoutTime);
+    logoutTimer = setTimeout(() => { alert("No activity detected for 8 hours."); }, logoutTime);
 }
-
 document.onmousemove = resetLogoutTimer;
 document.onkeydown = resetLogoutTimer;
 resetLogoutTimer();
