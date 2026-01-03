@@ -279,7 +279,7 @@ function updateStatus(){
     const now = new Date();
     const estHour = (now.getUTCHours()-5+24)%24;
     const estDay = now.getUTCDay();
-    const isOffice = (estDay>=1 && estDay<=5) && (estHour>=9 && estHour<18);
+    const isOffice = (estDay>=1 && estDay<=7) && (estHour>=9 && estHour<18);
     const dot=document.getElementById('statusDot');
     const text=document.getElementById('statusText');
     if(isOffice){ dot.className='status-dot'; text.textContent='Support Desk Online'; }
