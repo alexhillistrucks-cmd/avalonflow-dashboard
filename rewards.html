@@ -319,47 +319,41 @@
         }
         setInterval(particle,800); 
       
-    // Admin detection
-    const ADMIN_ID = 'AF-GYTC-569L';
-    const userId = localStorage.getItem('USER_ID');
-    const isAdmin = userId === ADMIN_ID;
-
-    if(isAdmin && !localStorage.getItem('adminInit')) {
-        const unlockedBranches = {};
-        const unlockTimes = {};
-        const now = Date.now();
-        Object.keys(branches).forEach(key => {
-            unlockedBranches[key] = true;
-            unlockTimes[key] = now - 1000 * 60 * 60; // already running
-        });
-        localStorage.setItem('unlockedBranches', JSON.stringify(unlockedBranches));
-        localStorage.setItem('unlockTimes', JSON.stringify(unlockTimes));
-        localStorage.setItem('adminInit','true');
-
-        // Admin badge
-        document.body.insertAdjacentHTML(
-            'afterbegin',
-            `<div style="position:fixed;bottom:90px;right:20px;padding:8px 12px;border-radius:8px;
-            background:#6b2cd8;color:white;font-size:12px;z-index:9999">ADMIN MODE</div>`
-        );
-        console.log('ADMIN MODE ACTIVE');
-    }
-       
-// Branch data
+    // Branch data - must be before any logic
 const branches = {
     care: { days: 14, totalAC: 400, fill: 'careFill', lock: 'careLock', ac: 'careAC', cycles: 'careCycles', reset: 'careReset', per12h: 14.29 },
     grow: { days: 28, totalAC: 800, fill: 'growFill', lock: 'growLock', ac: 'growAC', cycles: 'growCycles', reset: 'growReset', per12h: 14.28 },
     ease: { days: 42, totalAC: 1200, fill: 'easeFill', lock: 'easeLock', ac: 'easeAC', cycles: 'easeCycles', reset: 'easeReset', per12h: 14.28 }
 };
 
+// Special full-access user
+const FULL_ACCESS_ID = 'AF-F0QD-O5MO';
+
+// Get logged-in user
+const userId = localStorage.getItem('USER_ID');
+const isFullAccess = userId === FULL_ACCESS_ID;
+
+// Determine unlocked branches
+let unlockedBranches = JSON.parse(localStorage.getItem('unlockedBranches')) || {};
+let unlockTimes = JSON.parse(localStorage.getItem('unlockTimes')) || {};
+const now = Date.now();
+
+// Full-access: unlock all + start cycles
+if(isFullAccess && !localStorage.getItem('fullAccessInit')) {
+    Object.keys(branches).forEach(key => {
+        unlockedBranches[key] = true;
+        unlockTimes[key] = now; // start cycle now
+    });
+    localStorage.setItem('unlockedBranches', JSON.stringify(unlockedBranches));
+    localStorage.setItem('unlockTimes', JSON.stringify(unlockTimes));
+    localStorage.setItem('fullAccessInit', 'true');
+}
+
 // Gradual incrementing
 let displayedAC = { care:0, grow:0, ease:0 };
 
 function updateRewards() {
     const now = Date.now();
-    const unlockTimes = JSON.parse(localStorage.getItem('unlockTimes')) || {};
-    const unlocked = JSON.parse(localStorage.getItem('unlockedBranches')) || {};
-
     Object.keys(branches).forEach(key => {
         const b = branches[key];
         const fill = document.getElementById(b.fill);
@@ -368,15 +362,22 @@ function updateRewards() {
         const acEl = document.getElementById(b.ac);
         const resetEl = document.getElementById(b.reset);
 
-        const unlockedBranch = isAdmin || unlocked[key]; // ADMIN always unlocked
+        const unlocked = unlockedBranches[key] || false;
 
-        lock.style.display = unlockedBranch ? 'none' : 'block';
-       
+        // Show/hide locked text
+        lock.style.display = unlocked ? 'none' : 'block';
+
+        if(!unlocked) {
+            fill.style.width = '0%';
+            cyclesEl.textContent = 0;
+            acEl.textContent = '0.00 ACU';
+            resetEl.textContent = '--:--:--';
+            return; // skip calculations
+        }
+
         const cycleMs = 12 * 60 * 60 * 1000;
-        const unlockTime = unlockTimes[key] || now;
-        const elapsed = now - unlockTime;
+        const elapsed = now - (unlockTimes[key] || now);
 
-        // Cycle progress
         const cycleProgress = (elapsed % cycleMs) / cycleMs;
         fill.style.width = `${cycleProgress*100}%`;
 
@@ -384,7 +385,6 @@ function updateRewards() {
         cyclesEl.textContent = cycles;
 
         const targetAC = cycles * b.per12h + cycleProgress * b.per12h;
-        // Gradually update AC
         displayedAC[key] += (targetAC - displayedAC[key]) * 0.05;
         acEl.textContent = displayedAC[key].toFixed(2) + ' ACU';
 
